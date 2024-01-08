@@ -34,4 +34,5 @@ initial_screens = ["""                                                          
 options = ["Continue","New Game","Help","About","Exit"]
 
 cover = random.randint(0,len(initial_screens)-1)
-scr.print_screen(initial_screens[cover],options)
+screen_lines = initial_screens[cover].split("\n")
+scr.print_screen(screen_lines,options,titol_seccio="*")
