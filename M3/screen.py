@@ -17,7 +17,7 @@ def print_prompt():
     for i in range(len(prompt)):
         print(prompt[i])
 
-def print_screen(screen_lines,options,titol_seccio):
+def print_screen(screen_lines,options,titol_seccio="*"):
     if(len(titol_seccio)%2==0):
         titol_seccio += " "
     options_str = ", ".join(options)
