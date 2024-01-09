@@ -63,7 +63,7 @@ def create_game_help():
 
       Type 'back' now to go back to 'Set your name'
    """.split("\n")
-      scr.print_screen(lines,options,sec_title)
+      scr.print_menu_screen(lines,options,sec_title)
       x = input("What to do now? ")
       if(x.capitalize()=="Back"):
          break
@@ -88,7 +88,7 @@ def saved_help():
 
       Type 'back' now to go back to 'Saved games'
    """.split("\n")
-      scr.print_screen(lines,options,sec_title)
+      scr.print_menu_screen(lines,options,sec_title)
       x = input("What to do now? ")
       if(x.capitalize()=="Back"):
          break
@@ -111,7 +111,7 @@ def menu_help():
 
       Type 'back' now to go back to the 'Main menu'
    """.split("\n")
-      scr.print_screen(lines,options,sec_title)
+      scr.print_menu_screen(lines,options,sec_title)
       x = input("What to do now? ")
       if(x.capitalize()=="Back"):
          break
@@ -132,7 +132,7 @@ def about():
 
       Type 'back' now to go back to the 'Main menu'
    """.split("\n")
-      scr.print_screen(lines,options,sec_title)
+      scr.print_menu_screen(lines,options,sec_title)
       x = input("What to do now? ")
       if(x.capitalize()=="Back"):
          break
@@ -153,7 +153,7 @@ def create_game():
    options = ["Back","Help"]
    sec_title = "New Game"
    while True:
-      scr.print_screen(lines,options,sec_title)
+      scr.print_menu_screen(lines,options,sec_title)
       try:
          x = input("What to do now? ")
          if(x.capitalize() == "Back"):
@@ -186,7 +186,7 @@ def legend(name="Link"):
    The princess, with the help of a heroic young man, managed to defeat 
    Ganondorf and recover the Triforce.
    """.split("\n")
-      scr.print_screen(lines,options,sec_title)
+      scr.print_menu_screen(lines,options,sec_title)
       x = input("What to do now? ")
       if(x.capitalize()=="Continue"):
          break
@@ -208,7 +208,7 @@ def plot(name):
    must reclaim the Guardians to defeat Ganon and save Hyrule. 
 
    """.split("\n")
-      scr.print_screen(lines,options,sec_title)
+      scr.print_menu_screen(lines,options,sec_title)
       x = input("What to do now? ")
       if(x.capitalize()=="Continue"):
          scr.add_to_prompt("The adventure begins")
@@ -249,7 +249,7 @@ def saved_games():
          lines.append(f" {key[0]}: {games[key]['date'].day}/{games[key]['date'].month}/{games[key]['date'].year} {games[key]['date'].hour}:{games[key]['date'].minute}:{games[key]['date'].second} - {games[key]['name']}, {games[key]['region']}".ljust(71)+f"♥ {games[key]['act_hearts']}/{games[key]['total_hearts']} ")
       while(len(lines)<10):
          lines.append("")
-      scr.print_screen(lines,options,sec_title)
+      scr.print_menu_screen(lines,options,sec_title)
       x = input("What to do now? ").split(" ")
       try:
          ids_ok = []
@@ -283,7 +283,7 @@ cover = random.randint(0,len(initial_screens)-1)
 screen_lines = initial_screens[cover].split("\n")
 
 while True:
-   scr.print_screen(screen_lines,options)
+   scr.print_menu_screen(screen_lines,options)
    try:
       x = input("What to do now? ")
       opt = x.split(" ")
@@ -308,4 +308,3 @@ while True:
          create_game()
    except ValueError as e:
       scr.add_to_prompt(e)
-

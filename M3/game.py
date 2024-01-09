@@ -1,2 +1,2 @@
-def play():
+def play(id):
     pass

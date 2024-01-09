@@ -3,3 +3,6 @@ import mysql.connector
 connection = mysql.connector.connect(user='OcarinaOfCode',password='1234',host='127.0.0.1',database='zelda')
 
 cur = connection.cursor()
+
+def actual_hearts(id):
+    cur.execute(f"SELECT hearts_remaining FROM game WHERE game_id={id}")
