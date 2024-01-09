@@ -4,15 +4,24 @@
         <meta charset="UTF-8">
         <script src="shadowPartial.js"></script>
         <link href="index.css" rel="stylesheet">
-        <title>Document</title>
-        <link rel="stylesheet" href="https://pyscript.net/releases/2023.11.1/core.css" />
-        <script type="module" src="https://pyscript.net/releases/2023.11.1/core.js"></script>
+        <title>Advent Of Code</title>
     </head>
+    <header>
+        <shadow-partial data-html="header.part.html" data-css="header.part.css"></shadow-partial>
+        <div class="sticky">
+            <shadow-partial data-html="selection.part.html" data-css="selection.part.css"></shadow-partial>
+        </div>
+    </header>
     <body>
-        <py-script>print('hello world')</py-script>
-        <div class="container">
-            <div class="image10"></div>
-            <div class="image4"></div>
+        <div>
+            <div class="game-background">
+                <div class="game-description">
+                    <div class="game-text">
+                        GAME DESCRIPTION   
+                    </div>
+                </div>
+            </div>
+                
         </div>
     </body>
 </html>
