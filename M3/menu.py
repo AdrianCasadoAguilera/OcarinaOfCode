@@ -1,5 +1,4 @@
-import screen as scr,random
-import db,datetime
+import screen as scr,random,db,datetime,game
 
 initial_screens = ["""                                                                  ## 
                                                                   ## 
@@ -63,6 +62,31 @@ def create_game_help():
       letters, numbers and spaces are allowed
 
       Type 'back' now to go back to 'Set your name'
+   """.split("\n")
+      scr.print_screen(lines,options,sec_title)
+      x = input("What to do now? ")
+      if(x.capitalize()=="Back"):
+         break
+      else:
+         scr.add_to_prompt("Invalid Action")
+
+def delete_game(id):
+      db.cur.execute(f"DELETE FROM game WHERE game_id = {id}")
+      db.cur.execute("commit")
+
+def saved_help():
+   while True:
+      sec_title = "Help, saved games"
+      options = ["Back"]
+      lines = """
+
+      Type 'play X' to continue playing the game 'X'
+      Type 'erase X' to erase the game 'X'
+      Type 'back' now to go back to the main menu 
+      
+
+
+      Type 'back' now to go back to 'Saved games'
    """.split("\n")
       scr.print_screen(lines,options,sec_title)
       x = input("What to do now? ")
@@ -194,8 +218,8 @@ def plot(name):
    new_game(name)
 
 def new_game(user_name):
-   insert = 'INSERT INTO game (user_name,date_started,hearts_remaining,blood_moon_countdown,blood_moon_appearances,region) VALUES (%s,%s,%s,%s,%s,%s);'
-   values = (user_name,datetime.datetime.now(),3,25,0,"Hyrule")
+   insert = 'INSERT INTO game (user_name,last_connected,hearts_remaining,max_hearts,blood_moon_countdown,blood_moon_appearances,region) VALUES (%s,%s,%s,%s,%s,%s,%s);'
+   values = (user_name,datetime.datetime.now(),3,3,25,0,"Hyrule")
    db.cur.execute(insert,values)
    db.connection.commit()
 
@@ -203,28 +227,53 @@ def saved_games():
    while True:
       sec_title = "Saved games"
       options = ["Play X","Erase X","Help","Back"]
-      games = []
-      for i in range(check_games()):
-         db.cur.execute(f"SELECT * FROM games WHERE game_id = {i};")
+      games = {}
+      db.cur.execute("SELECT game_id FROM game")
+      ids = db.cur.fetchall()
+      for game_id in ids:
+         db.cur.execute(f"SELECT * FROM game WHERE game_id = {game_id[0]};")
          query = db.cur.fetchall()
-         games.append({
-            "id" : i,
+         print(query[0][2])
+         games[game_id] = {
+            "id" : game_id[0],
             "date" : query[0][2],
             "name" : query[0][1],
-            "region" : query[0][6],
-            "hearts" : query[0][3]
-         })
-         print(games[i])
-      lines = f"""
-""".split("\n")
+            "region" : query[0][6], # !!!!!!!!!!!!!!!!!!!!!!! MODIFICAR CUANDO ESTE LA BBDD DEFINITIVA
+            "act_hearts" : query[0][3],
+            "total_hearts" : query[0][7]  # !!!!!!!!!!!!!!!!!!!!!!!! MODIFICAR CUANDO ESTE LA BBDD DEFINITIVA
+         }
+      lines = [""]
+      # games.sort(reverse=True,key=lambda x:x["date"])
+      for i in range(len(games)):
+         key = list(games.keys())[i]
+         lines.append(f" {key[0]}: {games[key]['date'].day}/{games[key]['date'].month}/{games[key]['date'].year} {games[key]['date'].hour}:{games[key]['date'].minute}:{games[key]['date'].second} - {games[key]['name']}, {games[key]['region']}".ljust(71)+f"♥ {games[key]['act_hearts']}/{games[key]['total_hearts']} ")
+      while(len(lines)<10):
+         lines.append("")
       scr.print_screen(lines,options,sec_title)
-      x = input("What to do now? ")
-      if(x.capitalize()=="Continue"):
-         scr.add_to_prompt("The adventure begins")
-         break
-      else:
-         scr.add_to_prompt("Invalid Action")
-   pass
+      x = input("What to do now? ").split(" ")
+      try:
+         ids_ok = []
+         for i in range(len(ids)):
+            ids_ok.append(ids[i][0])
+         if(x[0].capitalize()=="Play" and len(x)==2):
+            if(int(x[1]) in ids_ok):
+               game.play(int(x[1]))
+               break
+            raise ValueError("Invalid Action")
+         elif(x[0].capitalize()=="Erase" and len(x)==2):
+            if(int(x[1]) in ids_ok):
+               delete_game(int(x[1]))
+               break
+            raise ValueError(f"Invalid Action")
+         elif(x[0].capitalize()=="Help" and len(x)==1):
+            saved_help()
+         elif(x[0].capitalize()=="Back" and len(x)==1):
+            break
+         else:
+            raise ValueError("Invalid Action")
+      except ValueError as e:
+         scr.add_to_prompt(e)
+      
 # EJECUCIÓN JUEGO
 
 options = ["Continue","New Game","Help","About","Exit"]
@@ -254,7 +303,7 @@ while True:
          if(check_games()>1):
             saved_games()
          else:
-            pass
+            game.play()
       elif(opt[0].capitalize()=="New"):
          create_game()
    except ValueError as e:
