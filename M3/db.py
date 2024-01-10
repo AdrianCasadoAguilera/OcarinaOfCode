@@ -4,5 +4,44 @@ connection = mysql.connector.connect(user='OcarinaOfCode',password='1234',host='
 
 cur = connection.cursor()
 
+
+# QUERIES FROM GAME TABLE
+
 def actual_hearts(id):
     cur.execute(f"SELECT hearts_remaining FROM game WHERE game_id={id}")
+    act_hearts = cur.fetchall()
+    return act_hearts[0][0]
+
+def name(id):
+    cur.execute(f"SELECT user_name FROM game WHERE game_id={id}")
+    usr_name = cur.fetchall()
+    return usr_name[0][0]
+
+def max_hearts(id):
+    cur.execute(f"SELECT max_hearts FROM game WHERE game_id={id}")
+    hearts = cur.fetchall()
+    return hearts[0][0]
+
+def weapons_equiped(id):
+    cur.execute(f"SELECT weapon_name FROM weapons WHERE equipped=1 and game_id={id};")
+    weapons = cur.fetchall()
+    if(len(weapons)<2):
+        return [weapons[0][0],""]
+    weapons_list = []
+    for i in range(2):
+        weapons_list.append(weapons[i][0])
+    return weapons_list
+
+def food_totals(id):
+    food_names = ["Vegetables","Fish","Meat","Salads","Pescatarian","Roasted"]
+    dic = {}
+    for food_name in food_names:
+        cur.execute(f'SELECT quantity FROM foods WHERE game_id={id} and food_name="{food_name}"')
+        food = cur.fetchall()
+        if(len(food)>0):
+            dic[food_name] = food[0][0]
+        else:
+            dic[food_name] = 0
+    return dic
+
+print(food_totals(16))

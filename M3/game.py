@@ -1,2 +1,4 @@
+import screen as scr
+
 def play(id):
-    pass
+    scr.print_screen()

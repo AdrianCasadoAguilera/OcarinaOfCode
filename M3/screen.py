@@ -1,4 +1,5 @@
 import os,platform,maps
+import inventory as inv
 
 prompt = []
 
@@ -30,25 +31,32 @@ def print_menu_screen(screen_lines,options,titol_seccio="*"):
     print(f"* {options_str} "+"* "*int((77-len(options_str))/2))
     print_prompt()
 
-def print_screen(options,mat,titol_seccio="*"):
+def print_screen(options,mat,inventory,inv_title="Inventory",titol_seccio="*"):
     if(len(titol_seccio)%2==0):
         titol_seccio += " "
-    options_str = ", ".join(options)
+    if(len(inv_title)%2==0):
+        inv_title = " " + inv_title
+    options_str = ", ".join(options) 
     if(len(options_str)%2==0):
         options_str += " "
     clear_screen()
-    print(f"* {titol_seccio} "+"* "*int((77-len(titol_seccio))/2))
+    print(f"* {titol_seccio} "+"* "*int(((77-len(titol_seccio)-len(inv_title))/2)-1)+inv_title+" *")
     for i in range(len(mat)):
         print("*",end="")
         for j in range(len(mat[i])):
-            print(mat[i][j],end="")
+            if(mat[i][j]!="!"):
+                print(mat[i][j],end="")
+            else:
+                print(" ",end="")
         print("* ",end="")
-
+        print(inventory[i].ljust(17),end=" *\n")
     print(f"* {options_str} "+"* "*int((77-len(options_str))/2))
     print_prompt()
 
 options = ["Back"]
-titol_seccio = "Map"
-mat = maps.prueba
+titol_seccio = "Hyrule"
+mat = maps.castle
+inv_title = "Food"
+inventory = inv.show_inventory(16,inv_title)
 
-print_screen(options,mat,titol_seccio)
+print_screen(options,mat,inventory,inv_title,titol_seccio)
