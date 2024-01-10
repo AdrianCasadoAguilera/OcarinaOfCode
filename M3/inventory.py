@@ -23,7 +23,17 @@ def show_inventory(id,to_show):
             " "*17,
             " "*17]
     
-    weapons = []
+    weapons = [" "*17,
+               " "*17,
+               "Wood Sword"+str(db.weapon_durability(id)["Wood Sword"])+"/"+str(db.weapon_quantity(id)["Wood Sword"]).rjust(len("Wood Sword")-17),
+               "  " + db.equipped(id,"Wood Sword"),
+               "Sword"+str(db.weapon_durability(id)["Sword"])+"/"+str(db.weapon_quantity(id)["Sword"]).rjust(len("Sword")-17),
+               "  " + db.equipped(id,"Sword"),
+               "Wood Shield"+str(db.weapon_durability(id)["Wood Shield"])+"/"+str(db.weapon_quantity(id)["Wood Shield"]).rjust(len("Wood Shield")-17),
+               "  " + db.equipped(id,"Wood Shield"),
+               "Shield"+str(db.weapon_durability(id)["Shield"])+"/"+str(db.weapon_quantity(id)["Shield"]).rjust(len("Shield")-17),
+               "  " + db.equipped(id,"Shield"),
+               ]
     food = [" "*17,
             " "*17,
             "Vegetables"+str(db.food_totals(id)["Vegetables"]).rjust(7),

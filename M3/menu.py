@@ -303,7 +303,7 @@ while True:
          if(check_games()>1):
             saved_games()
          else:
-            game.play()
+            game.play(1)
       elif(opt[0].capitalize()=="New"):
          create_game()
    except ValueError as e:
