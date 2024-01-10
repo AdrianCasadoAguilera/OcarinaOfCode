@@ -25,7 +25,9 @@ def max_hearts(id):
 def weapons_equiped(id):
     cur.execute(f"SELECT weapon_name FROM weapons WHERE equipped=1 and game_id={id};")
     weapons = cur.fetchall()
-    if(len(weapons)<2):
+    if(len(weapons)==0):
+        return ["",""]
+    elif(len(weapons)==1):
         return [weapons[0][0],""]
     weapons_list = []
     for i in range(2):
@@ -44,4 +46,41 @@ def food_totals(id):
             dic[food_name] = 0
     return dic
 
-print(food_totals(16))
+def weapon_quantity(id):
+    weapon_names = ["Wood Sword", "Sword", "Wood Shield", "Shield"]
+    weapon_dic = {}
+    for weapon_name in weapon_names:
+        cur.execute(f'SELECT quantity FROM weapons WHERE game_id={id} and weapon_name="{weapon_name}"')
+        weapon = cur.fetchall()
+        if(len(weapon)>0):
+            weapon_dic[weapon_name] = weapon[0][0]
+        else:
+            weapon_dic[weapon_name] = 0
+    return weapon_dic
+
+def weapon_durability(id):
+    weapon_names = ["Wood Sword", "Sword", "Wood Shield", "Shield"]
+    weapons = {}
+    for weapon_name in weapon_names:
+        cur.execute(f'SELECT lives_remaining FROM weapons WHERE game_id={id} and weapon_name="{weapon_name}"')
+        weapon = cur.fetchall()
+        if(len(weapon)==0):
+            weapon_name_list = weapon_name.split()
+            if(weapon_name_list[0] == "Wood"):
+                weapons[weapon_name] = 5
+            else:
+                weapons[weapon_name] = 9
+        else:
+            weapons[weapon_name] = weapon[0][0]
+    return weapons
+
+def equipped(id, weapon):
+    cur.execute(f'SELECT equipped FROM weapons WHERE game_id={id} and weapon_name="{weapon}"')
+    equipped_weapon = cur.fetchall()
+    if(len(equipped_weapon)==0):
+        return " "
+    else:
+        if equipped_weapon[0][0] == 1:
+            return "(equipped)"
+        else:
+            return " "

@@ -53,10 +53,3 @@ def print_screen(options,mat,inventory,inv_title="Inventory",titol_seccio="*"):
     print(f"* {options_str} "+"* "*int((77-len(options_str))/2))
     print_prompt()
 
-options = ["Back"]
-titol_seccio = "Hyrule"
-mat = maps.castle
-inv_title = "Food"
-inventory = inv.show_inventory(16,inv_title)
-
-print_screen(options,mat,inventory,inv_title,titol_seccio)
