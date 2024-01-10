@@ -6,7 +6,6 @@ USE zelda;
 CREATE TABLE game (
     game_id INT,
     user_name VARCHAR(50),
-    date_started DATETIME,
     last_connected DATETIME,
     hearts_remaining INT,
     max_hearts INT,
@@ -27,7 +26,8 @@ CREATE TABLE weapons (
     weapon_name VARCHAR(50),
     game_id INT,
     equipped BOOLEAN,
-    lives_remaining INT
+    lives_remaining INT,
+    quantity INT
 );
 
 -- Tabla de enemigos (enemies)
@@ -56,4 +56,25 @@ CREATE TABLE chests_opened (
     num INT,
     xpos FLOAT,
     ypos FLOAT
+);
+
+CREATE TABLE map_objects (
+	game_id INT,
+    region VARCHAR(50),
+	num INT,
+    xpos INT,
+    ypos INT,
+    waiting_time INT
+);
+
+CREATE TABLE weapons_used (
+	weapon_name VARCHAR(50),
+    game_id INT,
+    quantity_used INT
+);
+
+CREATE TABLE food_used (
+	food_name VARCHAR(50),
+    game_id INT,
+    quantity_used INT
 );

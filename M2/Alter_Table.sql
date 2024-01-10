@@ -1,7 +1,5 @@
 use zelda;
 
-
-
 ALTER TABLE game
 MODIFY COLUMN game_id int AUTO_INCREMENT primary key;
 
@@ -28,6 +26,15 @@ MODIFY COLUMN region VARCHAR(50) CHECK (region in ("Hyrule", "Death mountain", "
 
 ALTER TABLE chests_opened
 MODIFY COLUMN region VARCHAR(50) CHECK (region in ("Hyrule", "Death mountain", "Gerudo", "Necluda", "Castle"));
+
+ALTER TABLE map_objects
+MODIFY COLUMN region VARCHAR(50) CHECK (region in ("Hyrule", "Death mountain", "Gerudo", "Necluda", "Castle"));
+
+ALTER TABLE food_used
+MODIFY COLUMN food_name VARCHAR(50) CHECK (food_name in ("Vegetable", "Salad", "Pescatarian", "Roasted", "Meat", "Fish"));
+
+ALTER TABLE weapons_used
+MODIFY COLUMN weapon_name VARCHAR(50) CHECK (weapon_name in ("Wood Sword", "Sword", "Wood Shield", "Shield"));
 
 ALTER TABLE foods
 ADD PRIMARY KEY (food_name, game_id);
@@ -62,4 +69,25 @@ ADD PRIMARY KEY (game_id, region, num);
 
 ALTER TABLE chests_opened
 ADD CONSTRAINT fk_game_chests_opened
+FOREIGN KEY (game_id) REFERENCES game(game_id);
+
+ALTER TABLE map_objects
+ADD PRIMARY KEY (game_id, region, num);
+
+ALTER TABLE map_objects
+ADD CONSTRAINT fk_game_map_objects
+FOREIGN KEY (game_id) REFERENCES game(game_id);
+
+ALTER TABLE weapons_used
+ADD PRIMARY KEY (game_id, weapon_name);
+
+ALTER TABLE weapons_used
+ADD CONSTRAINT fk_game_weapons_used
+FOREIGN KEY (game_id) REFERENCES game(game_id);
+
+ALTER TABLE food_used
+ADD PRIMARY KEY (game_id, food_name);
+
+ALTER TABLE food_used
+ADD CONSTRAINT fk_game_food_used
 FOREIGN KEY (game_id) REFERENCES game(game_id);
