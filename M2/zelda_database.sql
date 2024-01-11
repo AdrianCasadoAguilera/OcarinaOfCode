@@ -6,7 +6,6 @@ USE zelda;
 CREATE TABLE game (
     game_id INT,
     user_name VARCHAR(50),
-    date_started DATETIME,
     last_connected DATETIME,
     hearts_remaining INT,
     max_hearts INT,
@@ -27,7 +26,8 @@ CREATE TABLE weapons (
     weapon_name VARCHAR(50),
     game_id INT,
     equipped BOOLEAN,
-    lives_remaining INT
+    lives_remaining INT,
+    quantity INT
 );
 
 -- Tabla de enemigos (enemies)
@@ -91,32 +91,32 @@ ADD PRIMARY KEY (food_name, game_id);
 
 ALTER TABLE foods
 ADD CONSTRAINT fk_game_foods
-FOREIGN KEY (game_id) REFERENCES game(game_id);
+FOREIGN KEY (game_id) REFERENCES game(game_id) ON DELETE CASCADE;
 
 ALTER TABLE weapons
 ADD PRIMARY KEY (weapon_name, game_id);
 
 ALTER TABLE weapons
 ADD CONSTRAINT fk_game_weapons
-FOREIGN KEY (game_id) REFERENCES game(game_id);
+FOREIGN KEY (game_id) REFERENCES game(game_id) ON DELETE CASCADE;
 
 ALTER TABLE enemies
 ADD PRIMARY KEY (game_id, region, num);
 
 ALTER TABLE enemies
 ADD CONSTRAINT fk_game_enemies
-FOREIGN KEY (game_id) REFERENCES game(game_id);
+FOREIGN KEY (game_id) REFERENCES game(game_id) ON DELETE CASCADE;
 
 ALTER TABLE sanctuaries_opened
 ADD PRIMARY KEY (game_id, num, region);
 
 ALTER TABLE sanctuaries_opened
 ADD CONSTRAINT fk_game_sanctuaries_opened
-FOREIGN KEY (game_id) REFERENCES game(game_id);
+FOREIGN KEY (game_id) REFERENCES game(game_id) ON DELETE CASCADE;
 
 ALTER TABLE chests_opened
 ADD PRIMARY KEY (game_id, region, num);
 
 ALTER TABLE chests_opened
 ADD CONSTRAINT fk_game_chests_opened
-FOREIGN KEY (game_id) REFERENCES game(game_id);
+FOREIGN KEY (game_id) REFERENCES game(game_id) ON DELETE CASCADE;
