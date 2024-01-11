@@ -1,8 +1,60 @@
-import screen as scr,maps,inventory as inv,db
+import screen as scr,maps,inventory as inv,db,random
 
 pos = [1,16]
 
 # AUXILIAR FUNCTIONS
+
+def attack_grass(id):
+    prob = random.randint(1,10)
+    if(db.equipped(id,"Wood Sword")=="(equipped)" or db.equipped(id,"Sword")=="(equipped)"):
+        if(prob==1):
+            add_food(id,"Meat",1)
+            scr.add_to_prompt("You got a lizard!")
+
+def attack_tree(id):
+    prob = random.randint(1,10)
+    if(db.equipped(id,"Wood Sword")=="(equipped)" or db.equipped(id,"Sword")=="(equipped)"):
+        if(prob<=4):
+            add_food(id,"Vegetable",1)
+            scr.add_to_prompt("You got an apple!")
+        elif(prob<=6):
+            if(db.weapon_quantity(id)["Wood Sword"]==0):
+                db.cur.execute(f'INSERT INTO weapons VALUES ("Wood Sword",{id},0,5,1);')
+            else:
+                db.cur.execute(f'UPDATE weapons SET quantity=(quantity+1) WHERE weapon_name="Wood Sword" and game_id = {id};')
+            db.cur.execute("commit")
+            scr.add_to_prompt("You got a Wooden Sword!")
+        elif(prob<=8):
+            if(db.weapon_quantity(id)["Wood Shield"]==0):
+                db.cur.execute(f'INSERT INTO weapons VALUES ("Wood Shield",{id},0,5,1);')
+            else:
+                db.cur.execute(f'UPDATE weapons SET quantity=(quantity+1) WHERE weapon_name="Wood Shield" and game_id = {id};')
+            db.cur.execute("commit")
+            scr.add_to_prompt("You got a Wooden Shield!")
+
+def who_attacks(id):
+    x = pos[1]
+    y = pos[0]
+    region = db.region(id)
+    mapa = maps.locations
+    try:
+        if mapa[region][y-1][x] == "E" or mapa[region][y+1][x] == "E" or mapa[region][y][x+1] == "E" or mapa[region][y][x-1] == "E" or mapa[region][y-1][x-1] == "E" or mapa[region][y-1][x+1] == "E" or mapa[region][y+1][x-1] == "E" or mapa[region][y+1][x+1] == "E":
+            return "enemy"
+    except:
+        print()
+    finally:
+        try:
+            if mapa[region][y-1][x] == "F" or mapa[region][y+1][x] == "F" or mapa[region][y][x+1] == "F" or mapa[region][y][x-1] == "F" or mapa[region][y-1][x-1] == "F" or mapa[region][y-1][x+1] == "F" or mapa[region][y+1][x-1] == "F" or mapa[region][y+1][x+1] == "F":
+                return "fox"
+        except:
+            print()
+        finally:
+            try:
+                if mapa[region][y-1][x] == "T" or mapa[region][y+1][x] == "T" or mapa[region][y][x+1] == "T" or mapa[region][y][x-1] == "T" or mapa[region][y-1][x-1] == "T" or mapa[region][y-1][x+1] == "T" or mapa[region][y+1][x-1] == "T" or mapa[region][y+1][x+1] == "T":
+                    return "tree"
+            except:
+                print()   
+    return "grass"
 
 def check_movement(direction, id):
     global pos
@@ -148,11 +200,38 @@ def eat(id,food):
 
 # MAIN FUNCTIONS
 
+def link_death(id):
+    while True:
+        titol_seccio = "Link's death"
+        options = ["Continue"]
+        lines = """
+
+
+
+        Game Over.
+
+
+
+
+
+    """.split("\n")
+        scr.print_menu_screen(lines,options,titol_seccio)
+        scr.add_to_prompt("Nice try, you died. Game is over.")
+        x = input("What to do now? ")
+        if(x.capitalize()==options[0]):
+            db.cur.execute(f"UPDATE game SET hearts_remaining=3 WHERE game_id={id};")
+            db.cur.execute("commit")
+            break
+        scr.add_to_prompt("Invalid Action")
+
 def play(id,act_location):
     inv_title = "Main"
     while True:
         try:
             options = ["Exit","Attack","Go","Unequip","Eat","Cook","Fish","Open","Show"]
+            if(db.actual_hearts(id)==0):
+                link_death(id)
+                break
             if(can_cook(pos,"Hyrule")==False):
                 options.remove("Cook")
             mat = maps.locations[act_location]
@@ -195,6 +274,12 @@ def play(id,act_location):
                         if(not valid):
                             scr.add_to_prompt("You can't go there, it's not a valid position!")
                             break
+            elif(x[0].lower()=="attack" and len(x)==1):
+                objective = who_attacks(id)
+                if(objective=="grass"):
+                    attack_grass(id)
+                elif(objective=="tree"):
+                    attack_tree(id)
 
         except ValueError as e:
             scr.add_to_prompt(e)
