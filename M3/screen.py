@@ -32,11 +32,13 @@ def print_menu_screen(screen_lines,options,titol_seccio="*"):
     print_prompt()
 
 def print_screen(char_pos,options,mat,inventory,inv_title="Main",titol_seccio="*"):
+    if(inv_title=="Main"):
+        inv_title="Inventory"
     if(len(titol_seccio)%2==0):
         titol_seccio += " "
     if(len(inv_title)%2==0):
         inv_title = " " + inv_title
-    options_str = ", ".join(options) 
+    options_str = ", ".join(options)
     if(len(options_str)%2==0):
         options_str += " "
     clear_screen()

@@ -22,6 +22,11 @@ def max_hearts(id):
     hearts = cur.fetchall()
     return hearts[0][0]
 
+def region(id):
+    cur.execute(f"SELECT region from game WHERE game_id = {id};")
+    region = cur.fetchall()
+    return region[0][0]
+
 def weapons_equiped(id):
     cur.execute(f"SELECT weapon_name FROM weapons WHERE equipped=1 and game_id={id};")
     weapons = cur.fetchall()

@@ -276,7 +276,7 @@ def saved_games():
       except ValueError as e:
          scr.add_to_prompt(e)
       
-# EJECUCIÓN JUEGO
+# GAME EXECUTION
 
 options = ["Continue","New Game","Help","About","Exit"]
 cover = random.randint(0,len(initial_screens)-1)
