@@ -35,7 +35,7 @@ def weapons_equiped(id):
     return weapons_list
 
 def food_totals(id):
-    food_names = ["Vegetables","Fish","Meat","Salads","Pescatarian","Roasted"]
+    food_names = ["Vegetable","Fish","Meat","Salad","Pescatarian","Roasted"]
     dic = {}
     for food_name in food_names:
         cur.execute(f'SELECT quantity FROM foods WHERE game_id={id} and food_name="{food_name}"')
