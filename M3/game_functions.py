@@ -162,132 +162,21 @@ def can_cook(id):
 
 def who_attacks(id):
     x, y = player_position()
-    region = db.region()
+    region = db.region(id)
     mapa = maps.locations[region]
     try:
-        try:
-            if mapa[region][y-1][x] == "E":
-                return "enemy"
-        except:
-            pass
-        try:
-            if mapa[region][y+1][x] == "E":
-                return "enemy"
-        except:
-            pass
-        try:
-            if mapa[region][y][x+1] == "E":
-                return "enemy"
-        except:
-            pass
-        try:
-            if mapa[region][y][x-1] == "E":
-                return "enemy"
-        except:
-            pass
-        try:
-            if mapa[region][y-1][x-1] == "E":
-                return "enemy"
-        except:
-            pass
-        try:
-            if mapa[region][y-1][x+1] == "E":
-                return "enemy"
-        except:
-            pass
-        try:
-            if mapa[region][y+1][x-1] == "E":
-                return "enemy"
-        except:
-            pass
-        try:
-            if mapa[region][y+1][x+1] == "E":
-                return "enemy"
-        except:
-            pass
+        if mapa[region][y-1][x] == "E" or mapa[region][y+1][x] == "E" or mapa[region][y][x+1] == "E" or mapa[region][y][x-1] == "E" or mapa[region][y-1][x-1] == "E" or mapa[region][y-1][x+1] == "E" or mapa[region][y+1][x-1] == "E" or mapa[region][y+1][x+1] == "E":
+            return "enemy"
     except:
-        try:
-            try:
-                if mapa[region][y-1][x] == "F":
-                    return "fox"
-            except:
-                pass
-            try:
-                if mapa[region][y+1][x] == "F":
-                    return "fox"
-            except:
-                pass
-            try:
-                if mapa[region][y][x+1] == "F":
-                    return "fox"
-            except:
-                pass
-            try:
-                if mapa[region][y][x-1] == "F":
-                    return "fox"
-            except:
-                pass
-            try:
-                if mapa[region][y-1][x-1] == "F":
-                    return "fox"
-            except:
-                pass
-            try:
-                if mapa[region][y-1][x+1] == "F":
-                    return "fox"
-            except:
-                pass
-            try:
-                if mapa[region][y+1][x-1] == "F":
-                    return "fox"
-            except:
-                pass
-            try:
-                if mapa[region][y+1][x+1] == "F":
-                    return "fox"
-            except:
-                pass
-        except:
-            try:
-                try:
-                    if mapa[region][y-1][x] == "T":
-                        return "tree"
-                except:
-                    pass
-                try:
-                    if mapa[region][y+1][x] == "T":
-                        return "tree"
-                except:
-                    pass
-                try:
-                    if mapa[region][y][x+1] == "T":
-                        return "tree"
-                except:
-                    pass
-                try:
-                    if mapa[region][y][x-1] == "T":
-                        return "tree"
-                except:
-                    pass
-                try:
-                    if mapa[region][y-1][x-1] == "T":
-                        return "tree"
-                except:
-                    pass
-                try:
-                    if mapa[region][y-1][x+1] == "T":
-                        return "tree"
-                except:
-                    pass
-                try:
-                    if mapa[region][y+1][x-1] == "T":
-                        return "tree"
-                except:
-                    pass
-                try:
-                    if mapa[region][y+1][x+1] == "T":
-                        return "tree"
-                except:
-                    pass
-            except:
-                return "grass"
+        print()
+    try:
+        if mapa[region][y-1][x] == "F" or mapa[region][y+1][x] == "F" or mapa[region][y][x+1] == "F" or mapa[region][y][x-1] == "F" or mapa[region][y-1][x-1] == "F" or mapa[region][y-1][x+1] == "F" or mapa[region][y+1][x-1] == "F" or mapa[region][y+1][x+1] == "F":
+            return "fox"
+    except:
+        print()
+    try:
+        if mapa[region][y-1][x] == "T" or mapa[region][y+1][x] == "E" or mapa[region][y][x+1] == "E" or mapa[region][y][x-1] == "E" or mapa[region][y-1][x-1] == "E" or mapa[region][y-1][x+1] == "E" or mapa[region][y+1][x-1] == "E" or mapa[region][y+1][x+1] == "E":
+            return "tree"
+    except:
+        print()   
+    return "grass"
