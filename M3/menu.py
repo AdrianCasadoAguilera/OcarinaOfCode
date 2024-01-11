@@ -165,7 +165,7 @@ def create_game():
             break
          elif(check_name(x)):
             scr.add_to_prompt(f"Welcome to the game, {x}")
-            legend()
+            legend(x)
             break
          else:
             raise ValueError("Invalid Action")
@@ -212,10 +212,10 @@ def plot(name):
       x = input("What to do now? ")
       if(x.capitalize()=="Continue"):
          scr.add_to_prompt("The adventure begins")
+         new_game(name)
          break
       else:
          scr.add_to_prompt("Invalid Action")
-   new_game(name)
 
 def new_game(user_name):
    insert = 'INSERT INTO game (user_name,last_connected,hearts_remaining,max_hearts,blood_moon_countdown,blood_moon_appearances,region) VALUES (%s,%s,%s,%s,%s,%s,%s);'
@@ -238,9 +238,9 @@ def saved_games():
             "id" : game_id[0],
             "date" : query[0][2],
             "name" : query[0][1],
-            "region" : query[0][6], # !!!!!!!!!!!!!!!!!!!!!!! MODIFICAR CUANDO ESTE LA BBDD DEFINITIVA
+            "region" : query[0][7], # !!!!!!!!!!!!!!!!!!!!!!! MODIFICAR CUANDO ESTE LA BBDD DEFINITIVA
             "act_hearts" : query[0][3],
-            "total_hearts" : query[0][7]  # !!!!!!!!!!!!!!!!!!!!!!!! MODIFICAR CUANDO ESTE LA BBDD DEFINITIVA
+            "total_hearts" : query[0][4]  # !!!!!!!!!!!!!!!!!!!!!!!! MODIFICAR CUANDO ESTE LA BBDD DEFINITIVA
          }
       lines = [""]
       # games.sort(reverse=True,key=lambda x:x["date"])
@@ -257,7 +257,9 @@ def saved_games():
             ids_ok.append(ids[i][0])
          if(x[0].capitalize()=="Play" and len(x)==2):
             if(int(x[1]) in ids_ok):
-               game.play(int(x[1]))
+               db.cur.execute("SELECT region FROM game;")
+               game_info = db.cur.fetchall()
+               game.play(int(x[1]),game_info[0][0])
                break
             raise ValueError("Invalid Action")
          elif(x[0].capitalize()=="Erase" and len(x)==2):
@@ -274,15 +276,15 @@ def saved_games():
       except ValueError as e:
          scr.add_to_prompt(e)
       
-# EJECUCIÓN JUEGO
+# GAME EXECUTION
 
 options = ["Continue","New Game","Help","About","Exit"]
-if(check_games()==0):
-   options.pop(0)
 cover = random.randint(0,len(initial_screens)-1)
 screen_lines = initial_screens[cover].split("\n")
 
 while True:
+   if(check_games()==0):
+      options.pop(0)
    scr.print_menu_screen(screen_lines,options)
    try:
       x = input("What to do now? ")
@@ -303,8 +305,13 @@ while True:
          if(check_games()>1):
             saved_games()
          else:
-            game.play()
-      elif(opt[0].capitalize()=="New"):
+            db.cur.execute("SELECT game_id FROM game;")
+            game_id = db.cur.fetchall()[0][0]
+            db.cur.execute(f"SELECT region FROM game WHERE game_id={game_id};")
+            act_location = db.cur.fetchall()[0][0]
+            game.play(game_id,act_location)
+            break
+      elif(opt[0].capitalize()=="New" and opt[1].capitalize()=="Game"):
          create_game()
    except ValueError as e:
       scr.add_to_prompt(e)

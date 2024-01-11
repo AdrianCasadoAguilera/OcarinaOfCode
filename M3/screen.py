@@ -31,12 +31,14 @@ def print_menu_screen(screen_lines,options,titol_seccio="*"):
     print(f"* {options_str} "+"* "*int((77-len(options_str))/2))
     print_prompt()
 
-def print_screen(options,mat,inventory,inv_title="Inventory",titol_seccio="*"):
+def print_screen(char_pos,options,mat,inventory,inv_title="Main",titol_seccio="*"):
+    if(inv_title=="Main"):
+        inv_title="Inventory"
     if(len(titol_seccio)%2==0):
         titol_seccio += " "
     if(len(inv_title)%2==0):
         inv_title = " " + inv_title
-    options_str = ", ".join(options) 
+    options_str = ", ".join(options)
     if(len(options_str)%2==0):
         options_str += " "
     clear_screen()
@@ -44,7 +46,9 @@ def print_screen(options,mat,inventory,inv_title="Inventory",titol_seccio="*"):
     for i in range(len(mat)):
         print("*",end="")
         for j in range(len(mat[i])):
-            if(mat[i][j]!="!"):
+            if(i==char_pos[0] and j==char_pos[1]):
+                print("X",end="")
+            elif(mat[i][j]!="!"):
                 print(mat[i][j],end="")
             else:
                 print(" ",end="")
@@ -53,10 +57,3 @@ def print_screen(options,mat,inventory,inv_title="Inventory",titol_seccio="*"):
     print(f"* {options_str} "+"* "*int((77-len(options_str))/2))
     print_prompt()
 
-options = ["Back"]
-titol_seccio = "Hyrule"
-mat = maps.castle
-inv_title = "Food"
-inventory = inv.show_inventory(16,inv_title)
-
-print_screen(options,mat,inventory,inv_title,titol_seccio)
