@@ -44,4 +44,31 @@ def food_totals(id):
             dic[food_name] = 0
     return dic
 
+def weapon_quantity(id):
+    weapon_names = ["Wood Sword", "Sword", "Wood Shield", "Shield"]
+    weapon_dic = {}
+    for weapon_name in weapon_names:
+        cur.execute(f'SELECT quantity FROM weapons WHERE game_id={id} and weapon_name="{weapon_name}"')
+        weapon = cur.fetchall()
+        if(len(weapon)>0):
+            weapon_dic[weapon_name] = weapon[0][0]
+        else:
+            weapon_dic[weapon_name] = 0
+    return weapon_dic
+
+
+def weapon_durability(id):
+    weapon_names = ["Wood Sword", "Sword", "Wood Shield", "Shield"]
+    for weapon_name in weapon_names:
+        cur.execute(f'SELECT lives_remaining FROM weapons WHERE game_id={id} and weapon_name="{weapon_name}"')
+        weapon = cur.fetchall()
+    return weapon
+
+def equipped(id, weapon):
+    cur.execute(f'SELECT equipped FROM weapons WHERE game_id={id} and weapon_name="{weapon}"')
+    equipped_weapon = cur.fetchall()
+    if equipped_weapon != 0:
+        return "(equipped)"
+    else:
+        return " "
 print(food_totals(16))
