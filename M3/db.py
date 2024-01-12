@@ -62,7 +62,15 @@ def weapon_durability(id):
     for weapon_name in weapon_names:
         cur.execute(f'SELECT lives_remaining FROM weapons WHERE game_id={id} and weapon_name="{weapon_name}"')
         weapon = cur.fetchall()
-    return weapon
+        if(len(weapon)==0):
+            weapon_name_list = weapon_name.split()
+            if(weapon_name_list[0] == "Wood"):
+                weapons[weapon_name] = 5
+            else:
+                weapons[weapon_name] = 9
+        else:
+            weapons[weapon_name] = weapon[0][0]
+    return weapons
 
 def equipped(id, weapon):
     cur.execute(f'SELECT equipped FROM weapons WHERE game_id={id} and weapon_name="{weapon}"')
@@ -70,5 +78,9 @@ def equipped(id, weapon):
     if equipped_weapon != 0:
         return "(equipped)"
     else:
-        return " "
-print(food_totals(16))
+        if equipped_weapon[0][0] == 1:
+            return "(equipped)"
+        else:
+            return " "
+
+

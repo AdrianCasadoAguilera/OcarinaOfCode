@@ -1,9 +1,9 @@
-import db
+import data
 
 # AUXULIAR FUNCTIONS
 
 def total_food(id):
-    dic = db.food_totals(id)
+    dic = data.food_totals(id)
     total = 0
     for el in dic.values():
         total += el
@@ -13,11 +13,11 @@ def total_food(id):
 
 def show_inventory(id,to_show):
     main = ["                ",
-            db.name(id)+f"♥ {db.actual_hearts(id)}/{db.max_hearts(id)}".rjust(17-len(db.name(id))),
+            data.name(id)+f"♥ {data.actual_hearts(id)}/{data.max_hearts(id)}".rjust(17-len(data.name(id))),
             "                ",
             "Equipment",
-            db.weapons_equiped(id)[0].rjust(17),
-            db.weapons_equiped(id)[1].rjust(17),
+            data.weapons_equiped(id)[0].rjust(17),
+            data.weapons_equiped(id)[1].rjust(17),
             " "*17,
             "Food"+total_food(16).rjust(13),
             " "*17,
@@ -25,24 +25,24 @@ def show_inventory(id,to_show):
     
     weapons = [" "*17,
                " "*17,
-               "Wood Sword"+str(db.weapon_durability(id)["Wood Sword"])+"/"+str(db.weapon_quantity(id)["Wood Sword"]).rjust(len("Wood Sword")-17),
-               "  " + db.equipped(id,"Wood Sword"),
-               "Sword"+str(db.weapon_durability(id)["Sword"])+"/"+str(db.weapon_quantity(id)["Sword"]).rjust(len("Sword")-17),
-               "  " + db.equipped(id,"Sword"),
-               "Wood Shield"+str(db.weapon_durability(id)["Wood Shield"])+"/"+str(db.weapon_quantity(id)["Wood Shield"]).rjust(len("Wood Shield")-17),
-               "  " + db.equipped(id,"Wood Shield"),
-               "Shield"+str(db.weapon_durability(id)["Shield"])+"/"+str(db.weapon_quantity(id)["Shield"]).rjust(len("Shield")-17),
-               "  " + db.equipped(id,"Shield"),
+               "Wood Sword"+str(data.weapon_durability(id)["Wood Sword"])+"/"+str(data.weapon_quantity(id)["Wood Sword"]).rjust(len("Wood Sword")-17),
+               "  " + data.equipped(id,"Wood Sword"),
+               "Sword"+str(data.weapon_durability(id)["Sword"])+"/"+str(data.weapon_quantity(id)["Sword"]).rjust(len("Sword")-17),
+               "  " + data.equipped(id,"Sword"),
+               "Wood Shield"+str(data.weapon_durability(id)["Wood Shield"])+"/"+str(data.weapon_quantity(id)["Wood Shield"]).rjust(len("Wood Shield")-17),
+               "  " + data.equipped(id,"Wood Shield"),
+               "Shield"+str(data.weapon_durability(id)["Shield"])+"/"+str(data.weapon_quantity(id)["Shield"]).rjust(len("Shield")-17),
+               "  " + data.equipped(id,"Shield"),
                ]
     food = [" "*17,
             " "*17,
-            "Vegetables"+str(db.food_totals(id)["Vegetables"]).rjust(7),
-            "Fish"+str(db.food_totals(id)["Fish"]).rjust(13),
-            "Meat"+str(db.food_totals(id)["Meat"]).rjust(13),
+            "Vegetables"+str(data.food_totals(id)["Vegetables"]).rjust(7),
+            "Fish"+str(data.food_totals(id)["Fish"]).rjust(13),
+            "Meat"+str(data.food_totals(id)["Meat"]).rjust(13),
             " "*17,
-            "Salads"+str(db.food_totals(id)["Salads"]).rjust(11),
-            "Pescatarian"+str(db.food_totals(id)["Pescatarian"]).rjust(6),
-            "Roasted"+str(db.food_totals(id)["Roasted"]).rjust(10),
+            "Salads"+str(data.food_totals(id)["Salads"]).rjust(11),
+            "Pescatarian"+str(data.food_totals(id)["Pescatarian"]).rjust(6),
+            "Roasted"+str(data.food_totals(id)["Roasted"]).rjust(10),
             " "*17]
     
     if(to_show=="Inventory"):
@@ -54,4 +54,3 @@ def show_inventory(id,to_show):
     else:
         return []
     
-# print(show_inventory(16))
