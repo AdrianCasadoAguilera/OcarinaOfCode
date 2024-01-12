@@ -1,4 +1,4 @@
-import screen as scr,maps,inventory as inv,db,random
+import screen as scr,maps,inventory as inv,db,random,data
 
 pos = [1,16]
 
@@ -6,22 +6,20 @@ pos = [1,16]
 
 def attack_grass(id):
     prob = random.randint(1,10)
-    if(db.equipped(id,"Wood Sword")=="(equipped)" or db.equipped(id,"Sword")=="(equipped)"):
+    if(data.data["weapons"]["Wood Sword"]["equipped"]==1 or data.data["weapons"]["Wood Sword"]["equipped"]==1):
         if(prob==1):
-            add_food(id,"Meat",1)
+            add_food("Meat",1)
             scr.add_to_prompt("You got a lizard!")
 
 def attack_tree(id):
     prob = random.randint(1,10)
-    if(db.equipped(id,"Wood Sword")=="(equipped)" or db.equipped(id,"Sword")=="(equipped)"):
+    if(data.data["weapons"]["Wood Sword"]["equipped"]==1 or data.data["weapons"]["Wood Sword"]["equipped"]==1):
         if(prob<=4):
-            add_food(id,"Vegetable",1)
+            add_food("Vegetable",1)
             scr.add_to_prompt("You got an apple!")
         elif(prob<=6):
-            if(db.weapon_quantity(id)["Wood Sword"]==0):
-                db.cur.execute(f'INSERT INTO weapons VALUES ("Wood Sword",{id},0,5,1);')
-            else:
-                db.cur.execute(f'UPDATE weapons SET quantity=(quantity+1) WHERE weapon_name="Wood Sword" and game_id = {id};')
+            if(data.data["weapons"]["Wood Sword"]["quantity"]==0):
+                add_weapon("Wood Sword")
             db.cur.execute("commit")
             scr.add_to_prompt("You got a Wooden Sword!")
         elif(prob<=8):
@@ -132,19 +130,28 @@ def can_cook(pos,map_name):
     except:
         return False
 
-def remove_food(id,food,quantity):
-    if(db.food_totals(id)[food]==quantity):
-        db.cur.execute(f'DELETE FROM foods WHERE food_name="{food}";')
-    else:
-        db.cur.execute(f'UPDATE foods SET quantity=(quantity-{quantity}) WHERE food_name="{food}" and game_id = {id};')
-    db.cur.execute("commit")
+def add_weapon(weapon):
+    global data
+    data["weapon"][weapon]["quantity"] += 1
 
-def add_food(id,food,quantity):
-    if(db.food_totals(id)[food]==0):
+def remove_food(food,quantity):
+    global data
+    if data["foods"][food] > 0:
+        data["foods"][food] -= quantity
+    # if(db.food_totals(id)[food]==quantity):
+    #     db.cur.execute(f'DELETE FROM foods WHERE food_name="{food}";')
+    # else:
+    #     db.cur.execute(f'UPDATE foods SET quantity=(quantity-{quantity}) WHERE food_name="{food}" and game_id = {id};')
+    # db.cur.execute("commit")
+
+def add_food(food,quantity):
+    global data
+    data["foods"][food] += quantity
+"""    if(db.food_totals(id)[food]==0):
         db.cur.execute(f'INSERT INTO foods VALUES ("{food}",{id},{quantity})')
     else:
         db.cur.execute(f'UPDATE foods SET quantity = (quantity+{quantity}) WHERE food_name="{food}" and game_id = {id};')
-    db.cur.execute("commit")
+    db.cur.execute("commit") """
 
 def cook(id,food):
     if(food == "Salad"):
