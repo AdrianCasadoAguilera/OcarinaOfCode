@@ -228,7 +228,7 @@ def play(id,act_location):
     inv_title = "Main"
     while True:
         try:
-            options = ["Exit","Attack","Go","Unequip","Eat","Cook","Fish","Open","Show"]
+            options = ["Exit","Attack","Go","Equip","Unequip","Eat","Cook","Fish","Open","Show"]
             if(db.actual_hearts(id)==0):
                 link_death(id)
                 break
@@ -280,6 +280,22 @@ def play(id,act_location):
                     attack_grass(id)
                 elif(objective=="tree"):
                     attack_tree(id)
+            elif(x[0].lower()=="equip" and len(x)>2 and len(x)<5):
+                if(len(x)==4):
+                    x[2] = x[2].capitalize() + " " + x[3].capitalize()
+                else:
+                    x[2] = x[2].capitalize()
+                if(x[1].lower() == "the" and x[2].lower() in ["sword","shield","wood sword","wood shield"]):
+                    print(x[2])
+                    print(db.equipped(id,x[2]))
+                    input()
+                    if(db.weapon_quantity(id)[x[2]]>0 and db.equipped(id,x[2])==" "):
+                        db.cur.execute(f'UPDATE weapons SET equipped = 1 WHERE game_id = {id} and weapon_name = "{x[2].capitalize()}"')
+                    elif(db.equipped(id,[x[2]]=="(equipped)")):
+                        raise ValueError(f"You alredy have {x[2]} equipped!")
+                    else:
+                        raise ValueError(f"You don't have {x[2]}!")
+
 
         except ValueError as e:
             scr.add_to_prompt(e)
