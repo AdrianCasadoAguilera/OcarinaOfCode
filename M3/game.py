@@ -124,7 +124,7 @@ def inventory_help():
 def can_cook(pos,map_name):
     pos_x = pos[0]
     pos_y = pos[1]
-    loc = maps.locations[map_name]
+    loc = maps.maps[map_name]
     try:
         if(loc[pos_x+1][pos_y]=="C" or loc[pos_x][pos_y+1]=="C" or loc[pos_x-1][pos_y]=="C" or loc[pos_x][pos_y-1]=="C" or loc[pos_x+1][pos_y+1]=="C" or loc[pos_x+1][pos_y-1]=="C" or loc[pos_x-1][pos_y-1]=="C" or loc[pos_x-1][pos_y+1]=="C"):
             return True
