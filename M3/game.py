@@ -1,7 +1,5 @@
 import screen as scr,maps,inventory as inv,db,random,data
 
-pos = [1,16]
-
 # AUXILIAR FUNCTIONS
 
 def attack_grass():
@@ -13,7 +11,16 @@ def attack_grass():
 
 def attack_tree():
     prob = random.randint(1,10)
-    if(data.data["weapons"]["Wood Sword"]["equipped"]==1 or data.data["weapons"]["Wood Sword"]["equipped"]==1):
+    ws_equipped = data.is_equipped("Wood Sword")
+    s_equipped = data.is_equipped("Sword")
+    if(ws_equipped=="(equipped)"):
+        equipped = "Wood Sword"
+    elif(s_equipped=="(equipped)"):
+        equipped = "Sword"
+    else:
+        equipped = " "
+    if(equipped=="Wood Sword" or equipped=="Sword"):
+        data.data["weapons"][equipped]
         if(prob<=4):
             add_food("Vegetable",1)
             scr.add_to_prompt("You got an apple!")
@@ -25,10 +32,20 @@ def attack_tree():
             if(data.data["weapons"]["Wood Shield"]["quantity"]==0):
                 add_weapon("Wood Shield")
             scr.add_to_prompt("You got a Wooden Shield!")
+    else:
+        if(prob<=4):
+            add_food("Vegetable",1)
+            scr.add_to_prompt("You got an apple!")
+        elif(prob<=5):
+            weapon_prob = random.randint(0,1)
+            if(weapon_prob==0):
+                add_weapon("Wood Sword")
+            else:
+                add_weapon("Wood Shield")
 
 def who_attacks():
-    x = data.data["character"]["position"][0]
-    y = data.data["character"]["position"][1]
+    x = data.data["character"]["position"][1]
+    y = data.data["character"]["position"][0]
     region = data.data["character"]["region"]
     mapa = maps.maps
     try:
@@ -52,13 +69,13 @@ def who_attacks():
 
 def check_movement(direction):
     global data
-    x = data.data["character"]["position"][0]
-    y = data.data["character"]["position"][1]
+    x = data.data["character"]["position"][1]
+    y = data.data["character"]["position"][0]
     region = data.data["character"]["region"]
     if direction == "left":
         try:
             if maps.maps[region][y][x-1] == " ":
-                data.data["character"]["position"][0] -= 1
+                data.data["character"]["position"][1] -= 1
                 return True
             else:
                 return False
@@ -67,7 +84,7 @@ def check_movement(direction):
     elif direction == "right":
         try:
             if maps.maps[region][y][x+1] == " ":
-                data.data["character"]["position"][0] += 1
+                data.data["character"]["position"][1] += 1
                 return True
             else:
                 return False
@@ -76,7 +93,7 @@ def check_movement(direction):
     elif direction == "up":
         try:
             if maps.maps[region][y-1][x] == " ":
-                data.data["character"]["position"][1] -= 1
+                data.data["character"]["position"][0] -= 1
                 return True
             else:
                 return False
@@ -85,7 +102,7 @@ def check_movement(direction):
     elif direction == "down":
         try:
             if maps.maps[region][y+1][x] == " ":
-                data.data["character"]["position"][1] += 1
+                data.data["character"]["position"][0] += 1
                 return True
             else:
                 return False
@@ -129,21 +146,16 @@ def can_cook():
 
 def add_weapon(weapon):
     global data
-    data["weapon"][weapon]["quantity"] += 1
+    data.data["weapons"][weapon]["quantity"] += 1
 
 def remove_food(food,quantity):
     global data
-    if data["foods"][food] > 0:
-        data["foods"][food] -= quantity
-    # if(db.food_totals(id)[food]==quantity):
-    #     db.cur.execute(f'DELETE FROM foods WHERE food_name="{food}";')
-    # else:
-    #     db.cur.execute(f'UPDATE foods SET quantity=(quantity-{quantity}) WHERE food_name="{food}" and game_id = {id};')
-    # db.cur.execute("commit")
+    if data.data["foods"][food] >= quantity:
+        data.data["foods"][food] -= quantity
 
 def add_food(food,quantity):
     global data
-    data["foods"][food] += quantity
+    data.data["foods"][food] += quantity
 """    if(db.food_totals(id)[food]==0):
         db.cur.execute(f'INSERT INTO foods VALUES ("{food}",{id},{quantity})')
     else:
@@ -230,6 +242,9 @@ def link_death():
 def play(id,act_location):
     inv_title = "Main"
     data.collect_data(id)
+    pos = data.data["character"]["position"]
+    print(pos)
+    input()
     while True:
         try:
             options = ["Exit","Attack","Go","Equip","Unequip","Eat","Cook","Fish","Open","Show"]
@@ -242,6 +257,8 @@ def play(id,act_location):
             inventory = inv.show_inventory(id,inv_title)
             scr.print_screen(pos,options,mat,inventory,inv_title,act_location)
             x = input("What to do now? ").split()
+            if(len(x)==0):
+                raise ValueError("Invalid Action")
             if(x[0].capitalize() not in options):
                 raise ValueError("Invalid Action")
             elif(x[0].capitalize()=="Exit" and len(x)==1):
@@ -261,9 +278,9 @@ def play(id,act_location):
                     scr.add_to_prompt("Invalid Action")
             elif(x[0].capitalize()=="Eat" and len(x)==2):
                 if(x[1].lower() in ["vegetable","salad","pescatarian","roasted"]):
-                    if(db.food_totals(id)[x[1].capitalize()]>0 and db.actual_hearts(id)<db.max_hearts(id)):
+                    if(data.data["foods"][x[1].capitalize()]>0 and data.data["character"]["hearts_remaining"]<data.data["character"]["max_hearts"]):
                         eat(x[1].capitalize())
-                    elif(db.actual_hearts(id)==db.max_hearts(id)):
+                    elif(data.data["character"]["hearts_remaining"]==data.data["character"]["max_hearts"]):
                         scr.add_to_prompt(f"You alredy have {db.max_hearts(id)} hearts!")
                     else:
                         scr.add_to_prompt(f"Not enough {x[1].capitalize()}")
@@ -279,7 +296,7 @@ def play(id,act_location):
                             scr.add_to_prompt("You can't go there, it's not a valid position!")
                             break
             elif(x[0].lower()=="attack" and len(x)==1):
-                objective = who_attacks(id)
+                objective = who_attacks()
                 if(objective=="grass"):
                     attack_grass()
                 elif(objective=="tree"):
