@@ -7,6 +7,11 @@ cur = connection.cursor()
 
 # QUERIES FROM GAME TABLE
 
+def user_name(id):
+    cur.execute(f"SELECT user_name FROM game WHERE game_id={id}")
+    name = cur.fetchall()
+    return name[0][0]
+
 def actual_hearts(id):
     cur.execute(f"SELECT hearts_remaining FROM game WHERE game_id={id}")
     act_hearts = cur.fetchall()
@@ -26,6 +31,11 @@ def region(id):
     cur.execute(f"SELECT region from game WHERE game_id = {id};")
     region = cur.fetchall()
     return region[0][0]
+
+def blood_moon_countdown(id):
+    cur.execute(f"SELECT blood_moon_countdown from game WHERE game_id = {id};")
+    countdown = cur.fetchall()
+    return countdown[0][0]
 
 def weapons_equiped(id):
     cur.execute(f"SELECT weapon_name FROM weapons WHERE equipped=1 and game_id={id};")

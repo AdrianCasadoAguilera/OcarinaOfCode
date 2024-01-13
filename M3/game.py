@@ -1,4 +1,4 @@
-import screen as scr,maps,inventory as inv,db,random
+import screen as scr,maps,inventory as inv,db,random,data
 
 pos = [1,16]
 
@@ -124,7 +124,7 @@ def inventory_help():
 def can_cook(pos,map_name):
     pos_x = pos[0]
     pos_y = pos[1]
-    loc = maps.locations[map_name]
+    loc = maps.maps[map_name]
     try:
         if(loc[pos_x+1][pos_y]=="C" or loc[pos_x][pos_y+1]=="C" or loc[pos_x-1][pos_y]=="C" or loc[pos_x][pos_y-1]=="C" or loc[pos_x+1][pos_y+1]=="C" or loc[pos_x+1][pos_y-1]=="C" or loc[pos_x-1][pos_y-1]=="C" or loc[pos_x-1][pos_y+1]=="C"):
             return True
@@ -226,6 +226,7 @@ def link_death(id):
 
 def play(id,act_location):
     inv_title = "Main"
+    data.collect_data(id)
     while True:
         try:
             options = ["Exit","Attack","Go","Equip","Unequip","Eat","Cook","Fish","Open","Show"]
@@ -234,7 +235,7 @@ def play(id,act_location):
                 break
             if(can_cook(pos,"Hyrule")==False):
                 options.remove("Cook")
-            mat = maps.locations[act_location]
+            mat = maps.maps[act_location]
             inventory = inv.show_inventory(id,inv_title)
             scr.print_screen(pos,options,mat,inventory,inv_title,act_location)
             x = input("What to do now? ").split()

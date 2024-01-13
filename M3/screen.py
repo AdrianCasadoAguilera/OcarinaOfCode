@@ -1,5 +1,4 @@
-import os,platform,maps
-import inventory as inv
+import os,platform
 
 prompt = []
 
@@ -56,4 +55,3 @@ def print_screen(char_pos,options,mat,inventory,inv_title="Main",titol_seccio="*
         print(inventory[i].ljust(17),end=" *\n")
     print(f"* {options_str} "+"* "*int((77-len(options_str))/2))
     print_prompt()
-
