@@ -1,4 +1,4 @@
-import db
+import db,maps
 # Working on this dictionary
 
 data = {}
@@ -62,7 +62,7 @@ def collect_data(id):
          "character" : {
             "game_id" : id,
             "user_name" : db.user_name(id),
-            "position" : [], ############################################## HAY QUE CAMBIAR LA POSICIÓN INICIAL POR UNA FUNCION QUE DEVUELVA LA LISTA BUSCANDO EN EL MAPA EL ! 
+            "position" : maps.player_position(id), 
             "hearts_remaining" : db.actual_hearts(id),
             "max_hearts" : db.max_hearts(id),
             "region" : db.region(id),
@@ -80,22 +80,22 @@ def collect_data(id):
             "Wood Sword": {
                 "quantity": db.weapon_quantity(id)["Wood Sword"],
                 "durability": db.weapon_durability(id)["Wood Sword"],
-                "equipped": db.equipped(id, "Wood Sword")
+                "equipped": db.is_equipped(id, "Wood Sword")
             },
             "Sword": {
                 "quantity": db.weapon_quantity(id)["Sword"],
                 "durability": db.weapon_durability(id)["Sword"],
-                "equipped": db.equipped(id, "Sword")
+                "equipped": db.is_equipped(id, "Sword")
             },
             "Wood Shield": {
                 "quantity": db.weapon_quantity(id)["Wood Shield"],
                 "durability": db.weapon_durability(id)["Wood Shield"],
-                "equipped": db.equipped(id, "Wood Shield")
+                "equipped": db.is_equipped(id, "Wood Shield")
             },
             "Shield":{
                 "quantity": db.weapon_quantity(id)["Shield"],
                 "durability": db.weapon_durability(id)["Shield"],
-                "equipped": db.equipped(id, "Shield")
+                "equipped": db.is_equipped(id, "Shield")
             }
         }
     }

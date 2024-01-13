@@ -119,7 +119,7 @@ def can_cook():
     x = data.data["character"]["position"][0]
     y = data.data["character"]["position"][1]
     region = data.data["character"]["region"]
-    loc = maps.locations[region]
+    loc = maps.maps[region]
     try:
         if(loc[x+1][y]=="C" or loc[x][y+1]=="C" or loc[x-1][y]=="C" or loc[x][y-1]=="C" or loc[x+1][y+1]=="C" or loc[x+1][y-1]=="C" or loc[x-1][y-1]=="C" or loc[x-1][y+1]=="C"):
             return True
@@ -233,13 +233,13 @@ def play(id,act_location):
     while True:
         try:
             options = ["Exit","Attack","Go","Equip","Unequip","Eat","Cook","Fish","Open","Show"]
-            if(data.data["characters"]["hearts_remaining"]==0):
+            if(data.data["character"]["hearts_remaining"]==0):
                 link_death()
                 break
             if(can_cook()==False):
                 options.remove("Cook")
             mat = maps.maps[data.data["character"]["region"]]
-            inventory = inv.show_inventory(inv_title)
+            inventory = inv.show_inventory(id,inv_title)
             scr.print_screen(pos,options,mat,inventory,inv_title,act_location)
             x = input("What to do now? ").split()
             if(x[0].capitalize() not in options):

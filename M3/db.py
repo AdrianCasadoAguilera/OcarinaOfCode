@@ -92,7 +92,7 @@ def weapon_durability(id):
 def region(id):
     cur.execute(f"SELECT region FROM game WHERE game_id = {id}")
     rst = cur.fetchall()
-    return rst
+    return rst[0][0]
 
 def is_equipped(id, weapon):
     cur.execute(f'SELECT equipped FROM weapons WHERE game_id={id} and weapon_name="{weapon}"')
