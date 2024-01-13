@@ -18,13 +18,38 @@ def attack_tree():
             add_food("Vegetable",1)
             scr.add_to_prompt("You got an apple!")
         elif(prob<=6):
-            if(data.data["weapons"]["Wood Sword"]["quantity"]==0):
-                add_weapon("Wood Sword")
+            add_weapon("Wood Sword")
             scr.add_to_prompt("You got a Wooden Sword!")
         elif(prob<=8):
-            if(data.data["weapons"]["Wood Shield"]["quantity"]==0):
-                add_weapon("Wood Shield")
+            add_weapon("Wood Shield")
             scr.add_to_prompt("You got a Wooden Shield!")
+<<<<<<< Updated upstream
+=======
+    else:
+        if(prob<=4):
+            add_food("Vegetable",1)
+            scr.add_to_prompt("You got an apple!")
+        elif(prob<=5):
+            weapon_prob = random.randint(0,1)
+            if(weapon_prob==0):
+                add_weapon("Wood Sword")
+                scr.add_to_prompt("You got a Wooden Sword!")
+            else:
+                add_weapon("Wood Shield")
+                scr.add_to_prompt("You got a Wooden Shield!")
+def fishing():
+    prob = random.randint(1,10)
+    region = data.data["character"]["region"]
+    if data.locations[region]["fishing"] != 0:
+        if prob <= 2:
+            add_food("Fish",1)
+            data.locations[region]["fishing"] = 0
+            scr.add_to_prompt("You got a fish")
+        elif prob > 2:
+            scr.add_to_prompt("You didn't get a fish")
+    else:
+        scr.add_to_prompt("You can't fish right now")        
+>>>>>>> Stashed changes
 
 def who_attacks():
     x = data.data["character"]["position"][0]
@@ -57,8 +82,13 @@ def check_movement(direction):
     region = data.data["character"]["region"]
     if direction == "left":
         try:
+<<<<<<< Updated upstream
             if maps.maps[region][y][x-1] == " ":
                 data.data["character"]["position"][0] -= 1
+=======
+            if maps.maps[region][y][x-1] == " " or maps.maps[region][y][x-1] == "!":
+                data.data["character"]["position"][1] -= 1
+>>>>>>> Stashed changes
                 return True
             else:
                 return False
@@ -66,8 +96,13 @@ def check_movement(direction):
             return False
     elif direction == "right":
         try:
+<<<<<<< Updated upstream
             if maps.maps[region][y][x+1] == " ":
                 data.data["character"]["position"][0] += 1
+=======
+            if maps.maps[region][y][x+1] == " " or maps.maps[region][y][x+1] == "!":
+                data.data["character"]["position"][1] += 1
+>>>>>>> Stashed changes
                 return True
             else:
                 return False
@@ -75,8 +110,13 @@ def check_movement(direction):
             return False
     elif direction == "up":
         try:
+<<<<<<< Updated upstream
             if maps.maps[region][y-1][x] == " ":
                 data.data["character"]["position"][1] -= 1
+=======
+            if maps.maps[region][y-1][x] == " " or  maps.maps[region][y-1][x] == "!":
+                data.data["character"]["position"][0] -= 1
+>>>>>>> Stashed changes
                 return True
             else:
                 return False
@@ -84,8 +124,13 @@ def check_movement(direction):
             return False
     elif direction == "down":
         try:
+<<<<<<< Updated upstream
             if maps.maps[region][y+1][x] == " ":
                 data.data["character"]["position"][1] += 1
+=======
+            if maps.maps[region][y+1][x] == " " or maps.maps[region][y+1][x] == "!":
+                data.data["character"]["position"][0] += 1
+>>>>>>> Stashed changes
                 return True
             else:
                 return False
@@ -200,6 +245,24 @@ def eat(food):
     else:
         increase_health(4)
         
+def equip(weapon):
+    if(data.data["weapons"][weapon]["quantity"]>0 and data.data["weapons"][weapon]["equipped"]==0):
+        for el in data.weapons_equipped():
+            if(el == weapon):
+                raise ValueError(f"You alredy have {el} equipped!")
+        data.data["weapons"][weapon]["equipped"] = 1
+    elif(data.data["weapons"][weapon]["quantity"]==0):
+        raise ValueError(f"You don't have {weapon}")
+
+def unequip(weapon):
+    if(data.data["weapons"][weapon]["quantity"]>0 and data.data["weapons"][weapon]["equipped"]==1):
+        for el in data.weapons_equipped():
+            if(el == weapon):
+                data.data["weapons"][weapon]["equipped"] = 0
+    elif(data.data["weapons"][weapon]["quantity"]==0):
+        raise ValueError(f"You don't have {weapon}")
+    else:
+        raise ValueError(f"You alredy have {weapon} unequipped!")
 
 # MAIN FUNCTIONS
 
@@ -290,6 +353,7 @@ def play(id,act_location):
                 else:
                     x[2] = x[2].capitalize()
                 if(x[1].lower() == "the" and x[2].lower() in ["sword","shield","wood sword","wood shield"]):
+<<<<<<< Updated upstream
                     print(x[2])
                     print(db.equipped(id,x[2]))
                     input()
@@ -299,6 +363,18 @@ def play(id,act_location):
                         raise ValueError(f"You alredy have {x[2]} equipped!")
                     else:
                         raise ValueError(f"You don't have {x[2]}!")
+=======
+                    equip(x[2])
+            elif(x[0].lower()=="unequip" and len(x)>2 and len(x)<5):
+                if(len(x)==4):
+                    x[2] = x[2].capitalize() + " " + x[3].capitalize()
+                else:
+                    x[2] = x[2].capitalize()
+                if(x[1].lower() == "the" and x[2].lower() in ["sword","shield","wood sword","wood shield"]):
+                    unequip(x[2])
+            elif(x[0].lower()=="fish" and len(x)==1):
+                fishing()
+>>>>>>> Stashed changes
 
 
         except ValueError as e:
