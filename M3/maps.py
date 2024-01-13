@@ -69,5 +69,5 @@ def player_position(id):
     for y in range(len(mapa)):
         for x in range(len(mapa[y])):
             if mapa[y][x] == "!":
-                return [x,y]
+                return [y,x]
             

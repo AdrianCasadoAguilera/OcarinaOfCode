@@ -42,7 +42,19 @@ def attack_tree():
                 add_weapon("Wood Sword")
             else:
                 add_weapon("Wood Shield")
-
+def fishing():
+    prob = random.randint(1,10)
+    region = data.data["character"]["region"]
+    if data.locations[region]["fishing"] != 0:
+        if prob <= 2:
+            add_food("Fish",1)
+            data.locations[region]["fishing"] = 0
+            scr.add_to_prompt("You got a fish")
+        elif prob > 2:
+            scr.add_to_prompt("You didn't get a fish")
+    else:
+        scr.add_to_prompt("You can't fish right now")        
+        
 def who_attacks():
     x = data.data["character"]["position"][1]
     y = data.data["character"]["position"][0]
@@ -139,6 +151,17 @@ def can_cook():
     loc = maps.maps[region]
     try:
         if(loc[x+1][y]=="C" or loc[x][y+1]=="C" or loc[x-1][y]=="C" or loc[x][y-1]=="C" or loc[x+1][y+1]=="C" or loc[x+1][y-1]=="C" or loc[x-1][y-1]=="C" or loc[x-1][y+1]=="C"):
+            return True
+        return False
+    except:
+        return False
+def can_fish():
+    x = data.data["character"]["position"][0]
+    y = data.data["character"]["position"][1]
+    region = data.data["character"]["region"]
+    loc = maps.maps[region]
+    try:
+        if(loc[x+1][y]=="~" or loc[x][y+1]=="~" or loc[x-1][y]=="~" or loc[x][y-1]=="~" or loc[x+1][y+1]=="~" or loc[x+1][y-1]=="~" or loc[x-1][y-1]=="~" or loc[x-1][y+1]=="~"):
             return True
         return False
     except:
@@ -243,8 +266,6 @@ def play(id,act_location):
     inv_title = "Main"
     data.collect_data(id)
     pos = data.data["character"]["position"]
-    print(pos)
-    input()
     while True:
         try:
             options = ["Exit","Attack","Go","Equip","Unequip","Eat","Cook","Fish","Open","Show"]
@@ -253,6 +274,8 @@ def play(id,act_location):
                 break
             if(can_cook()==False):
                 options.remove("Cook")
+            if(can_fish()==False):
+                options.remove("Fish")
             mat = maps.maps[data.data["character"]["region"]]
             inventory = inv.show_inventory(id,inv_title)
             scr.print_screen(pos,options,mat,inventory,inv_title,act_location)
@@ -307,15 +330,14 @@ def play(id,act_location):
                 else:
                     x[2] = x[2].capitalize()
                 if(x[1].lower() == "the" and x[2].lower() in ["sword","shield","wood sword","wood shield"]):
-                    print(x[2])
-                    print(db.equipped(id,x[2]))
-                    input()
                     if(db.weapon_quantity(id)[x[2]]>0 and db.equipped(id,x[2])==" "):
                         db.cur.execute(f'UPDATE weapons SET equipped = 1 WHERE game_id = {id} and weapon_name = "{x[2].capitalize()}"')
                     elif(db.equipped(id,[x[2]]=="(equipped)")):
                         raise ValueError(f"You alredy have {x[2]} equipped!")
                     else:
                         raise ValueError(f"You don't have {x[2]}!")
+            elif(x[0].lower()=="fish" and len(x)==1):
+                fishing()
 
 
         except ValueError as e:
