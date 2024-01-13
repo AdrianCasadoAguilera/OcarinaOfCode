@@ -119,7 +119,7 @@ def can_cook():
     x = data.data["character"]["position"][0]
     y = data.data["character"]["position"][1]
     region = data.data["character"]["region"]
-    loc = maps.locations[region]
+    loc = maps.maps[region]
     try:
         if(loc[x+1][y]=="C" or loc[x][y+1]=="C" or loc[x-1][y]=="C" or loc[x][y-1]=="C" or loc[x+1][y+1]=="C" or loc[x+1][y-1]=="C" or loc[x-1][y-1]=="C" or loc[x-1][y+1]=="C"):
             return True
@@ -233,7 +233,7 @@ def play(id,act_location):
     while True:
         try:
             options = ["Exit","Attack","Go","Equip","Unequip","Eat","Cook","Fish","Open","Show"]
-            if(data.data["characters"]["hearts_remaining"]==0):
+            if(data.data["character"]["hearts_remaining"]==0):
                 link_death()
                 break
             if(can_cook()==False):
@@ -291,7 +291,7 @@ def play(id,act_location):
                     x[2] = x[2].capitalize()
                 if(x[1].lower() == "the" and x[2].lower() in ["sword","shield","wood sword","wood shield"]):
                     print(x[2])
-                    print(db.equipped(id,x[2]))
+                    print(db.is_equipped(id,x[2]))
                     input()
                     if(db.weapon_quantity(id)[x[2]]>0 and db.equipped(id,x[2])==" "):
                         db.cur.execute(f'UPDATE weapons SET equipped = 1 WHERE game_id = {id} and weapon_name = "{x[2].capitalize()}"')
