@@ -4,14 +4,14 @@ pos = [1,16]
 
 # AUXILIAR FUNCTIONS
 
-def attack_grass(id):
+def attack_grass():
     prob = random.randint(1,10)
     if(data.data["weapons"]["Wood Sword"]["equipped"]==1 or data.data["weapons"]["Wood Sword"]["equipped"]==1):
         if(prob==1):
             add_food("Meat",1)
             scr.add_to_prompt("You got a lizard!")
 
-def attack_tree(id):
+def attack_tree():
     prob = random.randint(1,10)
     if(data.data["weapons"]["Wood Sword"]["equipped"]==1 or data.data["weapons"]["Wood Sword"]["equipped"]==1):
         if(prob<=4):
@@ -20,21 +20,17 @@ def attack_tree(id):
         elif(prob<=6):
             if(data.data["weapons"]["Wood Sword"]["quantity"]==0):
                 add_weapon("Wood Sword")
-            db.cur.execute("commit")
             scr.add_to_prompt("You got a Wooden Sword!")
         elif(prob<=8):
-            if(db.weapon_quantity(id)["Wood Shield"]==0):
-                db.cur.execute(f'INSERT INTO weapons VALUES ("Wood Shield",{id},0,5,1);')
-            else:
-                db.cur.execute(f'UPDATE weapons SET quantity=(quantity+1) WHERE weapon_name="Wood Shield" and game_id = {id};')
-            db.cur.execute("commit")
+            if(data.data["weapons"]["Wood Shield"]["quantity"]==0):
+                add_weapon("Wood Shield")
             scr.add_to_prompt("You got a Wooden Shield!")
 
-def who_attacks(id):
-    x = pos[1]
-    y = pos[0]
-    region = db.region(id)
-    mapa = maps.locations
+def who_attacks():
+    x = data.data["character"]["position"][0]
+    y = data.data["character"]["position"][1]
+    region = data.data["character"]["region"]
+    mapa = maps.maps
     try:
         if mapa[region][y-1][x] == "E" or mapa[region][y+1][x] == "E" or mapa[region][y][x+1] == "E" or mapa[region][y][x-1] == "E" or mapa[region][y-1][x-1] == "E" or mapa[region][y-1][x+1] == "E" or mapa[region][y+1][x-1] == "E" or mapa[region][y+1][x+1] == "E":
             return "enemy"
@@ -54,15 +50,15 @@ def who_attacks(id):
                 print()   
     return "grass"
 
-def check_movement(direction, id):
-    global pos
-    y = pos[0]
-    x = pos[1]
-    region = db.region(id)
+def check_movement(direction):
+    global data
+    x = data.data["character"]["position"][0]
+    y = data.data["character"]["position"][1]
+    region = data.data["character"]["region"]
     if direction == "left":
         try:
-            if maps.locations[region][y][x-1] == " ":
-                pos[1] -= 1
+            if maps.maps[region][y][x-1] == " ":
+                data.data["character"]["position"][0] -= 1
                 return True
             else:
                 return False
@@ -70,8 +66,8 @@ def check_movement(direction, id):
             return False
     elif direction == "right":
         try:
-            if maps.locations[region][y][x+1] == " ":
-                pos[1] += 1
+            if maps.maps[region][y][x+1] == " ":
+                data.data["character"]["position"][0] += 1
                 return True
             else:
                 return False
@@ -79,8 +75,8 @@ def check_movement(direction, id):
             return False
     elif direction == "up":
         try:
-            if maps.locations[region][y-1][x] == " ":
-                pos[0] -= 1
+            if maps.maps[region][y-1][x] == " ":
+                data.data["character"]["position"][1] -= 1
                 return True
             else:
                 return False
@@ -88,8 +84,8 @@ def check_movement(direction, id):
             return False
     elif direction == "down":
         try:
-            if maps.locations[region][y+1][x] == " ":
-                pos[0] += 1
+            if maps.maps[region][y+1][x] == " ":
+                data.data["character"]["position"][1] += 1
                 return True
             else:
                 return False
@@ -119,12 +115,13 @@ def inventory_help():
         except ValueError as e:
             scr.add_to_prompt(e)
 
-def can_cook(pos,map_name):
-    pos_x = pos[0]
-    pos_y = pos[1]
-    loc = maps.locations[map_name]
+def can_cook():
+    x = data.data["character"]["position"][0]
+    y = data.data["character"]["position"][1]
+    region = data.data["character"]["region"]
+    loc = maps.locations[region]
     try:
-        if(loc[pos_x+1][pos_y]=="C" or loc[pos_x][pos_y+1]=="C" or loc[pos_x-1][pos_y]=="C" or loc[pos_x][pos_y-1]=="C" or loc[pos_x+1][pos_y+1]=="C" or loc[pos_x+1][pos_y-1]=="C" or loc[pos_x-1][pos_y-1]=="C" or loc[pos_x-1][pos_y+1]=="C"):
+        if(loc[x+1][y]=="C" or loc[x][y+1]=="C" or loc[x-1][y]=="C" or loc[x][y-1]=="C" or loc[x+1][y+1]=="C" or loc[x+1][y-1]=="C" or loc[x-1][y-1]=="C" or loc[x-1][y+1]=="C"):
             return True
         return False
     except:
@@ -153,61 +150,61 @@ def add_food(food,quantity):
         db.cur.execute(f'UPDATE foods SET quantity = (quantity+{quantity}) WHERE food_name="{food}" and game_id = {id};')
     db.cur.execute("commit") """
 
-def cook(id,food):
+def cook(food):
     if(food == "Salad"):
-        if(db.food_totals(id)["Vegetable"]>=2):
-            remove_food(id,"Vegetable",2)
-            add_food(id,"Salad",1)
+        if(data.data["foods"]["Vegetable"]>=2):
+            remove_food("Vegetable",2)
+            add_food("Salad",1)
             scr.add_to_prompt("Cooked Salad.")
         else:
             scr.add_to_prompt("Not enough Vegetable")
     elif(food=="Pescatarian"):
-        if(db.food_totals(id)["Vegetable"]>=1 and db.food_totals(id)["Fish"]>=1):
-            remove_food(id,"Fish",1)
-            remove_food(id,"Vegetable",1)
-            add_food(id,"Pescatarian",1)
+        if(data.data["foods"]["Vegetable"]>=1 and data.data["foods"]["Fish"]>=1):
+            remove_food("Fish",1)
+            remove_food("Vegetable",1)
+            add_food("Pescatarian",1)
             scr.add_to_prompt("Cooked Pescatarian.")
-        elif(db.food_totals(id)["Vegetable"]<1):
+        elif(data.data["foods"]["Vegetable"]<1):
             scr.add_to_prompt("Not enough Vegetable")
-        elif(db.food_totals(id)["Fish"]<1):
+        elif(data.data["foods"]["Fish"]<1):
             scr.add_to_prompt("Not enough Fish")
         else:
             scr.add_to_prompt("Not enough Fish and Vegetable")
     elif(food=="Roasted"):
-        if(db.food_totals(id)["Vegetable"]>=1 and db.food_totals(id)["Meat"]>=1):
-            remove_food(id,"Meat",1)
-            remove_food(id,"Vegetable",1)
-            add_food(id,"Roasted",1)
+        if(data.data["foods"]["Vegetable"]>=1 and data.data["foods"]["Meat"]>=1):
+            remove_food("Meat",1)
+            remove_food("Vegetable",1)
+            add_food("Roasted",1)
             scr.add_to_prompt("Cooked Roasted.")
-        elif(db.food_totals(id)["Vegetable"]<1):
+        elif(data.data["foods"]["Vegetable"]<1):
             scr.add_to_prompt("Not enough Vegetable")
-        elif(db.food_totals(id)["Meat"]<1):
+        elif(data.data["foods"]["Meat"]<1):
             scr.add_to_prompt("Not enough Meat")
         else:
             scr.add_to_prompt("Not enough Meat and Vegetable")
 
-def increase_health(id,quantity):
-    db.cur.execute(f"UPDATE game SET hearts_remaining = (hearts_remaining+{quantity}) WHERE game_id={id};")
-    db.cur.execute("commit")
-    if(db.actual_hearts(id)>db.max_hearts(id)):
-        db.cur.execute(f"UPDATE game SET hearts_remaining = max_hearts WHERE game_id={id};")
-        db.cur.execute("commit")
+def increase_health(quantity):
+    global data
+    data.data["character"]["hearts_remaining"] += quantity
+    if(data.data["character"]["hearts_remaining"]>data.data["character"]["max_hearts"]):
+        data.data["character"]["hearts_remaining"] = data.data["character"]["max_hearts"]
 
-def eat(id,food):
-    remove_food(id,food,1)
+def eat(food):
+    remove_food(food,1)
     if(food=="Vegetable"):
-        increase_health(id,1)
+        increase_health(1)
     elif(food=="Salad"):
-        increase_health(id,2)
+        increase_health(2)
     elif(food=="Pescatarian"):
-        increase_health(id,3)
+        increase_health(3)
     else:
-        increase_health(id,4)
+        increase_health(4)
         
 
 # MAIN FUNCTIONS
 
-def link_death(id):
+def link_death():
+    global data
     while True:
         titol_seccio = "Link's death"
         options = ["Continue"]
@@ -226,8 +223,7 @@ def link_death(id):
         scr.add_to_prompt("Nice try, you died. Game is over.")
         x = input("What to do now? ")
         if(x.capitalize()==options[0]):
-            db.cur.execute(f"UPDATE game SET hearts_remaining=3 WHERE game_id={id};")
-            db.cur.execute("commit")
+            data.data["character"]["hearts_remaining"] = 3
             break
         scr.add_to_prompt("Invalid Action")
 
@@ -236,13 +232,13 @@ def play(id,act_location):
     while True:
         try:
             options = ["Exit","Attack","Go","Equip","Unequip","Eat","Cook","Fish","Open","Show"]
-            if(db.actual_hearts(id)==0):
-                link_death(id)
+            if(data.data["characters"]["hearts_remaining"]==0):
+                link_death()
                 break
-            if(can_cook(pos,"Hyrule")==False):
+            if(can_cook()==False):
                 options.remove("Cook")
-            mat = maps.locations[act_location]
-            inventory = inv.show_inventory(id,inv_title)
+            mat = maps.maps[data.data["character"]["region"]]
+            inventory = inv.show_inventory(inv_title)
             scr.print_screen(pos,options,mat,inventory,inv_title,act_location)
             x = input("What to do now? ").split()
             if(x[0].capitalize() not in options):
@@ -259,13 +255,13 @@ def play(id,act_location):
                     raise ValueError("Invalid Action")
             elif(x[0].capitalize()=="Cook" and len(x)==2):
                 if(x[1].capitalize() in ["Salad","Pescatarian","Roasted"]):
-                    cook(id,x[1].capitalize())
+                    cook(x[1].capitalize())
                 else:
                     scr.add_to_prompt("Invalid Action")
             elif(x[0].capitalize()=="Eat" and len(x)==2):
                 if(x[1].lower() in ["vegetable","salad","pescatarian","roasted"]):
                     if(db.food_totals(id)[x[1].capitalize()]>0 and db.actual_hearts(id)<db.max_hearts(id)):
-                        eat(id,x[1].capitalize())
+                        eat(x[1].capitalize())
                     elif(db.actual_hearts(id)==db.max_hearts(id)):
                         scr.add_to_prompt(f"You alredy have {db.max_hearts(id)} hearts!")
                     else:
@@ -276,7 +272,7 @@ def play(id,act_location):
                 if(x[1].lower() in ["up","down","left","right"] and x[2].isdigit()):
                     movements = int(x[2])
                     while movements>0:
-                        valid = check_movement(x[1].lower(),id)
+                        valid = check_movement(x[1].lower())
                         movements -= 1
                         if(not valid):
                             scr.add_to_prompt("You can't go there, it's not a valid position!")
@@ -284,9 +280,9 @@ def play(id,act_location):
             elif(x[0].lower()=="attack" and len(x)==1):
                 objective = who_attacks(id)
                 if(objective=="grass"):
-                    attack_grass(id)
+                    attack_grass()
                 elif(objective=="tree"):
-                    attack_tree(id)
+                    attack_tree()
             elif(x[0].lower()=="equip" and len(x)>2 and len(x)<5):
                 if(len(x)==4):
                     x[2] = x[2].capitalize() + " " + x[3].capitalize()
