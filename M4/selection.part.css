@@ -6,7 +6,7 @@
     justify-content: space-evenly;
     background-color: rgb(31, 97, 31);
     padding: 15px;
-    margin-top: 570px;
+    margin-top: 580px;
     z-index: 2;
 }
 
@@ -50,9 +50,5 @@
 }
 .dropdown:hover .dropdown-content{
     display: block;
-}
-@media only screen and (max-width:990px){
-    #menu{
-        margin-top: 0;
-    }
+    
 }
