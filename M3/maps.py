@@ -71,4 +71,3 @@ def player_position(id):
             if mapa[y][x] == "!":
                 return [x,y]
             
-print(player_position(1))
