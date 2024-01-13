@@ -7,6 +7,11 @@ cur = connection.cursor()
 
 # QUERIES FROM GAME TABLE
 
+def user_name(id):
+    cur.execute(f"SELECT user_name FROM game WHERE game_id={id}")
+    name = cur.fetchall()
+    return name[0][0]
+
 def actual_hearts(id):
     cur.execute(f"SELECT hearts_remaining FROM game WHERE game_id={id}")
     act_hearts = cur.fetchall()
@@ -26,6 +31,11 @@ def region(id):
     cur.execute(f"SELECT region from game WHERE game_id = {id};")
     region = cur.fetchall()
     return region[0][0]
+
+def blood_moon_countdown(id):
+    cur.execute(f"SELECT blood_moon_countdown from game WHERE game_id = {id};")
+    countdown = cur.fetchall()
+    return countdown[0][0]
 
 def weapons_equiped(id):
     cur.execute(f"SELECT weapon_name FROM weapons WHERE equipped=1 and game_id={id};")
@@ -52,6 +62,7 @@ def food_totals(id):
     return dic
 
 
+
 print(food_totals(16))
 def weapon_quantity(id):
     weapon_names = ["Vegetables","Fish","Meat","Salads","Pescatarian","Roasted"]
@@ -61,17 +72,8 @@ def weapon_quantity(id):
         food = cur.fetchall()
         if(len(food)>0):
             weapon_dic[weapon_name] = food[0][0]
-def weapon_quantity(id):
-    weapon_names = ["Wood Sword", "Sword", "Wood Shield", "Shield"]
-    weapon_dic = {}
-    for weapon_name in weapon_names:
-        cur.execute(f'SELECT quantity FROM weapons WHERE game_id={id} and weapon_name="{weapon_name}"')
-        weapon = cur.fetchall()
-        if(len(weapon)>0):
-            weapon_dic[weapon_name] = weapon[0][0]
-        else:
-            weapon_dic[weapon_name] = 0
-    return weapon_dic
+
+
 
 def weapon_durability(id):
     weapon_names = ["Wood Sword", "Sword", "Wood Shield", "Shield"]
@@ -83,6 +85,7 @@ def region(id):
     cur.execute(f"SELECT region FROM game WHERE game_id = {id}")
     rst = cur.fetchall()
     return rst
+
         if(len(weapon)==0):
             weapon_name_list = weapon_name.split()
             if(weapon_name_list[0] == "Wood"):
@@ -92,6 +95,11 @@ def region(id):
         else:
             weapons[weapon_name] = weapon[0][0]
     return weapons
+ 
+def region(id):
+    cur.execute(f"SELECT region FROM game WHERE game_id = {id}")
+    rst = cur.fetchall()
+    return rst
 
 def equipped(id, weapon):
     cur.execute(f'SELECT equipped FROM weapons WHERE game_id={id} and weapon_name="{weapon}"')

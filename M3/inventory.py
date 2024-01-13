@@ -1,5 +1,6 @@
 import data
 
+
 # AUXULIAR FUNCTIONS
 
 def total_food(id):
@@ -16,6 +17,7 @@ def total_weapons(id):
         total += el
     return str(total)
 
+
 # FUNCTIONS
 
 def show_inventory(id,to_show):
@@ -25,9 +27,14 @@ def show_inventory(id,to_show):
             "Equipment",
             data.weapons_equiped(id)[0].rjust(17),
             data.weapons_equiped(id)[1].rjust(17),
+            data.data["character"]["user_name"]+f"♥ {data.data['character']['hearts_remaining']}/{data.data['character']['max_hearts']}".rjust(17-len(data.data["character"]["user_name"])),
+            "                ",
+            "Equipment",
+            data.weapons_equipped()[0].rjust(17),
+            data.weapons_equipped()[1].rjust(17),
             " "*17,
-            "Food"+total_food(id).rjust(13),
-            "Weapons"+total_weapons(id).rjust(10),
+            "Food"+str(data.total_food()).rjust(13),
+            "Weapons"+str(data.total_weapons()).rjust(10),
             " "*17]
     
     weapons = [" "*17,
@@ -50,6 +57,7 @@ def show_inventory(id,to_show):
             "Salads"+str(data.food_totals(id)["Salads"]).rjust(11),
             "Pescatarian"+str(data.food_totals(id)["Pescatarian"]).rjust(6),
             "Roasted"+str(data.food_totals(id)["Roasted"]).rjust(10),
+
             " "*17]
     
     if(to_show=="Main"):
