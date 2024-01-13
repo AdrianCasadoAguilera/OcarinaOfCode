@@ -1,4 +1,5 @@
 import db
+# Working on this dictionary
 
 data = {}
 
@@ -61,6 +62,7 @@ def collect_data(id):
          "character" : {
             "game_id" : id,
             "user_name" : db.user_name(id),
+            "position" : [], ############################################## HAY QUE CAMBIAR LA POSICIÓN INICIAL POR UNA FUNCION QUE DEVUELVA LA LISTA BUSCANDO EN EL MAPA EL ! 
             "hearts_remaining" : db.actual_hearts(id),
             "max_hearts" : db.max_hearts(id),
             "region" : db.region(id),

@@ -94,13 +94,15 @@ def region(id):
     rst = cur.fetchall()
     return rst
 
-def equipped(id, weapon):
+def is_equipped(id, weapon):
     cur.execute(f'SELECT equipped FROM weapons WHERE game_id={id} and weapon_name="{weapon}"')
     equipped_weapon = cur.fetchall()
     if(len(equipped_weapon)==0):
-        return " "
+        return 0
     else:
         if equipped_weapon[0][0] == 1:
-            return "(equipped)"
+            return 1
         else:
-            return " "
+            return 0
+
+
