@@ -22,10 +22,17 @@ def max_hearts(id):
     hearts = cur.fetchall()
     return hearts[0][0]
 
+def region(id):
+    cur.execute(f"SELECT region from game WHERE game_id = {id};")
+    region = cur.fetchall()
+    return region[0][0]
+
 def weapons_equiped(id):
     cur.execute(f"SELECT weapon_name FROM weapons WHERE equipped=1 and game_id={id};")
     weapons = cur.fetchall()
-    if(len(weapons)<2):
+    if(len(weapons)==0):
+        return ["",""]
+    elif(len(weapons)==1):
         return [weapons[0][0],""]
     weapons_list = []
     for i in range(2):
@@ -33,7 +40,7 @@ def weapons_equiped(id):
     return weapons_list
 
 def food_totals(id):
-    food_names = ["Vegetables","Fish","Meat","Salads","Pescatarian","Roasted"]
+    food_names = ["Vegetable","Fish","Meat","Salad","Pescatarian","Roasted"]
     dic = {}
     for food_name in food_names:
         cur.execute(f'SELECT quantity FROM foods WHERE game_id={id} and food_name="{food_name}"')
@@ -44,6 +51,16 @@ def food_totals(id):
             dic[food_name] = 0
     return dic
 
+
+print(food_totals(16))
+def weapon_quantity(id):
+    weapon_names = ["Vegetables","Fish","Meat","Salads","Pescatarian","Roasted"]
+    weapon_dic = {}
+    for weapon_name in weapon_names:
+        cur.execute(f'SELECT quantity FROM foods WHERE game_id={id} and food_name="{weapon_name}"')
+        food = cur.fetchall()
+        if(len(food)>0):
+            weapon_dic[weapon_name] = food[0][0]
 def weapon_quantity(id):
     weapon_names = ["Wood Sword", "Sword", "Wood Shield", "Shield"]
     weapon_dic = {}
@@ -56,12 +73,16 @@ def weapon_quantity(id):
             weapon_dic[weapon_name] = 0
     return weapon_dic
 
-
 def weapon_durability(id):
     weapon_names = ["Wood Sword", "Sword", "Wood Shield", "Shield"]
     for weapon_name in weapon_names:
         cur.execute(f'SELECT lives_remaining FROM weapons WHERE game_id={id} and weapon_name="{weapon_name}"')
         weapon = cur.fetchall()
+    
+def region(id):
+    cur.execute(f"SELECT region FROM game WHERE game_id = {id}")
+    rst = cur.fetchall()
+    return rst
         if(len(weapon)==0):
             weapon_name_list = weapon_name.split()
             if(weapon_name_list[0] == "Wood"):
@@ -77,10 +98,10 @@ def equipped(id, weapon):
     equipped_weapon = cur.fetchall()
     if equipped_weapon != 0:
         return "(equipped)"
+    if(len(equipped_weapon)==0):
+        return " "
     else:
         if equipped_weapon[0][0] == 1:
             return "(equipped)"
         else:
             return " "
-
-

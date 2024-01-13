@@ -9,6 +9,13 @@ def total_food(id):
         total += el
     return str(total)
 
+def total_weapons(id):
+    dic = db.weapon_quantity(id)
+    total = 0
+    for el in dic.values():
+        total += el
+    return str(total)
+
 # FUNCTIONS
 
 def show_inventory(id,to_show):
@@ -19,8 +26,8 @@ def show_inventory(id,to_show):
             data.weapons_equiped(id)[0].rjust(17),
             data.weapons_equiped(id)[1].rjust(17),
             " "*17,
-            "Food"+total_food(16).rjust(13),
-            " "*17,
+            "Food"+total_food(id).rjust(13),
+            "Weapons"+total_weapons(id).rjust(10),
             " "*17]
     
     weapons = [" "*17,
@@ -45,7 +52,7 @@ def show_inventory(id,to_show):
             "Roasted"+str(data.food_totals(id)["Roasted"]).rjust(10),
             " "*17]
     
-    if(to_show=="Inventory"):
+    if(to_show=="Main"):
         return main
     elif(to_show=="Weapons"):
         return weapons
@@ -53,4 +60,3 @@ def show_inventory(id,to_show):
         return food
     else:
         return []
-    
