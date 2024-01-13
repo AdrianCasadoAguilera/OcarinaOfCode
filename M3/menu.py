@@ -305,6 +305,8 @@ while True:
          if(check_games()>1):
             saved_games()
          else:
+            game.play(1)
+      elif(opt[0].capitalize()=="New"):
             db.cur.execute("SELECT game_id FROM game;")
             game_id = db.cur.fetchall()[0][0]
             db.cur.execute(f"SELECT region FROM game WHERE game_id={game_id};")
