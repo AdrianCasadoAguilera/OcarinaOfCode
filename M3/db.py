@@ -135,4 +135,32 @@ def update_database(data):
         """
         data.cur.execute(weapons_query, {'game_id': data['character']['game_id'], 'weapon_name': weapon_name, **weapon_data})
 
+    for region, region_data in data.locations.items():
+        for enemy_num, enemy_info in region_data['enemies'].items():
+            enemies_query = """
+                UPDATE enemies
+                SET xpos = %s,
+                    ypos = %s,
+                    lifes_remaining = %s
+                WHERE game_id = %(game_id)s AND region = %(region)s AND num = %s
+            """
+            data.cur.execute(enemies_query, (enemy_info[1][0], enemy_info[1][1], enemy_info[0], {'game_id': 1, 'region': region, 'num': enemy_num}))
+
+        for chest_num, chest_position in region_data['chests'].items():
+            chests_query = """
+                UPDATE chests
+                SET xpos = %s,
+                    ypos = %s
+                WHERE game_id = %(game_id)s AND region = %(region)s AND num = %s
+            """
+            data.cur.execute(chests_query, (chest_position[0], chest_position[1], {'game_id': 1, 'region': region, 'num': chest_num}))
+
+        game_query = """
+            UPDATE game
+            SET fishing = %s
+            WHERE game_id = %(game_id)s AND region = %(region)s
+        """
+        data.cur.execute(game_query, (region_data['fishing'], {'game_id': 1, 'region': region}))
+
+
     data.connection.commit()
