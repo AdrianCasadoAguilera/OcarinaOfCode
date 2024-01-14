@@ -1,4 +1,4 @@
-import mysql.connector
+import mysql.connector, data
 
 connection = mysql.connector.connect(user='OcarinaOfCode',password='1234',host='127.0.0.1',database='zelda')
 
@@ -105,4 +105,34 @@ def is_equipped(id, weapon):
         else:
             return 0
 
+def update_database(data):
 
+    game_query = """
+        UPDATE game
+        SET user_name = %(user_name)s,
+            hearts_remaining = %(hearts_remaining)s,
+            max_hearts = %(max_hearts)s,
+            region = %(region)s,
+            blood_moon_countdown = %(blood_moon_countdown)s
+        WHERE game_id = %(game_id)s
+    """
+    data.cur.execute(game_query, data['character'])
+    
+    for food_name, quantity in data['foods'].items():
+        foods_query = """
+            UPDATE foods
+            SET quantity = %s
+            WHERE game_id = %(game_id)s AND food_name = %s
+        """
+        data.cur.execute(foods_query, (quantity, data['character']['game_id'], food_name))
+
+    for weapon_name, weapon_data in data['weapons'].items():
+        weapons_query = """
+            UPDATE weapons
+            SET quantity = %(quantity)s,
+                equipped = %(equipped)s
+            WHERE game_id = %(game_id)s AND weapon_name = %(weapon_name)s
+        """
+        data.cur.execute(weapons_query, {'game_id': data['character']['game_id'], 'weapon_name': weapon_name, **weapon_data})
+
+    data.connection.commit()
