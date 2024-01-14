@@ -222,6 +222,9 @@ def new_game(user_name):
    values = (user_name,datetime.datetime.now(),3,3,25,0,"Hyrule")
    db.cur.execute(insert,values)
    db.connection.commit()
+   db.cur.execute(f"SELECT max(game_id) FROM game;")
+   id = db.cur.fetchall()
+   game.play(id[0][0],"Hyrule")
 
 def saved_games():
    while True:
@@ -265,7 +268,8 @@ def saved_games():
          elif(x[0].capitalize()=="Erase" and len(x)==2):
             if(int(x[1]) in ids_ok):
                delete_game(int(x[1]))
-               break
+               if(check_games()==0):
+                  break
             raise ValueError(f"Invalid Action")
          elif(x[0].capitalize()=="Help" and len(x)==1):
             saved_help()
@@ -278,13 +282,13 @@ def saved_games():
       
 # GAME EXECUTION
 
-options = ["Continue","New Game","Help","About","Exit"]
 cover = random.randint(0,len(initial_screens)-1)
 screen_lines = initial_screens[cover].split("\n")
 
 while True:
+   options = ["Continue","New Game","Help","About","Exit"]
    if(check_games()==0):
-      options.pop(0)
+      options.remove("Continue")
    scr.print_menu_screen(screen_lines,options)
    try:
       x = input("What to do now? ")

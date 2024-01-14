@@ -1,17 +1,53 @@
-import db, maps
+import db,maps
 # Working on this dictionary
 
 data = {}
 
 locations = {
-    "Hyrule":   {
-            "enemies" : {
-                1 : [1,[20,8]],
-                2 : [9,[25,4]]
-            },
-            "fishing" : 1
-        }
+    "Hyrule": {
+        "enemies" : {
+            1 : [1,[20,8]],
+            2 : [9,[25,4]]
+        },
+        "chests": {
+            1 : [48,9]
+        },
+        "fishing" : 1
+        },
+    "Death Mountain" : {
+        "enemies":{
+            1 : [2,[13,4]],
+            2 : [2,[51,3]]
+        },
+        "chests": {
+            1 : [36,8]
+        },
+        "fishing" : 1
+    },
+    "Gerudo": {
+        "enemies": {
+            1: [1, [2, 3]],
+            2: [2, [37, 5]]
+        },
+        "chests": {
+            1 : [52,1],
+            2 : [8,9]
+        },
+        "fishing" : 1
+    },
+    "Necluda" : {
+        "enemies" : {
+            1 : [1,[10,2]],
+            2 : [2,[38,6]]
+        },
+        "chests": {
+            1 : [22,1],
+            2 : [51,2],
+            3 : [23,9]
+        },
+        "fishing" : 1
     }
+}
 
 def initialize_data(id,usr_name):
     global data
@@ -62,7 +98,7 @@ def collect_data(id):
          "character" : {
             "game_id" : id,
             "user_name" : db.user_name(id),
-            "position" : maps.player_position(id), ############################################## HAY QUE CAMBIAR LA POSICIÓN INICIAL POR UNA FUNCION QUE DEVUELVA LA LISTA BUSCANDO EN EL MAPA EL ! 
+            "position" : maps.player_position(id), 
             "hearts_remaining" : db.actual_hearts(id),
             "max_hearts" : db.max_hearts(id),
             "region" : db.region(id),
@@ -128,4 +164,4 @@ def total_weapons():
     total = 0
     for weapon in data["weapons"]:
         total += data["weapons"][weapon]["quantity"]
-    return total
+    return total    
