@@ -1,12 +1,10 @@
 import screen as scr,maps,inventory as inv,db,random,data
 
-pos = [1,16]
-
 # AUXILIAR FUNCTIONS
 
 def attack_grass():
     prob = random.randint(1,10)
-    if(data.data["weapons"]["Wood Sword"]["equipped"]==1 or data.data["weapons"]["Wood Sword"]["equipped"]==1):
+    if(data.data["weapons"]["Wood Sword"]["equipped"]==1 or data.data["weapons"]["Sword"]["equipped"]==1):
         if(prob==1):
             add_food("Meat",1)
             scr.add_to_prompt("You got a lizard!")
@@ -23,8 +21,6 @@ def attack_tree():
         elif(prob<=8):
             add_weapon("Wood Shield")
             scr.add_to_prompt("You got a Wooden Shield!")
-<<<<<<< Updated upstream
-=======
     else:
         if(prob<=4):
             add_food("Vegetable",1)
@@ -49,11 +45,10 @@ def fishing():
             scr.add_to_prompt("You didn't get a fish")
     else:
         scr.add_to_prompt("You can't fish right now")        
->>>>>>> Stashed changes
 
 def who_attacks():
-    x = data.data["character"]["position"][0]
-    y = data.data["character"]["position"][1]
+    x = data.data["character"]["position"][1]
+    y = data.data["character"]["position"][0]
     region = data.data["character"]["region"]
     mapa = maps.maps
     try:
@@ -77,18 +72,13 @@ def who_attacks():
 
 def check_movement(direction):
     global data
-    x = data.data["character"]["position"][0]
-    y = data.data["character"]["position"][1]
+    x = data.data["character"]["position"][1]
+    y = data.data["character"]["position"][0]
     region = data.data["character"]["region"]
     if direction == "left":
         try:
-<<<<<<< Updated upstream
-            if maps.maps[region][y][x-1] == " ":
-                data.data["character"]["position"][0] -= 1
-=======
             if maps.maps[region][y][x-1] == " " or maps.maps[region][y][x-1] == "!":
                 data.data["character"]["position"][1] -= 1
->>>>>>> Stashed changes
                 return True
             else:
                 return False
@@ -96,13 +86,8 @@ def check_movement(direction):
             return False
     elif direction == "right":
         try:
-<<<<<<< Updated upstream
-            if maps.maps[region][y][x+1] == " ":
-                data.data["character"]["position"][0] += 1
-=======
             if maps.maps[region][y][x+1] == " " or maps.maps[region][y][x+1] == "!":
                 data.data["character"]["position"][1] += 1
->>>>>>> Stashed changes
                 return True
             else:
                 return False
@@ -110,13 +95,8 @@ def check_movement(direction):
             return False
     elif direction == "up":
         try:
-<<<<<<< Updated upstream
-            if maps.maps[region][y-1][x] == " ":
-                data.data["character"]["position"][1] -= 1
-=======
             if maps.maps[region][y-1][x] == " " or  maps.maps[region][y-1][x] == "!":
                 data.data["character"]["position"][0] -= 1
->>>>>>> Stashed changes
                 return True
             else:
                 return False
@@ -124,13 +104,8 @@ def check_movement(direction):
             return False
     elif direction == "down":
         try:
-<<<<<<< Updated upstream
-            if maps.maps[region][y+1][x] == " ":
-                data.data["character"]["position"][1] += 1
-=======
             if maps.maps[region][y+1][x] == " " or maps.maps[region][y+1][x] == "!":
                 data.data["character"]["position"][0] += 1
->>>>>>> Stashed changes
                 return True
             else:
                 return False
@@ -172,28 +147,30 @@ def can_cook():
     except:
         return False
 
+def can_fish():
+    x = data.data["character"]["position"][0]
+    y = data.data["character"]["position"][1]
+    region = data.data["character"]["region"]
+    loc = maps.maps[region]
+    try:
+        if(loc[x+1][y]=="~" or loc[x][y+1]=="~" or loc[x-1][y]=="~" or loc[x][y-1]=="~" or loc[x+1][y+1]=="~" or loc[x+1][y-1]=="~" or loc[x-1][y-1]=="~" or loc[x-1][y+1]=="~"):
+            return True
+        return False
+    except:
+        return False
+
 def add_weapon(weapon):
     global data
-    data["weapon"][weapon]["quantity"] += 1
+    data.data["weapons"][weapon]["quantity"] += 1
 
 def remove_food(food,quantity):
     global data
-    if data["foods"][food] > 0:
-        data["foods"][food] -= quantity
-    # if(db.food_totals(id)[food]==quantity):
-    #     db.cur.execute(f'DELETE FROM foods WHERE food_name="{food}";')
-    # else:
-    #     db.cur.execute(f'UPDATE foods SET quantity=(quantity-{quantity}) WHERE food_name="{food}" and game_id = {id};')
-    # db.cur.execute("commit")
+    if data.data["foods"][food] > 0:
+        data.data["foods"][food] -= quantity
 
 def add_food(food,quantity):
     global data
-    data["foods"][food] += quantity
-"""    if(db.food_totals(id)[food]==0):
-        db.cur.execute(f'INSERT INTO foods VALUES ("{food}",{id},{quantity})')
-    else:
-        db.cur.execute(f'UPDATE foods SET quantity = (quantity+{quantity}) WHERE food_name="{food}" and game_id = {id};')
-    db.cur.execute("commit") """
+    data.data["foods"][food] += quantity
 
 def cook(food):
     if(food == "Salad"):
@@ -295,16 +272,21 @@ def play(id,act_location):
     data.collect_data(id)
     while True:
         try:
+            pos = data.data["character"]["position"]
             options = ["Exit","Attack","Go","Equip","Unequip","Eat","Cook","Fish","Open","Show"]
             if(data.data["character"]["hearts_remaining"]==0):
                 link_death()
                 break
             if(can_cook()==False):
                 options.remove("Cook")
+            if(can_fish()==False):
+                options.remove("Fish")
             mat = maps.maps[data.data["character"]["region"]]
             inventory = inv.show_inventory(id,inv_title)
             scr.print_screen(pos,options,mat,inventory,inv_title,act_location)
             x = input("What to do now? ").split()
+            if(len(x)==0):
+                raise ValueError("Invalid Action")
             if(x[0].capitalize() not in options):
                 raise ValueError("Invalid Action")
             elif(x[0].capitalize()=="Exit" and len(x)==1):
@@ -342,7 +324,7 @@ def play(id,act_location):
                             scr.add_to_prompt("You can't go there, it's not a valid position!")
                             break
             elif(x[0].lower()=="attack" and len(x)==1):
-                objective = who_attacks(id)
+                objective = who_attacks()
                 if(objective=="grass"):
                     attack_grass()
                 elif(objective=="tree"):
@@ -353,17 +335,6 @@ def play(id,act_location):
                 else:
                     x[2] = x[2].capitalize()
                 if(x[1].lower() == "the" and x[2].lower() in ["sword","shield","wood sword","wood shield"]):
-<<<<<<< Updated upstream
-                    print(x[2])
-                    print(db.equipped(id,x[2]))
-                    input()
-                    if(db.weapon_quantity(id)[x[2]]>0 and db.equipped(id,x[2])==" "):
-                        db.cur.execute(f'UPDATE weapons SET equipped = 1 WHERE game_id = {id} and weapon_name = "{x[2].capitalize()}"')
-                    elif(db.equipped(id,[x[2]]=="(equipped)")):
-                        raise ValueError(f"You alredy have {x[2]} equipped!")
-                    else:
-                        raise ValueError(f"You don't have {x[2]}!")
-=======
                     equip(x[2])
             elif(x[0].lower()=="unequip" and len(x)>2 and len(x)<5):
                 if(len(x)==4):
@@ -374,7 +345,6 @@ def play(id,act_location):
                     unequip(x[2])
             elif(x[0].lower()=="fish" and len(x)==1):
                 fishing()
->>>>>>> Stashed changes
 
 
         except ValueError as e:
