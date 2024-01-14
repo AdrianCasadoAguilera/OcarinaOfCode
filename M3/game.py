@@ -4,7 +4,7 @@ import screen as scr,maps,inventory as inv,db,random,data
 
 def attack_grass():
     prob = random.randint(1,10)
-    if(data.data["weapons"]["Wood Sword"]["equipped"]==1 or data.data["weapons"]["Wood Sword"]["equipped"]==1):
+    if(data.data["weapons"]["Wood Sword"]["equipped"]==1 or data.data["weapons"]["Sword"]["equipped"]==1):
         if(prob==1):
             add_food("Meat",1)
             scr.add_to_prompt("You got a lizard!")
@@ -25,12 +25,10 @@ def attack_tree():
             add_food("Vegetable",1)
             scr.add_to_prompt("You got an apple!")
         elif(prob<=6):
-            if(data.data["weapons"]["Wood Sword"]["quantity"]==0):
-                add_weapon("Wood Sword")
+            add_weapon("Wood Sword")
             scr.add_to_prompt("You got a Wooden Sword!")
         elif(prob<=8):
-            if(data.data["weapons"]["Wood Shield"]["quantity"]==0):
-                add_weapon("Wood Shield")
+            add_weapon("Wood Shield")
             scr.add_to_prompt("You got a Wooden Shield!")
     else:
         if(prob<=4):
@@ -40,8 +38,10 @@ def attack_tree():
             weapon_prob = random.randint(0,1)
             if(weapon_prob==0):
                 add_weapon("Wood Sword")
+                scr.add_to_prompt("You got a Wooden Sword!")
             else:
                 add_weapon("Wood Shield")
+                scr.add_to_prompt("You got a Wooden Shield!")
 def fishing():
     prob = random.randint(1,10)
     region = data.data["character"]["region"]
@@ -54,7 +54,6 @@ def fishing():
             scr.add_to_prompt("You didn't get a fish")
     else:
         scr.add_to_prompt("You can't fish right now")        
-        
 def who_attacks():
     x = data.data["character"]["position"][1]
     y = data.data["character"]["position"][0]
@@ -86,7 +85,7 @@ def check_movement(direction):
     region = data.data["character"]["region"]
     if direction == "left":
         try:
-            if maps.maps[region][y][x-1] == " ":
+            if maps.maps[region][y][x-1] == " " or maps.maps[region][y][x-1] == "!":
                 data.data["character"]["position"][1] -= 1
                 return True
             else:
@@ -95,7 +94,7 @@ def check_movement(direction):
             return False
     elif direction == "right":
         try:
-            if maps.maps[region][y][x+1] == " ":
+            if maps.maps[region][y][x+1] == " " or maps.maps[region][y][x+1] == "!":
                 data.data["character"]["position"][1] += 1
                 return True
             else:
@@ -104,7 +103,7 @@ def check_movement(direction):
             return False
     elif direction == "up":
         try:
-            if maps.maps[region][y-1][x] == " ":
+            if maps.maps[region][y-1][x] == " " or  maps.maps[region][y-1][x] == "!":
                 data.data["character"]["position"][0] -= 1
                 return True
             else:
@@ -113,7 +112,7 @@ def check_movement(direction):
             return False
     elif direction == "down":
         try:
-            if maps.maps[region][y+1][x] == " ":
+            if maps.maps[region][y+1][x] == " " or maps.maps[region][y+1][x] == "!":
                 data.data["character"]["position"][0] += 1
                 return True
             else:
@@ -167,6 +166,18 @@ def can_fish():
     except:
         return False
 
+def can_fish():
+    x = data.data["character"]["position"][0]
+    y = data.data["character"]["position"][1]
+    region = data.data["character"]["region"]
+    loc = maps.maps[region]
+    try:
+        if(loc[x+1][y]=="~" or loc[x][y+1]=="~" or loc[x-1][y]=="~" or loc[x][y-1]=="~" or loc[x+1][y+1]=="~" or loc[x+1][y-1]=="~" or loc[x-1][y-1]=="~" or loc[x-1][y+1]=="~"):
+            return True
+        return False
+    except:
+        return False
+
 def add_weapon(weapon):
     global data
     data.data["weapons"][weapon]["quantity"] += 1
@@ -179,11 +190,6 @@ def remove_food(food,quantity):
 def add_food(food,quantity):
     global data
     data.data["foods"][food] += quantity
-"""    if(db.food_totals(id)[food]==0):
-        db.cur.execute(f'INSERT INTO foods VALUES ("{food}",{id},{quantity})')
-    else:
-        db.cur.execute(f'UPDATE foods SET quantity = (quantity+{quantity}) WHERE food_name="{food}" and game_id = {id};')
-    db.cur.execute("commit") """
 
 def cook(food):
     if(food == "Salad"):
@@ -235,6 +241,24 @@ def eat(food):
     else:
         increase_health(4)
         
+def equip(weapon):
+    if(data.data["weapons"][weapon]["quantity"]>0 and data.data["weapons"][weapon]["equipped"]==0):
+        for el in data.weapons_equipped():
+            if(el == weapon):
+                raise ValueError(f"You alredy have {el} equipped!")
+        data.data["weapons"][weapon]["equipped"] = 1
+    elif(data.data["weapons"][weapon]["quantity"]==0):
+        raise ValueError(f"You don't have {weapon}")
+
+def unequip(weapon):
+    if(data.data["weapons"][weapon]["quantity"]>0 and data.data["weapons"][weapon]["equipped"]==1):
+        for el in data.weapons_equipped():
+            if(el == weapon):
+                data.data["weapons"][weapon]["equipped"] = 0
+    elif(data.data["weapons"][weapon]["quantity"]==0):
+        raise ValueError(f"You don't have {weapon}")
+    else:
+        raise ValueError(f"You alredy have {weapon} unequipped!")
 
 # MAIN FUNCTIONS
 
@@ -268,6 +292,7 @@ def play(id,act_location):
     pos = data.data["character"]["position"]
     while True:
         try:
+            pos = data.data["character"]["position"]
             options = ["Exit","Attack","Go","Equip","Unequip","Eat","Cook","Fish","Open","Show"]
             if(data.data["character"]["hearts_remaining"]==0):
                 link_death()
@@ -330,12 +355,14 @@ def play(id,act_location):
                 else:
                     x[2] = x[2].capitalize()
                 if(x[1].lower() == "the" and x[2].lower() in ["sword","shield","wood sword","wood shield"]):
-                    if(db.weapon_quantity(id)[x[2]]>0 and db.equipped(id,x[2])==" "):
-                        db.cur.execute(f'UPDATE weapons SET equipped = 1 WHERE game_id = {id} and weapon_name = "{x[2].capitalize()}"')
-                    elif(db.equipped(id,[x[2]]=="(equipped)")):
-                        raise ValueError(f"You alredy have {x[2]} equipped!")
-                    else:
-                        raise ValueError(f"You don't have {x[2]}!")
+                    equip(x[2])
+            elif(x[0].lower()=="unequip" and len(x)>2 and len(x)<5):
+                if(len(x)==4):
+                    x[2] = x[2].capitalize() + " " + x[3].capitalize()
+                else:
+                    x[2] = x[2].capitalize()
+                if(x[1].lower() == "the" and x[2].lower() in ["sword","shield","wood sword","wood shield"]):
+                    unequip(x[2])
             elif(x[0].lower()=="fish" and len(x)==1):
                 fishing()
 
