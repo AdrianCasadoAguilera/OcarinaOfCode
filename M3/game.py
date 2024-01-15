@@ -317,6 +317,53 @@ def eat(food):
     else:
         increase_health(4)
         
+
+def show_map(inventory, inv_title):
+    region = data.data["character"]["region"]
+    data.locations[region]["fishing"] = 1
+    mat = maps.maps["General Map"]
+    scr.print_screen([-1,-1],"Back ",mat,inventory,inv_title,"General Map") #!!!!!!!!!!!!!!!!!!!! CAMBIAR POSICION PERSONAJE PARA QUE NO SALGA EN EL MAPA
+    while True:
+        x = input("What to do now? ")    
+        if(x.capitalize()=="Back"):
+            break
+        else:
+            raise ValueError("Invalid Action") #!!!!!!!!!!!!!!!!!!!! NEED FIX 
+        
+def map_position(selected_map):
+    if(selected_map=="Gerudo"):
+        data.data["character"]["position"] = [2,9]
+    elif(selected_map=="Hyrule"):
+        data.data["character"]["position"] = [11,8]
+    elif(selected_map=="Death"):
+        data.data["character"]["position"] = [2,9]
+    elif(selected_map=="Necluda"):
+        data.data["character"]["position"] = [2,2]
+    elif(selected_map=="Castle"):
+        data.data["character"]["position"] = [4,9]
+
+def comp_map(act_location,selected_map,id):
+    global data
+    selected_map = selected_map.lower().capitalize()
+    if(act_location=="Hyrule" and selected_map=="Gerudo" or selected_map=="Death" or selected_map=="Castle"):
+        data.data["character"]["region"] = selected_map
+        db.change_map(selected_map, id)
+        maps.player_position(id)
+    elif(act_location=="Death" and selected_map=="Hyrule" or selected_map=="Necluda" or selected_map=="Castle"):
+        data.data["character"]["region"] = selected_map
+        maps.player_position(id)
+        db.change_map(selected_map, id)
+    elif(act_location=="Gerudo" and selected_map=="Hyrule" or selected_map=="Necluda" or selected_map=="Castle"):
+        data.data["character"]["region"] = selected_map
+        maps.player_position(id)
+        db.change_map(selected_map, id)
+    elif(act_location=="Necluda" and selected_map=="Death" or selected_map=="Gerudo" or selected_map=="Castle"):
+        data.data["character"]["region"] = selected_map
+        maps.player_position(id)
+        db.change_map(selected_map, id)
+    else:
+        raise ValueError(f"You can't go to {selected_map} from here")
+
 def equip(weapon):
     if(data.data["weapons"][weapon]["quantity"]>0 and data.data["weapons"][weapon]["equipped"]==0):
         for el in data.weapons_equipped():
@@ -335,6 +382,7 @@ def unequip(weapon):
         raise ValueError(f"You don't have {weapon}")
     else:
         raise ValueError(f"You alredy have {weapon} unequipped!")
+
 
 # MAIN FUNCTIONS
 
@@ -398,6 +446,11 @@ def play(id,act_location):
                 raise ValueError("Invalid Action")
             elif(x[0].capitalize()=="Exit" and len(x)==1):
                 break
+            elif(x[0].capitalize()=="Show" and len(x)==2):
+                if x[1].capitalize()=="Map":
+                    show_map(inventory, inv_title,id)
+                else:
+                    raise ValueError("Invalid Action")
             elif(x[0].capitalize()=="Show" and len(x)==3):
                 print(x[1],x[2])
                 if(x[1].capitalize()=="Inventory" and x[2].lower() in ["main","food","weapons"]):
@@ -430,6 +483,8 @@ def play(id,act_location):
                         if(not valid):
                             scr.add_to_prompt("You can't go there, it's not a valid position!")
                             break
+                elif(x[0].capitalize()=="Go" and x[1].capitalize()== "To" and x[2].capitalize() in maps.maps.keys()):
+                    comp_map(act_location, x[2],id)
             elif(x[0].lower()=="attack" and len(x)==1):
                 objective = who_attacks()
                 if(objective=="grass"):
