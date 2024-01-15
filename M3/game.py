@@ -2,6 +2,21 @@ import screen as scr,maps,inventory as inv,db,random,data,game_functions
 
 # AUXILIAR FUNCTIONS
 
+def pass_turn():
+    for key,value in data.locations[data.data["character"]["region"]]["trees"].items():
+        if(data.locations[data.data["character"]["region"]]["trees"][key][0]<0):
+            data.locations[data.data["character"]["region"]]["trees"][key][0]+=1
+            if(data.locations[data.data["character"]["region"]]["trees"][key][0]>-3):
+                maps.maps[data.data["character"]["region"]][data.locations[data.data["character"]["region"]]["trees"][key][1][0]][data.locations[data.data["character"]["region"]]["trees"][key][1][1]] = "t"
+            elif(data.locations[data.data["character"]["region"]]["trees"][key][0]>-7):
+                maps.maps[data.data["character"]["region"]][data.locations[data.data["character"]["region"]]["trees"][key][1][0]][data.locations[data.data["character"]["region"]]["trees"][key][1][1]] = "|"
+            else:
+                maps.maps[data.data["character"]["region"]][data.locations[data.data["character"]["region"]]["trees"][key][1][0]][data.locations[data.data["character"]["region"]]["trees"][key][1][1]] = "."
+        if(data.locations[data.data["character"]["region"]]["trees"][key][0]==0):
+            data.locations[data.data["character"]["region"]]["trees"][key][0]=4
+            maps.maps[data.data["character"]["region"]][data.locations[data.data["character"]["region"]]["trees"][key][1][0]][data.locations[data.data["character"]["region"]]["trees"][key][1][1]] = "T"
+        
+
 def attack_grass():
     prob = random.randint(1,10)
     if(data.data["weapons"]["Wood Sword"]["equipped"]==1 or data.data["weapons"]["Sword"]["equipped"]==1):
@@ -9,6 +24,60 @@ def attack_grass():
             add_food("Meat",1)
             scr.add_to_prompt("You got a lizard!")
 
+def where_is_tree():
+    pos_x = data.data["character"]["position"][0]
+    pos_y = data.data["character"]["position"][1]
+    region = data.data["character"]["region"]
+    region_map = maps.maps[region]
+    try:
+        if(region_map[pos_x+1][pos_y] == "T"):
+            return [pos_x+1,pos_y]
+    except:
+        pass
+    finally:
+        try:
+            if(region_map[pos_x][pos_y+1] == "T"):
+                return [pos_x,pos_y+1]
+        except:
+            pass
+        finally:
+            try:
+                if(region_map[pos_x+1][pos_y+1] == "T"):
+                    return [pos_x+1,pos_y+1]
+            except:
+                pass
+            finally:
+                try:
+                    if(region_map[pos_x-1][pos_y] == "T"):
+                        return [pos_x-1,pos_y]
+                except:
+                    pass
+                finally:
+                    try:
+                        if(region_map[pos_x][pos_y-1] == "T"):
+                            return [pos_x,pos_y-1]
+                    except:
+                        pass
+                    finally:
+                        try:
+                            if(region_map[pos_x-1][pos_y-1] == "T"):
+                                return [pos_x-1,pos_y-1]
+                        except:
+                            pass
+                        finally:
+                            try:
+                                if(region_map[pos_x+1][pos_y-1] == "T"):
+                                    return [pos_x+1,pos_y-1]
+                            except:
+                                pass
+                            finally:
+                                try:
+                                    if(region_map[pos_x-1][pos_y+1] == "T"):
+                                        return [pos_x-1,pos_y+1]
+                                except:
+                                    pass
+    
+    
 def attack_tree():
     prob = random.randint(1,10)
     ws_equipped = data.is_equipped("Wood Sword")
@@ -20,7 +89,13 @@ def attack_tree():
     else:
         equipped = " "
     if(equipped=="Wood Sword" or equipped=="Sword"):
-        data.data["weapons"][equipped]
+        data.data["weapons"][equipped]["durability"] -= 1
+        loc = where_is_tree()
+        for key,tree in data.locations[data.data["character"]["region"]]["trees"].items():
+            if(tree[1]==loc):
+                 data.locations[data.data["character"]["region"]]["trees"][key][0] -= 1
+            if(data.locations[data.data["character"]["region"]]["trees"][key][0] == 0):
+                data.locations[data.data["character"]["region"]]["trees"][key][0] = -10
         if(prob<=4):
             add_food("Vegetable",1)
             scr.add_to_prompt("You got an apple!")
@@ -54,6 +129,7 @@ def fishing():
             scr.add_to_prompt("You didn't get a fish")
     else:
         scr.add_to_prompt("You can't fish right now")        
+
 def who_attacks():
     x = data.data["character"]["position"][1]
     y = data.data["character"]["position"][0]
@@ -80,12 +156,12 @@ def who_attacks():
 
 def check_movement(direction):
     global data
-    x = data.data["character"]["position"][1]
-    y = data.data["character"]["position"][0]
+    x = data.data["character"]["position"][0]
+    y = data.data["character"]["position"][1]
     region = data.data["character"]["region"]
     if direction == "left":
         try:
-            if maps.maps[region][y][x-1] == " " or maps.maps[region][y][x-1] == "!":
+            if maps.maps[region][x][y-1] == " " or maps.maps[region][x][y-1] == "!":
                 data.data["character"]["position"][1] -= 1
                 return True
             else:
@@ -94,7 +170,7 @@ def check_movement(direction):
             return False
     elif direction == "right":
         try:
-            if maps.maps[region][y][x+1] == " " or maps.maps[region][y][x+1] == "!":
+            if maps.maps[region][x][y+1] == " " or maps.maps[region][x][y+1] == "!":
                 data.data["character"]["position"][1] += 1
                 return True
             else:
@@ -103,7 +179,7 @@ def check_movement(direction):
             return False
     elif direction == "up":
         try:
-            if maps.maps[region][y-1][x] == " " or  maps.maps[region][y-1][x] == "!":
+            if maps.maps[region][x-1][y] == " " or  maps.maps[region][x-1][y] == "!":
                 data.data["character"]["position"][0] -= 1
                 return True
             else:
@@ -112,7 +188,7 @@ def check_movement(direction):
             return False
     elif direction == "down":
         try:
-            if maps.maps[region][y+1][x] == " " or maps.maps[region][y+1][x] == "!":
+            if maps.maps[region][x+1][y] == " " or maps.maps[region][x+1][y] == "!":
                 data.data["character"]["position"][0] += 1
                 return True
             else:
@@ -241,6 +317,53 @@ def eat(food):
     else:
         increase_health(4)
         
+
+def show_map(inventory, inv_title):
+    region = data.data["character"]["region"]
+    data.locations[region]["fishing"] = 1
+    mat = maps.maps["General Map"]
+    scr.print_screen([-1,-1],"Back ",mat,inventory,inv_title,"General Map") #!!!!!!!!!!!!!!!!!!!! CAMBIAR POSICION PERSONAJE PARA QUE NO SALGA EN EL MAPA
+    while True:
+        x = input("What to do now? ")    
+        if(x.capitalize()=="Back"):
+            break
+        else:
+            raise ValueError("Invalid Action") #!!!!!!!!!!!!!!!!!!!! NEED FIX 
+        
+def map_position(selected_map):
+    if(selected_map=="Gerudo"):
+        data.data["character"]["position"] = [2,9]
+    elif(selected_map=="Hyrule"):
+        data.data["character"]["position"] = [11,8]
+    elif(selected_map=="Death"):
+        data.data["character"]["position"] = [2,9]
+    elif(selected_map=="Necluda"):
+        data.data["character"]["position"] = [2,2]
+    elif(selected_map=="Castle"):
+        data.data["character"]["position"] = [4,9]
+
+def comp_map(act_location,selected_map,id):
+    global data
+    selected_map = selected_map.lower().capitalize()
+    if(act_location=="Hyrule" and selected_map=="Gerudo" or selected_map=="Death" or selected_map=="Castle"):
+        data.data["character"]["region"] = selected_map
+        db.change_map(selected_map, id)
+        maps.player_position(id)
+    elif(act_location=="Death" and selected_map=="Hyrule" or selected_map=="Necluda" or selected_map=="Castle"):
+        data.data["character"]["region"] = selected_map
+        maps.player_position(id)
+        db.change_map(selected_map, id)
+    elif(act_location=="Gerudo" and selected_map=="Hyrule" or selected_map=="Necluda" or selected_map=="Castle"):
+        data.data["character"]["region"] = selected_map
+        maps.player_position(id)
+        db.change_map(selected_map, id)
+    elif(act_location=="Necluda" and selected_map=="Death" or selected_map=="Gerudo" or selected_map=="Castle"):
+        data.data["character"]["region"] = selected_map
+        maps.player_position(id)
+        db.change_map(selected_map, id)
+    else:
+        raise ValueError(f"You can't go to {selected_map} from here")
+
 def equip(weapon):
     if(data.data["weapons"][weapon]["quantity"]>0 and data.data["weapons"][weapon]["equipped"]==0):
         for el in data.weapons_equipped():
@@ -251,7 +374,7 @@ def equip(weapon):
         raise ValueError(f"You don't have {weapon}")
 
 def unequip(weapon):
-    if(data.data["weapons"][weapon]["quantity"]>0 and data.data["weapons"][weapon]["equipped"]==1):
+    if(data.data["weapons"][weapon]["equipped"]==1):
         for el in data.weapons_equipped():
             if(el == weapon):
                 data.data["weapons"][weapon]["equipped"] = 0
@@ -259,6 +382,7 @@ def unequip(weapon):
         raise ValueError(f"You don't have {weapon}")
     else:
         raise ValueError(f"You alredy have {weapon} unequipped!")
+
 
 # MAIN FUNCTIONS
 
@@ -289,10 +413,21 @@ def link_death():
 def play(id,act_location):
     inv_title = "Main"
     data.collect_data(id)
-    pos = data.data["character"]["position"]
     while True:
         try:
+            # CHECK ELEMENTS
+            pass_turn()
             pos = data.data["character"]["position"]
+            for weapon in data.data["weapons"]:
+                if(data.data["weapons"][weapon]["durability"]==0):
+                    data.data["weapons"][weapon]["quantity"]-=1
+                    if(data.data["weapons"][weapon]["quantity"]==0):
+                        data.data["weapons"][weapon]["equipped"] = 0
+                    if(weapon.split(" ")[0] == "Wood"):
+                        data.data["weapons"][weapon]["durability"]=5
+                    else:
+                        data.data["weapons"][weapon]["durability"]=9
+            
             options = ["Exit","Attack","Go","Equip","Unequip","Eat","Cook","Fish","Open","Show"]
             if(data.data["character"]["hearts_remaining"]==0):
                 link_death()
@@ -311,6 +446,11 @@ def play(id,act_location):
                 raise ValueError("Invalid Action")
             elif(x[0].capitalize()=="Exit" and len(x)==1):
                 break
+            elif(x[0].capitalize()=="Show" and len(x)==2):
+                if x[1].capitalize()=="Map":
+                    show_map(inventory, inv_title,id)
+                else:
+                    raise ValueError("Invalid Action")
             elif(x[0].capitalize()=="Show" and len(x)==3):
                 print(x[1],x[2])
                 if(x[1].capitalize()=="Inventory" and x[2].lower() in ["main","food","weapons"]):
@@ -343,6 +483,8 @@ def play(id,act_location):
                         if(not valid):
                             scr.add_to_prompt("You can't go there, it's not a valid position!")
                             break
+                elif(x[0].capitalize()=="Go" and x[1].capitalize()== "To" and x[2].capitalize() in maps.maps.keys()):
+                    comp_map(act_location, x[2],id)
             elif(x[0].lower()=="attack" and len(x)==1):
                 objective = who_attacks()
                 if(objective=="grass"):
