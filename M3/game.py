@@ -2,6 +2,21 @@ import screen as scr,maps,inventory as inv,db,random,data
 
 # AUXILIAR FUNCTIONS
 
+def pass_turn():
+    for key,value in data.locations[data.data["character"]["region"]]["trees"].items():
+        if(data.locations[data.data["character"]["region"]]["trees"][key][0]<0):
+            data.locations[data.data["character"]["region"]]["trees"][key][0]+=1
+            if(data.locations[data.data["character"]["region"]]["trees"][key][0]>-3):
+                maps.maps[data.data["character"]["region"]][data.locations[data.data["character"]["region"]]["trees"][key][1][0]][data.locations[data.data["character"]["region"]]["trees"][key][1][1]] = "t"
+            elif(data.locations[data.data["character"]["region"]]["trees"][key][0]>-7):
+                maps.maps[data.data["character"]["region"]][data.locations[data.data["character"]["region"]]["trees"][key][1][0]][data.locations[data.data["character"]["region"]]["trees"][key][1][1]] = "|"
+            else:
+                maps.maps[data.data["character"]["region"]][data.locations[data.data["character"]["region"]]["trees"][key][1][0]][data.locations[data.data["character"]["region"]]["trees"][key][1][1]] = "."
+        if(data.locations[data.data["character"]["region"]]["trees"][key][0]==0):
+            data.locations[data.data["character"]["region"]]["trees"][key][0]=4
+            maps.maps[data.data["character"]["region"]][data.locations[data.data["character"]["region"]]["trees"][key][1][0]][data.locations[data.data["character"]["region"]]["trees"][key][1][1]] = "T"
+        
+
 def attack_grass():
     prob = random.randint(1,10)
     if(data.data["weapons"]["Wood Sword"]["equipped"]==1 or data.data["weapons"]["Sword"]["equipped"]==1):
@@ -9,6 +24,60 @@ def attack_grass():
             add_food("Meat",1)
             scr.add_to_prompt("You got a lizard!")
 
+def where_is_tree():
+    pos_x = data.data["character"]["position"][0]
+    pos_y = data.data["character"]["position"][1]
+    region = data.data["character"]["region"]
+    region_map = maps.maps[region]
+    try:
+        if(region_map[pos_x+1][pos_y] == "T"):
+            return [pos_x+1,pos_y]
+    except:
+        pass
+    finally:
+        try:
+            if(region_map[pos_x][pos_y+1] == "T"):
+                return [pos_x,pos_y+1]
+        except:
+            pass
+        finally:
+            try:
+                if(region_map[pos_x+1][pos_y+1] == "T"):
+                    return [pos_x+1,pos_y+1]
+            except:
+                pass
+            finally:
+                try:
+                    if(region_map[pos_x-1][pos_y] == "T"):
+                        return [pos_x-1,pos_y]
+                except:
+                    pass
+                finally:
+                    try:
+                        if(region_map[pos_x][pos_y-1] == "T"):
+                            return [pos_x,pos_y-1]
+                    except:
+                        pass
+                    finally:
+                        try:
+                            if(region_map[pos_x-1][pos_y-1] == "T"):
+                                return [pos_x-1,pos_y-1]
+                        except:
+                            pass
+                        finally:
+                            try:
+                                if(region_map[pos_x+1][pos_y-1] == "T"):
+                                    return [pos_x+1,pos_y-1]
+                            except:
+                                pass
+                            finally:
+                                try:
+                                    if(region_map[pos_x-1][pos_y+1] == "T"):
+                                        return [pos_x-1,pos_y+1]
+                                except:
+                                    pass
+    
+    
 def attack_tree():
     prob = random.randint(1,10)
     ws_equipped = data.is_equipped("Wood Sword")
@@ -20,7 +89,13 @@ def attack_tree():
     else:
         equipped = " "
     if(equipped=="Wood Sword" or equipped=="Sword"):
-        data.data["weapons"][equipped]
+        data.data["weapons"][equipped]["durability"] -= 1
+        loc = where_is_tree()
+        for key,tree in data.locations[data.data["character"]["region"]]["trees"].items():
+            if(tree[1]==loc):
+                 data.locations[data.data["character"]["region"]]["trees"][key][0] -= 1
+            if(data.locations[data.data["character"]["region"]]["trees"][key][0] == 0):
+                data.locations[data.data["character"]["region"]]["trees"][key][0] = -10
         if(prob<=4):
             add_food("Vegetable",1)
             scr.add_to_prompt("You got an apple!")
@@ -54,6 +129,7 @@ def fishing():
             scr.add_to_prompt("You didn't get a fish")
     else:
         scr.add_to_prompt("You can't fish right now")        
+
 def who_attacks():
     x = data.data["character"]["position"][1]
     y = data.data["character"]["position"][0]
@@ -251,7 +327,7 @@ def equip(weapon):
         raise ValueError(f"You don't have {weapon}")
 
 def unequip(weapon):
-    if(data.data["weapons"][weapon]["quantity"]>0 and data.data["weapons"][weapon]["equipped"]==1):
+    if(data.data["weapons"][weapon]["equipped"]==1):
         for el in data.weapons_equipped():
             if(el == weapon):
                 data.data["weapons"][weapon]["equipped"] = 0
@@ -289,10 +365,21 @@ def link_death():
 def play(id,act_location):
     inv_title = "Main"
     data.collect_data(id)
-    pos = data.data["character"]["position"]
     while True:
         try:
+            # CHECK ELEMENTS
+            pass_turn()
             pos = data.data["character"]["position"]
+            for weapon in data.data["weapons"]:
+                if(data.data["weapons"][weapon]["durability"]==0):
+                    data.data["weapons"][weapon]["quantity"]-=1
+                    if(data.data["weapons"][weapon]["quantity"]==0):
+                        data.data["weapons"][weapon]["equipped"] = 0
+                    if(weapon.split(" ")[0] == "Wood"):
+                        data.data["weapons"][weapon]["durability"]=5
+                    else:
+                        data.data["weapons"][weapon]["durability"]=9
+            
             options = ["Exit","Attack","Go","Equip","Unequip","Eat","Cook","Fish","Open","Show"]
             if(data.data["character"]["hearts_remaining"]==0):
                 link_death()
