@@ -43,8 +43,6 @@ def search_nearest(tipo):
             index = key
     return index
 
-print(search_nearest("T"))
-
 def check_movement(direction, positions, id):
     x, y = player_position()
     region = db.region(id)

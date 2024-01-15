@@ -60,6 +60,7 @@ def initialize_data(id,usr_name):
          "character" : {
             "game_id" : id,
             "user_name" : usr_name,
+            "position" : [11,7],
             "hearts_remaining" : 3,
             "max_hearts" : 3,
             "region" : "Hyrule",

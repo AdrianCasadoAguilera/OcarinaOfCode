@@ -121,6 +121,7 @@ def attack_tree():
 
 def attack_enemy():
     global maps, locations
+
     if data.is_equipped("Wood Sword") == "(equipped)":
         weapon = "Wood Sword"
     elif data.is_equipped("Sword") == "(equipped)":
@@ -133,12 +134,16 @@ def attack_enemy():
         shield = "Wood Shield"
     elif data.is_equipped("Shield") == "(equipped)":
         shield = "Shield"
+    elif data.is_equipped("Shield") == " " and data.is_equipped("Wood Shield") == " ":
+        shield = " "
 
-    index = game_functions.search_nearest()
+    index = game_functions.search_nearest("E")
     region = data.data["character"]["region"]
     data.locations[region]["enemies"][index][0] -= 1
     directions = ["up", "down", "left", "right"]
-    x, y = data.data[region]["enemies"][index][1][0], data.data[region]["enemies"][index][1][1]
+    x, y = data.locations[region]["enemies"][index][1][0], data.locations[region]["enemies"][index][1][1]
+    if data.locations[region]["enemies"][index][0] == 0:
+        maps.maps[region][y][x] = " "
     while(True):
         direction = random.randint(0,3)
         if directions[direction] == "up":
@@ -161,10 +166,9 @@ def attack_enemy():
                 data.locations[region]["enemies"][index][1][0] += 1
                 maps.maps[region][y][x], maps.maps[region][y][x+1] = maps.maps[region][y][x+1], maps.maps[region][y][x]
                 break
-    data.locations[region]["enemies"][index][0] -= 1
     data.data["weapons"][weapon]["durability"] -= 1
-
-    data.data["weapons"][shield]["durability"] -= 1
+    if not shield == " ":
+        data.data["weapons"][shield]["durability"] -= 1
 
     if data.locations[region]["enemies"][index][0] == 0:
         maps.maps[region][y][x] = " "
@@ -543,6 +547,8 @@ def play(id,act_location):
                     attack_grass()
                 elif(objective=="tree"):
                     attack_tree()
+                elif(objective=="enemy"):
+                    attack_enemy()
             elif(x[0].lower()=="equip" and len(x)>2 and len(x)<5):
                 if(len(x)==4):
                     x[2] = x[2].capitalize() + " " + x[3].capitalize()
@@ -565,19 +571,19 @@ def play(id,act_location):
             scr.add_to_prompt(e)
 
 def check_enemy_movement(direction, enemy_index, region):
-    x, y = data.data[region]["enemies"][enemy_index][1][0], data.data[region]["enemies"][enemy_index][1][1]
+    x, y = data.locations[region]["enemies"][enemy_index][1][0], data.locations[region]["enemies"][enemy_index][1][1]
     try:
         if direction == "up":
-            if maps.maps[region][y-1][x] == " ":
+            if maps.maps[region][y-1][x] == " " and [x, y-1] != data.data["character"]["position"]:
                 return True
         elif direction == "down":
-            if maps.maps[region][y+1][x] == " ":
+            if maps.maps[region][y+1][x] == " " and [x, y+1] != data.data["character"]["position"]:
                 return True
         elif direction == "left":
-            if maps.maps[region][y][x-1] == " ":
+            if maps.maps[region][y][x-1] == " " and [x-1, y] != data.data["character"]["position"]:
                 return True
         elif direction == "right":
-            if maps.maps[region][y][x+1] == " ":
+            if maps.maps[region][y][x+1] == " " and [x+1, y] != data.data["character"]["position"]:
                 return True
     except:
         return False
