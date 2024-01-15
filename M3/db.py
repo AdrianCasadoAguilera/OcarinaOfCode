@@ -1,4 +1,4 @@
-import mysql.connector
+import mysql.connector, data
 
 connection = mysql.connector.connect(user='OcarinaOfCode',password='1234',host='127.0.0.1',database='zelda')
 
@@ -105,6 +105,68 @@ def is_equipped(id, weapon):
         else:
             return 0
 
+
 def change_map(selected_map, id):
     cur.execute(f'UPDATE game SET region = "{selected_map}" WHERE game_id = {id}')
     cur.execute("commit")
+
+def update_database(data):
+
+    game_query = """
+        UPDATE game
+        SET user_name = %(user_name)s,
+            hearts_remaining = %(hearts_remaining)s,
+            max_hearts = %(max_hearts)s,
+            region = %(region)s,
+            blood_moon_countdown = %(blood_moon_countdown)s
+        WHERE game_id = %(game_id)s
+    """
+    data.cur.execute(game_query, data['character'])
+    
+    for food_name, quantity in data['foods'].items():
+        foods_query = """
+            UPDATE foods
+            SET quantity = %s
+            WHERE game_id = %(game_id)s AND food_name = %s
+        """
+        data.cur.execute(foods_query, (quantity, data['character']['game_id'], food_name))
+
+    for weapon_name, weapon_data in data['weapons'].items():
+        weapons_query = """
+            UPDATE weapons
+            SET quantity = %(quantity)s,
+                equipped = %(equipped)s
+            WHERE game_id = %(game_id)s AND weapon_name = %(weapon_name)s
+        """
+        data.cur.execute(weapons_query, {'game_id': data['character']['game_id'], 'weapon_name': weapon_name, **weapon_data})
+
+    for region, region_data in data.locations.items():
+        for enemy_num, enemy_info in region_data['enemies'].items():
+            enemies_query = """
+                UPDATE enemies
+                SET xpos = %s,
+                    ypos = %s,
+                    lifes_remaining = %s
+                WHERE game_id = %(game_id)s AND region = %(region)s AND num = %s
+            """
+            data.cur.execute(enemies_query, (enemy_info[1][0], enemy_info[1][1], enemy_info[0], {'game_id': 1, 'region': region, 'num': enemy_num}))
+
+        for chest_num, chest_position in region_data['chests'].items():
+            chests_query = """
+                UPDATE chests
+                SET xpos = %s,
+                    ypos = %s
+                WHERE game_id = %(game_id)s AND region = %(region)s AND num = %s
+            """
+            data.cur.execute(chests_query, (chest_position[0], chest_position[1], {'game_id': 1, 'region': region, 'num': chest_num}))
+
+        game_query = """
+            UPDATE game
+            SET fishing = %s
+            WHERE game_id = %(game_id)s AND region = %(region)s
+        """
+        data.cur.execute(game_query, (region_data['fishing'], {'game_id': 1, 'region': region}))
+
+
+    data.connection.commit()
+

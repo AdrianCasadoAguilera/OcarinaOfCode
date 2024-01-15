@@ -9,6 +9,11 @@ locations = {
             1 : [1,[20,8]],
             2 : [9,[25,4]]
         },
+        "trees" : {
+            1 : [4,[3,5]],
+            2 : [4,[8,45]],
+            3 : [4,[7,47]]
+        },
         "chests": {
             1 : [48,9]
         },
@@ -164,6 +169,4 @@ def total_weapons():
     total = 0
     for weapon in data["weapons"]:
         total += data["weapons"][weapon]["quantity"]
-    return total
-
-
+    return total    
