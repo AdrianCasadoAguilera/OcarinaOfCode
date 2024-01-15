@@ -395,6 +395,8 @@ def attack_enemy():
         weapon = "Wood Sword"
     elif data.is_equipped("Sword") == "(equipped)":
         weapon = "Sword"
+    else:
+        scr.add_to_prompt("You need to equip a sword to attack an enemy!")
     index = game_functions.search_nearest()
     region = data.data["character"]["region"]
     data.locations[region]["enemies"][index][0] -= 1
@@ -422,4 +424,4 @@ def attack_enemy():
                 data.locations[region]["enemies"][index][1][0] += 1
                 maps.maps[region][y][x], maps.maps[region][y][x+1] = maps.maps[region][y][x+1], maps.maps[region][y][x]
                 break
-    data.data["weapons"][weapon][]
+    data.data["weapons"][weapon]["durability"] -= 1
