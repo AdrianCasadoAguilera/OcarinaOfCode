@@ -1,4 +1,4 @@
-import screen as scr,maps,inventory as inv,db,random,data
+import screen as scr,maps,inventory as inv,db,random,data,game_functions
 
 # AUXILIAR FUNCTIONS
 
@@ -369,3 +369,57 @@ def play(id,act_location):
 
         except ValueError as e:
             scr.add_to_prompt(e)
+
+def check_enemy_movement(direction, enemy_index, region):
+    x, y = data.data[region]["enemies"][enemy_index][1][0], data.data[region]["enemies"][enemy_index][1][1]
+    try:
+        if direction == "up":
+            if maps.maps[region][y-1][x] == " ":
+                return True
+        elif direction == "down":
+            if maps.maps[region][y+1][x] == " ":
+                return True
+        elif direction == "left":
+            if maps.maps[region][y][x-1] == " ":
+                return True
+        elif direction == "right":
+            if maps.maps[region][y][x+1] == " ":
+                return True
+    except:
+        return False
+    return False
+
+def attack_enemy():
+    global data
+    if data.is_equipped("Wood Sword") == "(equipped)":
+        weapon = "Wood Sword"
+    elif data.is_equipped("Sword") == "(equipped)":
+        weapon = "Sword"
+    index = game_functions.search_nearest()
+    region = data.data["character"]["region"]
+    data.locations[region]["enemies"][index][0] -= 1
+    directions = ["up", "down", "left", "right"]
+    x, y = data.data[region]["enemies"][index][1][0], data.data[region]["enemies"][index][1][1]
+    while(True):
+        direction = random.randint(0,3)
+        if directions[direction] == "up":
+            if check_enemy_movement(directions[direction], index, region):
+                data.locations[region]["enemies"][index][1][1] -= 1
+                maps.maps[region][y][x], maps.maps[region][y-1][x] = maps.maps[region][y-1][x], maps.maps[region][y][x]
+                break
+        elif directions[direction] == "down":
+            if check_enemy_movement(directions[direction], index, region):
+                data.locations[region]["enemies"][index][1][1] += 1
+                maps.maps[region][y][x], maps.maps[region][y+1][x] = maps.maps[region][y+1][x], maps.maps[region][y][x]
+                break
+        elif directions[direction] == "left":
+            if check_enemy_movement(directions[direction], index, region):
+                data.locations[region]["enemies"][index][1][0] -= 1
+                maps.maps[region][y][x], maps.maps[region][y][x-1] = maps.maps[region][y][x-1], maps.maps[region][y][x]
+                break
+        elif directions[direction] == "right":
+            if check_enemy_movement(directions[direction], index, region):
+                data.locations[region]["enemies"][index][1][0] += 1
+                maps.maps[region][y][x], maps.maps[region][y][x+1] = maps.maps[region][y][x+1], maps.maps[region][y][x]
+                break
+    data.data["weapons"][weapon][]

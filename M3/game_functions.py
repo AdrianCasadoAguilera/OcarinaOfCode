@@ -1,4 +1,4 @@
-import math, maps, db
+import math, maps, db, data
 
 def search_position(tipo, id):
     lista = []
@@ -18,7 +18,7 @@ def player_position(id):
             if mapa[y][x] == "X":
                 return x, y
 
-def search_nearest(type):
+def search_nearest2(type):
     x, y = player_position()
     lista_objetos = search_position("T")
     minim = float('inf')
@@ -29,6 +29,19 @@ def search_nearest(type):
             minim = distancia
             index = i
     return minim, index
+
+def search_nearest(tipo):
+    x, y = data.data["character"]["position"][0], data.data["character"]["position"][1]
+    region = data.data["character"]["region"]
+    types = {"T": "trees", "E": "enemies", "C": "chests"}
+    minim = float('inf')
+    index = -1
+    for key,value in data.locations[region][types[tipo]].items():
+        distancia = math.sqrt((value[1][0] - x)**2 + (value[1][1]- y)**2)
+        if distancia < minim:
+            minim = distancia
+            index = key
+    return index
 
 print(search_nearest("T"))
 
