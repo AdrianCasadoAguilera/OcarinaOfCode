@@ -156,12 +156,12 @@ def who_attacks():
 
 def check_movement(direction):
     global data
-    x = data.data["character"]["position"][1]
-    y = data.data["character"]["position"][0]
+    x = data.data["character"]["position"][0]
+    y = data.data["character"]["position"][1]
     region = data.data["character"]["region"]
     if direction == "left":
         try:
-            if maps.maps[region][y][x-1] == " " or maps.maps[region][y][x-1] == "!":
+            if maps.maps[region][x][y-1] == " " or maps.maps[region][x][y-1] == "!":
                 data.data["character"]["position"][1] -= 1
                 return True
             else:
@@ -170,7 +170,7 @@ def check_movement(direction):
             return False
     elif direction == "right":
         try:
-            if maps.maps[region][y][x+1] == " " or maps.maps[region][y][x+1] == "!":
+            if maps.maps[region][x][y+1] == " " or maps.maps[region][x][y+1] == "!":
                 data.data["character"]["position"][1] += 1
                 return True
             else:
@@ -179,7 +179,7 @@ def check_movement(direction):
             return False
     elif direction == "up":
         try:
-            if maps.maps[region][y-1][x] == " " or  maps.maps[region][y-1][x] == "!":
+            if maps.maps[region][x-1][y] == " " or  maps.maps[region][x-1][y] == "!":
                 data.data["character"]["position"][0] -= 1
                 return True
             else:
@@ -188,7 +188,7 @@ def check_movement(direction):
             return False
     elif direction == "down":
         try:
-            if maps.maps[region][y+1][x] == " " or maps.maps[region][y+1][x] == "!":
+            if maps.maps[region][x+1][y] == " " or maps.maps[region][x+1][y] == "!":
                 data.data["character"]["position"][0] += 1
                 return True
             else:
