@@ -1,21 +1,24 @@
 import screen as scr,maps,inventory as inv,db,random,data
 
+# GANON'S LIFE
+ganons_life = 8
+
 # AUXILIAR FUNCTIONS
 
 def pass_turn():
-    for key,value in data.locations[data.data["character"]["region"]]["trees"].items():
-        if(data.locations[data.data["character"]["region"]]["trees"][key][0]<0):
-            data.locations[data.data["character"]["region"]]["trees"][key][0]+=1
-            if(data.locations[data.data["character"]["region"]]["trees"][key][0]>-3):
-                maps.maps[data.data["character"]["region"]][data.locations[data.data["character"]["region"]]["trees"][key][1][0]][data.locations[data.data["character"]["region"]]["trees"][key][1][1]] = "t"
-            elif(data.locations[data.data["character"]["region"]]["trees"][key][0]>-7):
-                maps.maps[data.data["character"]["region"]][data.locations[data.data["character"]["region"]]["trees"][key][1][0]][data.locations[data.data["character"]["region"]]["trees"][key][1][1]] = "|"
+    region = data.data["character"]["region"]
+    for key in data.locations[region]["trees"].keys():
+        if(data.locations[region]["trees"][key][0]<0):
+            data.locations[region]["trees"][key][0]+=1
+            if(data.locations[region]["trees"][key][0]>-3):
+                maps.maps[region][data.locations[region]["trees"][key][1][0]][data.locations[region]["trees"][key][1][1]] = "t"
+            elif(data.locations[region]["trees"][key][0]>-7):
+                maps.maps[region][data.locations[region]["trees"][key][1][0]][data.locations[region]["trees"][key][1][1]] = "|"
             else:
-                maps.maps[data.data["character"]["region"]][data.locations[data.data["character"]["region"]]["trees"][key][1][0]][data.locations[data.data["character"]["region"]]["trees"][key][1][1]] = "."
-        if(data.locations[data.data["character"]["region"]]["trees"][key][0]==0):
-            data.locations[data.data["character"]["region"]]["trees"][key][0]=4
-            maps.maps[data.data["character"]["region"]][data.locations[data.data["character"]["region"]]["trees"][key][1][0]][data.locations[data.data["character"]["region"]]["trees"][key][1][1]] = "T"
-        
+                maps.maps[region][data.locations[region]["trees"][key][1][0]][data.locations[region]["trees"][key][1][1]] = "."
+        if(data.locations[region]["trees"][key][0]==0):
+            data.locations[region]["trees"][key][0]=4
+            maps.maps[region][data.locations[region]["trees"][key][1][0]][data.locations[region]["trees"][key][1][1]] = "T"
 
 def attack_grass():
     prob = random.randint(1,10)
@@ -77,7 +80,6 @@ def where_is_tree():
                                 except:
                                     pass
     
-    
 def attack_tree():
     prob = random.randint(1,10)
     ws_equipped = data.is_equipped("Wood Sword")
@@ -91,11 +93,12 @@ def attack_tree():
     if(equipped=="Wood Sword" or equipped=="Sword"):
         data.data["weapons"][equipped]["durability"] -= 1
         loc = where_is_tree()
-        for key,tree in data.locations[data.data["character"]["region"]]["trees"].items():
+        region = data.data["character"]["region"]
+        for key,tree in data.locations[region]["trees"].items():
             if(tree[1]==loc):
-                 data.locations[data.data["character"]["region"]]["trees"][key][0] -= 1
-            if(data.locations[data.data["character"]["region"]]["trees"][key][0] == 0):
-                data.locations[data.data["character"]["region"]]["trees"][key][0] = -10
+                 data.locations[region]["trees"][key][0] -= 1
+            if(data.locations[region]["trees"][key][0] == 0):
+                data.locations[region]["trees"][key][0] = -10
         if(prob<=4):
             add_food("Vegetable",1)
             scr.add_to_prompt("You got an apple!")
@@ -230,17 +233,6 @@ def can_cook():
         return False
     except:
         return False
-def can_fish():
-    x = data.data["character"]["position"][0]
-    y = data.data["character"]["position"][1]
-    region = data.data["character"]["region"]
-    loc = maps.maps[region]
-    try:
-        if(loc[x+1][y]=="~" or loc[x][y+1]=="~" or loc[x-1][y]=="~" or loc[x][y-1]=="~" or loc[x+1][y+1]=="~" or loc[x+1][y-1]=="~" or loc[x-1][y-1]=="~" or loc[x-1][y+1]=="~"):
-            return True
-        return False
-    except:
-        return False
 
 def can_fish():
     x = data.data["character"]["position"][0]
@@ -344,23 +336,28 @@ def map_position(selected_map):
 
 def comp_map(act_location,selected_map,id):
     global data
-    selected_map = selected_map.lower().capitalize()
-    if(act_location=="Hyrule" and selected_map=="Gerudo" or selected_map=="Death" or selected_map=="Castle"):
+    selected_map = selected_map.capitalize()
+    if(act_location=="Hyrule" and selected_map=="Gerudo" or selected_map=="Death"):
         data.data["character"]["region"] = selected_map
         db.change_map(selected_map, id)
-        maps.player_position(id)
-    elif(act_location=="Death" and selected_map=="Hyrule" or selected_map=="Necluda" or selected_map=="Castle"):
+        data.data["character"]["position"] = maps.player_position(id)
+    elif(act_location=="Death" and selected_map=="Hyrule" or selected_map=="Necluda"):
         data.data["character"]["region"] = selected_map
-        maps.player_position(id)
         db.change_map(selected_map, id)
-    elif(act_location=="Gerudo" and selected_map=="Hyrule" or selected_map=="Necluda" or selected_map=="Castle"):
+        data.data["character"]["position"] = maps.player_position(id)
+    elif(act_location=="Gerudo" and selected_map=="Hyrule" or selected_map=="Necluda"):
         data.data["character"]["region"] = selected_map
-        maps.player_position(id)
         db.change_map(selected_map, id)
-    elif(act_location=="Necluda" and selected_map=="Death" or selected_map=="Gerudo" or selected_map=="Castle"):
+        data.data["character"]["position"] = maps.player_position(id)
+    elif(act_location=="Necluda" and selected_map=="Death" or selected_map=="Gerudo"):
         data.data["character"]["region"] = selected_map
-        maps.player_position(id)
         db.change_map(selected_map, id)
+        data.data["character"]["position"] = maps.player_position(id)
+    elif(selected_map=="Castle"):
+        data.data["character"]["region"] = selected_map
+        db.change_map(selected_map, id)
+        data.data["character"]["position"] = maps.player_position(id)
+        db.change_map(act_location, id)
     else:
         raise ValueError(f"You can't go to {selected_map} from here")
 
@@ -429,14 +426,17 @@ def play(id,act_location):
                         data.data["weapons"][weapon]["durability"]=9
             
             options = ["Exit","Attack","Go","Equip","Unequip","Eat","Cook","Fish","Open","Show"]
-            if(data.data["character"]["hearts_remaining"]==0):
+            if(data.data["character"]["hearts_remaining"]<=0):
                 link_death()
                 break
             if(can_cook()==False):
                 options.remove("Cook")
             if(can_fish()==False):
                 options.remove("Fish")
-            mat = maps.maps[data.data["character"]["region"]]
+            act_location = data.data["character"]["region"]
+            if(act_location=="Castle"):
+                options = ["Back","Go","Attack","Eat","Show"]
+            mat = maps.maps[act_location]
             inventory = inv.show_inventory(id,inv_title)
             scr.print_screen(pos,options,mat,inventory,inv_title,act_location)
             x = input("What to do now? ").split()
@@ -448,7 +448,7 @@ def play(id,act_location):
                 break
             elif(x[0].capitalize()=="Show" and len(x)==2):
                 if x[1].capitalize()=="Map":
-                    show_map(inventory, inv_title,id)
+                    show_map(inventory, inv_title)
                 else:
                     raise ValueError("Invalid Action")
             elif(x[0].capitalize()=="Show" and len(x)==3):
@@ -465,7 +465,7 @@ def play(id,act_location):
                 else:
                     scr.add_to_prompt("Invalid Action")
             elif(x[0].capitalize()=="Eat" and len(x)==2):
-                if(x[1].lower() in ["vegetable","salad","pescatarian","roasted"]):
+                if(x[1].lower() in ["vegetable","fish","meat","salad","pescatarian","roasted"]):
                     if(data.data["foods"][x[1].capitalize()]>0 and data.data["character"]["hearts_remaining"]<data.data["character"]["max_hearts"]):
                         eat(x[1].capitalize())
                     elif(data.data["character"]["hearts_remaining"]==data.data["character"]["max_hearts"]):
@@ -483,9 +483,23 @@ def play(id,act_location):
                         if(not valid):
                             scr.add_to_prompt("You can't go there, it's not a valid position!")
                             break
-                elif(x[0].capitalize()=="Go" and x[1].capitalize()== "To" and x[2].capitalize() in maps.maps.keys()):
+                    if(data.data["character"]["region"]=="Castle"):
+                        pos = data.data["character"]["position"][1]
+                        if(pos>=18):
+                            data.data["character"]["hearts_remaining"] -= 1
+                elif(x[1].capitalize()== "To" and x[2].capitalize() in maps.maps.keys()):
+                    if(x[2].capitalize()=="Castle"):
+                        last_location = act_location
                     comp_map(act_location, x[2],id)
             elif(x[0].lower()=="attack" and len(x)==1):
+                if(act_location=="Castle" and who_attacks()!="tree"):
+                    input("!!!!!!!!!!!!")
+                    pos = data.data["character"]["position"][1]
+                    if(pos>=18 and data.is_equipped("Wood Sword")=="(equipped)" or data.is_equipped("Sword")=="(equipped)"):
+                        input("????????????????????")
+                        ganon()
+                    else:
+                        raise ValueError("Invalid Action")
                 objective = who_attacks()
                 if(objective=="grass"):
                     attack_grass()
@@ -507,7 +521,17 @@ def play(id,act_location):
                     unequip(x[2])
             elif(x[0].lower()=="fish" and len(x)==1):
                 fishing()
-
-
+            elif(x[0].lower()=="back"):
+                comp_map(act_location,last_location,id)
         except ValueError as e:
             scr.add_to_prompt(e)
+
+
+def ganon():
+    global ganons_life
+    ganons_life -= 1
+    if(ganons_life>0):
+        data.data["character"]["hearts_remaining"] -= 1
+    else:
+        input("GANON DERROTADO")
+        # link_wins()
