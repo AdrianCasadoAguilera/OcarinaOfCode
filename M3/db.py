@@ -105,4 +105,6 @@ def is_equipped(id, weapon):
         else:
             return 0
 
-
+def change_map(selected_map, id):
+    cur.execute(f'UPDATE game SET region = "{selected_map}" WHERE game_id = {id}')
+    cur.execute("commit")
