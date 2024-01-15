@@ -3,19 +3,19 @@ import screen as scr,maps,inventory as inv,db,random,data,game_functions
 # AUXILIAR FUNCTIONS
 
 def pass_turn():
-    for key,value in data.locations[data.data["character"]["region"]]["trees"].items():
-        if(data.locations[data.data["character"]["region"]]["trees"][key][0]<0):
-            data.locations[data.data["character"]["region"]]["trees"][key][0]+=1
-            if(data.locations[data.data["character"]["region"]]["trees"][key][0]>-3):
-                maps.maps[data.data["character"]["region"]][data.locations[data.data["character"]["region"]]["trees"][key][1][0]][data.locations[data.data["character"]["region"]]["trees"][key][1][1]] = "t"
-            elif(data.locations[data.data["character"]["region"]]["trees"][key][0]>-7):
-                maps.maps[data.data["character"]["region"]][data.locations[data.data["character"]["region"]]["trees"][key][1][0]][data.locations[data.data["character"]["region"]]["trees"][key][1][1]] = "|"
+    region = data.data["character"]["region"]
+    for key in data.locations[region]["trees"].keys():
+        if(data.locations[region]["trees"][key][0]<0):
+            data.locations[region]["trees"][key][0]+=1
+            if(data.locations[region]["trees"][key][0]>-3):
+                maps.maps[region][data.locations[region]["trees"][key][1][0]][data.locations[region]["trees"][key][1][1]] = "t"
+            elif(data.locations[region]["trees"][key][0]>-7):
+                maps.maps[region][data.locations[region]["trees"][key][1][0]][data.locations[region]["trees"][key][1][1]] = "|"
             else:
-                maps.maps[data.data["character"]["region"]][data.locations[data.data["character"]["region"]]["trees"][key][1][0]][data.locations[data.data["character"]["region"]]["trees"][key][1][1]] = "."
-        if(data.locations[data.data["character"]["region"]]["trees"][key][0]==0):
-            data.locations[data.data["character"]["region"]]["trees"][key][0]=4
-            maps.maps[data.data["character"]["region"]][data.locations[data.data["character"]["region"]]["trees"][key][1][0]][data.locations[data.data["character"]["region"]]["trees"][key][1][1]] = "T"
-        
+                maps.maps[region][data.locations[region]["trees"][key][1][0]][data.locations[region]["trees"][key][1][1]] = "."
+        if(data.locations[region]["trees"][key][0]==0):
+            data.locations[region]["trees"][key][0]=4
+            maps.maps[region][data.locations[region]["trees"][key][1][0]][data.locations[region]["trees"][key][1][1]] = "T"
 
 def attack_grass():
     prob = random.randint(1,10)
@@ -117,6 +117,58 @@ def attack_tree():
             else:
                 add_weapon("Wood Shield")
                 scr.add_to_prompt("You got a Wooden Shield!")
+
+
+def attack_enemy():
+    global maps, locations
+    if data.is_equipped("Wood Sword") == "(equipped)":
+        weapon = "Wood Sword"
+    elif data.is_equipped("Sword") == "(equipped)":
+        weapon = "Sword"
+    else:
+        scr.add_to_prompt("You need to equip a sword to attack an enemy!")
+        return
+
+    if data.is_equipped("Wood Shield") == "(equipped)":
+        shield = "Wood Shield"
+    elif data.is_equipped("Shield") == "(equipped)":
+        shield = "Shield"
+
+    index = game_functions.search_nearest()
+    region = data.data["character"]["region"]
+    data.locations[region]["enemies"][index][0] -= 1
+    directions = ["up", "down", "left", "right"]
+    x, y = data.data[region]["enemies"][index][1][0], data.data[region]["enemies"][index][1][1]
+    while(True):
+        direction = random.randint(0,3)
+        if directions[direction] == "up":
+            if check_enemy_movement(directions[direction], index, region):
+                data.locations[region]["enemies"][index][1][1] -= 1
+                maps.maps[region][y][x], maps.maps[region][y-1][x] = maps.maps[region][y-1][x], maps.maps[region][y][x]
+                break
+        elif directions[direction] == "down":
+            if check_enemy_movement(directions[direction], index, region):
+                data.locations[region]["enemies"][index][1][1] += 1
+                maps.maps[region][y][x], maps.maps[region][y+1][x] = maps.maps[region][y+1][x], maps.maps[region][y][x]
+                break
+        elif directions[direction] == "left":
+            if check_enemy_movement(directions[direction], index, region):
+                data.locations[region]["enemies"][index][1][0] -= 1
+                maps.maps[region][y][x], maps.maps[region][y][x-1] = maps.maps[region][y][x-1], maps.maps[region][y][x]
+                break
+        elif directions[direction] == "right":
+            if check_enemy_movement(directions[direction], index, region):
+                data.locations[region]["enemies"][index][1][0] += 1
+                maps.maps[region][y][x], maps.maps[region][y][x+1] = maps.maps[region][y][x+1], maps.maps[region][y][x]
+                break
+    data.locations[region]["enemies"][index][0] -= 1
+    data.data["weapons"][weapon]["durability"] -= 1
+
+    data.data["weapons"][shield]["durability"] -= 1
+
+    if data.locations[region]["enemies"][index][0] == 0:
+        maps.maps[region][y][x] = " "
+
 def fishing():
     prob = random.randint(1,10)
     region = data.data["character"]["region"]
@@ -531,39 +583,3 @@ def check_enemy_movement(direction, enemy_index, region):
         return False
     return False
 
-def attack_enemy():
-    global data
-    if data.is_equipped("Wood Sword") == "(equipped)":
-        weapon = "Wood Sword"
-    elif data.is_equipped("Sword") == "(equipped)":
-        weapon = "Sword"
-    else:
-        scr.add_to_prompt("You need to equip a sword to attack an enemy!")
-    index = game_functions.search_nearest()
-    region = data.data["character"]["region"]
-    data.locations[region]["enemies"][index][0] -= 1
-    directions = ["up", "down", "left", "right"]
-    x, y = data.data[region]["enemies"][index][1][0], data.data[region]["enemies"][index][1][1]
-    while(True):
-        direction = random.randint(0,3)
-        if directions[direction] == "up":
-            if check_enemy_movement(directions[direction], index, region):
-                data.locations[region]["enemies"][index][1][1] -= 1
-                maps.maps[region][y][x], maps.maps[region][y-1][x] = maps.maps[region][y-1][x], maps.maps[region][y][x]
-                break
-        elif directions[direction] == "down":
-            if check_enemy_movement(directions[direction], index, region):
-                data.locations[region]["enemies"][index][1][1] += 1
-                maps.maps[region][y][x], maps.maps[region][y+1][x] = maps.maps[region][y+1][x], maps.maps[region][y][x]
-                break
-        elif directions[direction] == "left":
-            if check_enemy_movement(directions[direction], index, region):
-                data.locations[region]["enemies"][index][1][0] -= 1
-                maps.maps[region][y][x], maps.maps[region][y][x-1] = maps.maps[region][y][x-1], maps.maps[region][y][x]
-                break
-        elif directions[direction] == "right":
-            if check_enemy_movement(directions[direction], index, region):
-                data.locations[region]["enemies"][index][1][0] += 1
-                maps.maps[region][y][x], maps.maps[region][y][x+1] = maps.maps[region][y][x+1], maps.maps[region][y][x]
-                break
-    data.data["weapons"][weapon]["durability"] -= 1
