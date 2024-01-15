@@ -118,6 +118,7 @@ def attack_tree():
                 add_weapon("Wood Shield")
                 scr.add_to_prompt("You got a Wooden Shield!")
 
+
 def attack_enemy():
     global maps, locations
     if data.is_equipped("Wood Sword") == "(equipped)":
@@ -246,25 +247,6 @@ def check_movement(direction):
                 return False
         except:
             return False
-
-def check_enemy_movement(direction, enemy_index, region):
-    x, y = data.data[region]["enemies"][enemy_index][1][0], data.data[region]["enemies"][enemy_index][1][1]
-    try:
-        if direction == "up":
-            if maps.maps[region][y-1][x] == " " and [x, y-1] != data.data["character"]["position"]:
-                return True
-        elif direction == "down":
-            if maps.maps[region][y+1][x] == " " and [x, y+1] != data.data["character"]["position"]:
-                return True
-        elif direction == "left":
-            if maps.maps[region][y][x-1] == " " and [x-1, y] != data.data["character"]["position"]:
-                return True
-        elif direction == "right":
-            if maps.maps[region][y][x+1] == " " and [x+1, y] != data.data["character"]["position"]:
-                return True
-    except:
-        return False
-    return False
 
 def inventory_help():
     while True:
@@ -561,8 +543,6 @@ def play(id,act_location):
                     attack_grass()
                 elif(objective=="tree"):
                     attack_tree()
-                elif(objective=="enemy"):
-                    attack_enemy()
             elif(x[0].lower()=="equip" and len(x)>2 and len(x)<5):
                 if(len(x)==4):
                     x[2] = x[2].capitalize() + " " + x[3].capitalize()
@@ -583,4 +563,23 @@ def play(id,act_location):
 
         except ValueError as e:
             scr.add_to_prompt(e)
+
+def check_enemy_movement(direction, enemy_index, region):
+    x, y = data.data[region]["enemies"][enemy_index][1][0], data.data[region]["enemies"][enemy_index][1][1]
+    try:
+        if direction == "up":
+            if maps.maps[region][y-1][x] == " ":
+                return True
+        elif direction == "down":
+            if maps.maps[region][y+1][x] == " ":
+                return True
+        elif direction == "left":
+            if maps.maps[region][y][x-1] == " ":
+                return True
+        elif direction == "right":
+            if maps.maps[region][y][x+1] == " ":
+                return True
+    except:
+        return False
+    return False
 
