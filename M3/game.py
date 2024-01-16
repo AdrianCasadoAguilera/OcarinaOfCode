@@ -358,6 +358,10 @@ def comp_map(act_location,selected_map,id):
         db.change_map(selected_map, id)
         data.data["character"]["position"] = maps.player_position(id)
         db.change_map(act_location, id)
+    elif(act_location=="Castle"):
+        data.data["character"]["region"] = selected_map
+        db.change_map(selected_map, id)
+        data.data["character"]["position"] = maps.player_position(id)
     else:
         raise ValueError(f"You can't go to {selected_map} from here")
 
@@ -403,7 +407,7 @@ def link_death():
         scr.add_to_prompt("Nice try, you died. Game is over.")
         x = input("What to do now? ")
         if(x.capitalize()==options[0]):
-            data.data["character"]["hearts_remaining"] = 3
+            data.data["character"]["hearts_remaining"] = data.data["character"]["max_hearts"]
             break
         scr.add_to_prompt("Invalid Action")
 
@@ -498,8 +502,10 @@ def play(id,act_location):
                     if(pos>=18 and data.is_equipped("Wood Sword")=="(equipped)" or data.is_equipped("Sword")=="(equipped)"):
                         input("????????????????????")
                         ganon()
+                    elif pos<18:
+                        raise ValueError("You need to get closer to Ganon.")
                     else:
-                        raise ValueError("Invalid Action")
+                        raise ValueError("You need a sword to fight against Ganon.")
                 objective = who_attacks()
                 if(objective=="grass"):
                     attack_grass()
@@ -533,5 +539,29 @@ def ganon():
     if(ganons_life>0):
         data.data["character"]["hearts_remaining"] -= 1
     else:
-        input("GANON DERROTADO")
-        # link_wins()
+        zelda_saved()
+
+def zelda_saved():
+    global data
+    while True:
+        titol_seccio = "Zelda saved"
+        options = ["Continue"]
+        lines = """
+
+
+
+        Congratulations, Link has saved Princess Zelda.
+        Thanks for playing!
+
+
+
+
+    """.split("\n")
+        scr.print_menu_screen(lines,options,titol_seccio)
+        scr.add_to_prompt("You saved Zelda, you won the game")
+        x = input("What to do now? ")
+        if(x.capitalize()==options[0]):
+            data.data["character"]["hearts_remaining"] = 9
+            data.data["character"]["max_hearts"] = 9
+            break
+        scr.add_to_prompt("Invalid Action")
