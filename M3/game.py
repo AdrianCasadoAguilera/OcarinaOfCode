@@ -21,11 +21,12 @@ def pass_turn():
             maps.maps[region][data.locations[region]["trees"][key][1][0]][data.locations[region]["trees"][key][1][1]] = "T"
 
 def attack_grass():
-    prob = random.randint(1,10)
-    if(data.data["weapons"]["Wood Sword"]["equipped"]==1 or data.data["weapons"]["Sword"]["equipped"]==1):
-        if(prob==1):
-            add_food("Meat",1)
-            scr.add_to_prompt("You got a lizard!")
+    if(data.data["character"]["region"]!="Castle"):
+        prob = random.randint(1,10)
+        if(data.data["weapons"]["Wood Sword"]["equipped"]==1 or data.data["weapons"]["Sword"]["equipped"]==1):
+            if(prob==1):
+                add_food("Meat",1)
+                scr.add_to_prompt("You got a lizard!")
 
 def where_is_tree():
     pos_x = data.data["character"]["position"][0]
@@ -327,7 +328,7 @@ def map_position(selected_map):
         data.data["character"]["position"] = [2,9]
     elif(selected_map=="Hyrule"):
         data.data["character"]["position"] = [11,8]
-    elif(selected_map=="Death"):
+    elif(selected_map=="Death Mountain"):
         data.data["character"]["position"] = [2,9]
     elif(selected_map=="Necluda"):
         data.data["character"]["position"] = [2,2]
@@ -336,12 +337,12 @@ def map_position(selected_map):
 
 def comp_map(act_location,selected_map,id):
     global data
-    selected_map = selected_map.capitalize()
-    if(act_location=="Hyrule" and selected_map=="Gerudo" or selected_map=="Death"):
+    selected_map = selected_map
+    if(act_location=="Hyrule" and selected_map=="Gerudo" or selected_map=="Death Mountain"):
         data.data["character"]["region"] = selected_map
         db.change_map(selected_map, id)
         data.data["character"]["position"] = maps.player_position(id)
-    elif(act_location=="Death" and selected_map=="Hyrule" or selected_map=="Necluda"):
+    elif(act_location=="Death Mountain" and selected_map=="Hyrule" or selected_map=="Necluda"):
         data.data["character"]["region"] = selected_map
         db.change_map(selected_map, id)
         data.data["character"]["position"] = maps.player_position(id)
@@ -349,7 +350,7 @@ def comp_map(act_location,selected_map,id):
         data.data["character"]["region"] = selected_map
         db.change_map(selected_map, id)
         data.data["character"]["position"] = maps.player_position(id)
-    elif(act_location=="Necluda" and selected_map=="Death" or selected_map=="Gerudo"):
+    elif(act_location=="Necluda" and selected_map=="Death Mountain" or selected_map=="Gerudo"):
         data.data["character"]["region"] = selected_map
         db.change_map(selected_map, id)
         data.data["character"]["position"] = maps.player_position(id)
@@ -412,12 +413,14 @@ def link_death():
         scr.add_to_prompt("Invalid Action")
 
 def play(id,act_location):
+    global ganons_life
     inv_title = "Main"
     data.collect_data(id)
     while True:
         try:
             # CHECK ELEMENTS
             pass_turn()
+            update_ganons_hearts()
             pos = data.data["character"]["position"]
             for weapon in data.data["weapons"]:
                 if(data.data["weapons"][weapon]["durability"]==0):
@@ -439,7 +442,7 @@ def play(id,act_location):
                 options.remove("Fish")
             act_location = data.data["character"]["region"]
             if(act_location=="Castle"):
-                options = ["Back","Go","Attack","Eat","Show"]
+                options = ["Back","Go","Attack","Eat","Show","Equip","Unequip"]
             mat = maps.maps[act_location]
             inventory = inv.show_inventory(id,inv_title)
             scr.print_screen(pos,options,mat,inventory,inv_title,act_location)
@@ -478,29 +481,32 @@ def play(id,act_location):
                         scr.add_to_prompt(f"Not enough {x[1].capitalize()}")
                 else:
                     scr.add_to_prompt("Invalid Action")
-            elif(x[0].capitalize()=="Go" and len(x)==3):
-                if(x[1].lower() in ["up","down","left","right"] and x[2].isdigit()):
-                    movements = int(x[2])
-                    while movements>0:
-                        valid = check_movement(x[1].lower())
-                        movements -= 1
-                        if(not valid):
-                            scr.add_to_prompt("You can't go there, it's not a valid position!")
-                            break
-                    if(data.data["character"]["region"]=="Castle"):
-                        pos = data.data["character"]["position"][1]
-                        if(pos>=18):
-                            data.data["character"]["hearts_remaining"] -= 1
-                elif(x[1].capitalize()== "To" and x[2].capitalize() in maps.maps.keys()):
-                    if(x[2].capitalize()=="Castle"):
-                        last_location = act_location
-                    comp_map(act_location, x[2],id)
+            elif(x[0].capitalize()=="Go"):
+                if(len(x)==3):
+                    if(x[1].lower() in ["up","down","left","right"] and x[2].isdigit()):
+                        movements = int(x[2])
+                        while movements>0:
+                            valid = check_movement(x[1].lower())
+                            movements -= 1
+                            if(not valid):
+                                scr.add_to_prompt("You can't go there, it's not a valid position!")
+                                break
+                        if(data.data["character"]["region"]=="Castle"):
+                            pos = data.data["character"]["position"][1]
+                            if(pos>=18 and ganons_life>0):
+                                data.data["character"]["hearts_remaining"] -= 1
+                    elif(x[1].capitalize()== "To" and x[2].capitalize() in maps.maps.keys()):
+                        if(x[2].capitalize()=="Castle"):
+                            last_location = act_location
+                        comp_map(act_location, x[2].capitalize(),id)
+                elif(len(x)==4):
+                    x[2] = x[2].capitalize() + " " + x[3].capitalize()
+                    if(x[1].lower()=="to" and x[2] == "Death Mountain"):
+                        comp_map(act_location, x[2],id)
             elif(x[0].lower()=="attack" and len(x)==1):
                 if(act_location=="Castle" and who_attacks()!="tree"):
-                    input("!!!!!!!!!!!!")
                     pos = data.data["character"]["position"][1]
                     if(pos>=18 and data.is_equipped("Wood Sword")=="(equipped)" or data.is_equipped("Sword")=="(equipped)"):
-                        input("????????????????????")
                         ganon()
                     elif pos<18:
                         raise ValueError("You need to get closer to Ganon.")
@@ -528,6 +534,8 @@ def play(id,act_location):
             elif(x[0].lower()=="fish" and len(x)==1):
                 fishing()
             elif(x[0].lower()=="back"):
+                if(data.data["character"]["region"]=="Castle"):
+                    ganons_life = 8
                 comp_map(act_location,last_location,id)
         except ValueError as e:
             scr.add_to_prompt(e)
@@ -538,8 +546,37 @@ def ganon():
     ganons_life -= 1
     if(ganons_life>0):
         data.data["character"]["hearts_remaining"] -= 1
-    else:
+    elif(ganons_life==0):
         zelda_saved()
+        ganons_life = -1
+
+
+def update_ganons_hearts():
+    if(ganons_life == 8):
+        maps.maps["Castle"][1][54] = "♥"
+        maps.maps["Castle"][1][53] = "♥"
+        maps.maps["Castle"][1][52] = "♥"
+        maps.maps["Castle"][1][51] = "♥"
+        maps.maps["Castle"][1][50] = "♥"
+        maps.maps["Castle"][1][49] = "♥"
+        maps.maps["Castle"][1][48] = "♥"
+        maps.maps["Castle"][1][47] = "♥"
+    if ganons_life <= 7:
+        maps.maps["Castle"][1][54] = " "
+    if ganons_life <= 6:
+        maps.maps["Castle"][1][53] = " "
+    if ganons_life <= 5:
+        maps.maps["Castle"][1][52] = " "
+    if ganons_life <= 4:
+        maps.maps["Castle"][1][51] = " "
+    if ganons_life <= 3:
+        maps.maps["Castle"][1][50] = " "
+    if ganons_life <= 2:
+        maps.maps["Castle"][1][49] = " "
+    if ganons_life <= 1:
+        maps.maps["Castle"][1][48] = " "
+    if ganons_life <= 0:
+        maps.maps["Castle"][1][47] = " "
 
 def zelda_saved():
     global data
@@ -560,6 +597,16 @@ def zelda_saved():
         scr.print_menu_screen(lines,options,titol_seccio)
         scr.add_to_prompt("You saved Zelda, you won the game")
         x = input("What to do now? ")
+        maps.maps["Castle"] = [[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+          [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '\\', ' ', '/', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+          [' ', ' ', ' ', ' ', ' ', ' ', '-', '-', ' ', 'O', ' ', '-', '-', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+          [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '/', ' ', '\\', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+          [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', '>', ' ', ' ', 'v', '-', 'v', '-', 'v', '-', 'v', ' ', ' ', ' ', '|', '>', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+          [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '/', '_', '\\', ' ', ' ', '|', ' ', ' ', ' ', ' ', ' ', '|', ' ', ' ', '/', '_', '\\', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+          [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', ' ', '|', "'", "'", "'", "'", "'", "'", "'", "'", "'", "'", "'", '|', ' ', '|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+          [' ', ' ', ' ', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', ' ', '|', ' ', '|', '|', ' ', ' ', '_', ' ', ' ', '|', '|', ' ', '|', ' ', '|', " ", ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+          [' ', 'O', 'T', '!', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', ' ', '|', ' ', ' ', ' ', ' ', '|', '#', '|', ' ', ' ', ' ', ' ', '|', ' ', '|', ' ', ' ', ' ', ' ', " ", ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+          [' ', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']]
         if(x.capitalize()==options[0]):
             data.data["character"]["hearts_remaining"] = 9
             data.data["character"]["max_hearts"] = 9
