@@ -215,10 +215,15 @@ def check_movement(direction):
     x = data.data["character"]["position"][0]
     y = data.data["character"]["position"][1]
     region = data.data["character"]["region"]
+    
     if direction == "left":
         try:
             if maps.maps[region][x][y-1] == " " or maps.maps[region][x][y-1] == "!":
+                if y-1 < 0:
+                    return False
                 data.data["character"]["position"][1] -= 1
+                print(data.data["character"]["position"][1])
+                input()
                 return True
             else:
                 return False
@@ -227,7 +232,11 @@ def check_movement(direction):
     elif direction == "right":
         try:
             if maps.maps[region][x][y+1] == " " or maps.maps[region][x][y+1] == "!":
+                if y+1 < 0:
+                    return False
                 data.data["character"]["position"][1] += 1
+                print(data.data["character"]["position"][1])
+                input()
                 return True
             else:
                 return False
@@ -236,7 +245,11 @@ def check_movement(direction):
     elif direction == "up":
         try:
             if maps.maps[region][x-1][y] == " " or  maps.maps[region][x-1][y] == "!":
+                if x-1 < 0:
+                    return False
                 data.data["character"]["position"][0] -= 1
+                print(data.data["character"]["position"][0])
+                input()
                 return True
             else:
                 return False
@@ -245,7 +258,11 @@ def check_movement(direction):
     elif direction == "down":
         try:
             if maps.maps[region][x+1][y] == " " or maps.maps[region][x+1][y] == "!":
+                if x+1 < 0:
+                    return False
                 data.data["character"]["position"][0] += 1
+                print(data.data["character"]["position"][0])
+                input()
                 return True
             else:
                 return False
