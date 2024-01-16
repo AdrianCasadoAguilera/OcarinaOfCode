@@ -462,6 +462,19 @@ def unequip(weapon):
         raise ValueError(f"You don't have {weapon}")
     else:
         raise ValueError(f"You alredy have {weapon} unequipped!")
+    
+def shield(id):
+    prob_deflect = random.randint(1,10)
+    if db.is_equipped(id,"Wood Shield") == 1:
+        if prob_deflect <=2:
+            return True
+        else:
+            return False
+    elif db.is_equipped(id,"Shield") == 1:
+        if prob_deflect <=3:
+            return True
+        else: 
+            return False
 
 # MAIN FUNCTIONS
 
