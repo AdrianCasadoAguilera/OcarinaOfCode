@@ -606,3 +606,5 @@ def check_enemy_movement(direction, enemy_index, region):
         return False
     return False
 
+def blood_moon():
+    global data
