@@ -302,8 +302,6 @@ def check_movement(direction):
                 if y-1 < 0:
                     return False
                 data.data["character"]["position"][1] -= 1
-                print(data.data["character"]["position"][1])
-                input()
                 return True
             else:
                 return False
@@ -315,8 +313,6 @@ def check_movement(direction):
                 if y+1 < 0:
                     return False
                 data.data["character"]["position"][1] += 1
-                print(data.data["character"]["position"][1])
-                input()
                 return True
             else:
                 return False
@@ -328,8 +324,6 @@ def check_movement(direction):
                 if x-1 < 0:
                     return False
                 data.data["character"]["position"][0] -= 1
-                print(data.data["character"]["position"][0])
-                input()
                 return True
             else:
                 return False
@@ -341,8 +335,6 @@ def check_movement(direction):
                 if x+1 < 0:
                     return False
                 data.data["character"]["position"][0] += 1
-                print(data.data["character"]["position"][0])
-                input()
                 return True
             else:
                 return False
