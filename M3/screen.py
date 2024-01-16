@@ -47,6 +47,10 @@ def print_screen(char_pos,options,mat,inventory,inv_title="Main",titol_seccio="*
         for j in range(len(mat[i])):
             if(i==char_pos[0] and j==char_pos[1]):
                 print("X",end="")
+            elif(mat[i][j]=="limit"):
+                print(" ",end="")
+            elif():
+                print(" ",end="")
             elif(mat[i][j]!="!"):
                 print(mat[i][j],end="")
             else:
