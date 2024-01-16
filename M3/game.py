@@ -88,6 +88,59 @@ def where_is_tree():
                                 except:
                                     pass
 
+def where_is_enemy():
+    pos_x = data.data["character"]["position"][0]
+    pos_y = data.data["character"]["position"][1]
+    region = data.data["character"]["region"]
+    region_map = maps.maps[region]
+    try:
+        if(region_map[pos_x+1][pos_y] == "E"):
+            return [pos_x+1,pos_y]
+    except:
+        pass
+    finally:
+        try:
+            if(region_map[pos_x][pos_y+1] == "E"):
+                return [pos_x,pos_y+1]
+        except:
+            pass
+        finally:
+            try:
+                if(region_map[pos_x+1][pos_y+1] == "E"):
+                    return [pos_x+1,pos_y+1]
+            except:
+                pass
+            finally:
+                try:
+                    if(region_map[pos_x-1][pos_y] == "E"):
+                        return [pos_x-1,pos_y]
+                except:
+                    pass
+                finally:
+                    try:
+                        if(region_map[pos_x][pos_y-1] == "E"):
+                            return [pos_x,pos_y-1]
+                    except:
+                        pass
+                    finally:
+                        try:
+                            if(region_map[pos_x-1][pos_y-1] == "E"):
+                                return [pos_x-1,pos_y-1]
+                        except:
+                            pass
+                        finally:
+                            try:
+                                if(region_map[pos_x+1][pos_y-1] == "E"):
+                                    return [pos_x+1,pos_y-1]
+                            except:
+                                pass
+                            finally:
+                                try:
+                                    if(region_map[pos_x-1][pos_y+1] == "E"):
+                                        return [pos_x-1,pos_y+1]
+                                except:
+                                    pass
+
 def where_is_chest():
     pos_x = data.data["character"]["position"][0]
     pos_y = data.data["character"]["position"][1]
@@ -184,7 +237,6 @@ def attack_tree():
 
 
 def attack_enemy():
-    global maps, locations
 
     if data.is_equipped("Wood Sword") == "(equipped)":
         weapon = "Wood Sword"
@@ -200,42 +252,46 @@ def attack_enemy():
         shield = "Shield"
     elif data.is_equipped("Shield") == " " and data.is_equipped("Wood Shield") == " ":
         shield = " "
-
-    index = game_functions.search_nearest("E")
     region = data.data["character"]["region"]
+    enemy_pos = where_is_enemy()
+    for key,value in data.locations[region]["enemies"].items():
+        input(value[1] + [] + enemy_pos)
+        if(value[1]==enemy_pos):
+            index = key
+            break
     data.locations[region]["enemies"][index][0] -= 1
     directions = ["up", "down", "left", "right"]
     x, y = data.locations[region]["enemies"][index][1][0], data.locations[region]["enemies"][index][1][1]
     if data.locations[region]["enemies"][index][0] == 0:
-        maps.maps[region][y][x] = " "
+        maps.maps[region][x][y] = " "
     while(True):
         direction = random.randint(0,3)
         if directions[direction] == "up":
             if check_enemy_movement(directions[direction], index, region):
-                data.locations[region]["enemies"][index][1][1] -= 1
-                maps.maps[region][y][x], maps.maps[region][y-1][x] = maps.maps[region][y-1][x], maps.maps[region][y][x]
+                data.locations[region]["enemies"][index][1][0] -= 1
+                maps.maps[region][x][y], maps.maps[region][x-1][y] = maps.maps[region][x-1][y], maps.maps[region][x][y]
                 break
         elif directions[direction] == "down":
             if check_enemy_movement(directions[direction], index, region):
-                data.locations[region]["enemies"][index][1][1] += 1
-                maps.maps[region][y][x], maps.maps[region][y+1][x] = maps.maps[region][y+1][x], maps.maps[region][y][x]
+                data.locations[region]["enemies"][index][1][0] += 1
+                maps.maps[region][x][y], maps.maps[region][x+1][y] = maps.maps[region][x+1][y], maps.maps[region][x][y]
                 break
         elif directions[direction] == "left":
             if check_enemy_movement(directions[direction], index, region):
-                data.locations[region]["enemies"][index][1][0] -= 1
-                maps.maps[region][y][x], maps.maps[region][y][x-1] = maps.maps[region][y][x-1], maps.maps[region][y][x]
+                data.locations[region]["enemies"][index][1][1] -= 1
+                maps.maps[region][x][y], maps.maps[region][x][y-1] = maps.maps[region][x][y-1], maps.maps[region][x][y]
                 break
         elif directions[direction] == "right":
             if check_enemy_movement(directions[direction], index, region):
-                data.locations[region]["enemies"][index][1][0] += 1
-                maps.maps[region][y][x], maps.maps[region][y][x+1] = maps.maps[region][y][x+1], maps.maps[region][y][x]
+                data.locations[region]["enemies"][index][1][1] += 1
+                maps.maps[region][x][y], maps.maps[region][x][y+1] = maps.maps[region][x][y+1], maps.maps[region][x][y]
                 break
     data.data["weapons"][weapon]["durability"] -= 1
     if not shield == " ":
         data.data["weapons"][shield]["durability"] -= 1
 
     if data.locations[region]["enemies"][index][0] == 0:
-        maps.maps[region][y][x] = " "
+        maps.maps[region][x][y] = " "
 
 def fishing():
     prob = random.randint(1,10)
@@ -839,19 +895,19 @@ def play(id,act_location):
             scr.add_to_prompt(e)
 
 def check_enemy_movement(direction, enemy_index, region):
-    x, y = data.locations[region]["enemies"][enemy_index][1][0], data.locations[region]["enemies"][enemy_index][1][1]
+    y, x = data.locations[region]["enemies"][enemy_index][1][0], data.locations[region]["enemies"][enemy_index][1][1]
     try:
         if direction == "up":
-            if maps.maps[region][y-1][x] == " " and [x, y-1] != data.data["character"]["position"]:
+            if maps.maps[region][y-1][x] == " " and [y, x-1] != data.data["character"]["position"]:
                 return True
         elif direction == "down":
-            if maps.maps[region][y+1][x] == " " and [x, y+1] != data.data["character"]["position"]:
+            if maps.maps[region][y+1][x] == " " and [y, x+1] != data.data["character"]["position"]:
                 return True
         elif direction == "left":
-            if maps.maps[region][y][x-1] == " " and [x-1, y] != data.data["character"]["position"]:
+            if maps.maps[region][y][x-1] == " " and [y-1, x] != data.data["character"]["position"]:
                 return True
         elif direction == "right":
-            if maps.maps[region][y][x+1] == " " and [x+1, y] != data.data["character"]["position"]:
+            if maps.maps[region][y][x+1] == " " and [y+1, x] != data.data["character"]["position"]:
                 return True
     except:
         return False
