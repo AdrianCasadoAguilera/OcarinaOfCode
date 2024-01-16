@@ -370,40 +370,166 @@ def inventory_help():
             scr.add_to_prompt(e)
 
 def can_cook():
-    x = data.data["character"]["position"][0]
-    y = data.data["character"]["position"][1]
+    pos_x = data.data["character"]["position"][0]
+    pos_y = data.data["character"]["position"][1]
     region = data.data["character"]["region"]
-    loc = maps.maps[region]
+    region_map = maps.maps[region]
     try:
-        if(loc[x+1][y]=="C" or loc[x][y+1]=="C" or loc[x-1][y]=="C" or loc[x][y-1]=="C" or loc[x+1][y+1]=="C" or loc[x+1][y-1]=="C" or loc[x-1][y-1]=="C" or loc[x-1][y+1]=="C"):
+        if(region_map[pos_x+1][pos_y] == "C"):
             return True
-        return False
     except:
-        return False
+        pass
+    finally:
+        try:
+            if(region_map[pos_x][pos_y+1] == "C"):
+                return True
+        except:
+            pass
+        finally:
+            try:
+                if(region_map[pos_x+1][pos_y+1] == "C"):
+                    return True
+            except:
+                pass
+            finally:
+                try:
+                    if(region_map[pos_x-1][pos_y] == "C"):
+                        return True
+                except:
+                    pass
+                finally:
+                    try:
+                        if(region_map[pos_x][pos_y-1] == "C"):
+                            return True
+                    except:
+                        pass
+                    finally:
+                        try:
+                            if(region_map[pos_x-1][pos_y-1] == "C"):
+                                return True
+                        except:
+                            pass
+                        finally:
+                            try:
+                                if(region_map[pos_x+1][pos_y-1] == "C"):
+                                    return True
+                            except:
+                                pass
+                            finally:
+                                try:
+                                    if(region_map[pos_x-1][pos_y+1] == "C"):
+                                        return True
+                                except:
+                                    return False
+    return False
 
 def can_fish():
-    x = data.data["character"]["position"][0]
-    y = data.data["character"]["position"][1]
+    pos_x = data.data["character"]["position"][0]
+    pos_y = data.data["character"]["position"][1]
     region = data.data["character"]["region"]
-    loc = maps.maps[region]
+    region_map = maps.maps[region]
     try:
-        if(loc[x+1][y]=="~" or loc[x][y+1]=="~" or loc[x-1][y]=="~" or loc[x][y-1]=="~" or loc[x+1][y+1]=="~" or loc[x+1][y-1]=="~" or loc[x-1][y-1]=="~" or loc[x-1][y+1]=="~"):
+        if(region_map[pos_x+1][pos_y] == "~"):
             return True
-        return False
     except:
-        return False
+        pass
+    finally:
+        try:
+            if(region_map[pos_x][pos_y+1] == "~"):
+                return True
+        except:
+            pass
+        finally:
+            try:
+                if(region_map[pos_x+1][pos_y+1] == "~"):
+                    return True
+            except:
+                pass
+            finally:
+                try:
+                    if(region_map[pos_x-1][pos_y] == "~"):
+                        return True
+                except:
+                    pass
+                finally:
+                    try:
+                        if(region_map[pos_x][pos_y-1] == "~"):
+                            return True
+                    except:
+                        pass
+                    finally:
+                        try:
+                            if(region_map[pos_x-1][pos_y-1] == "~"):
+                                return True
+                        except:
+                            pass
+                        finally:
+                            try:
+                                if(region_map[pos_x+1][pos_y-1] == "~"):
+                                    return True
+                            except:
+                                pass
+                            finally:
+                                try:
+                                    if(region_map[pos_x-1][pos_y+1] == "~"):
+                                        return True
+                                except:
+                                    return False
+    return False
 
 def can_chest():
-    x = data.data["character"]["position"][0]
-    y = data.data["character"]["position"][1]
+    pos_x = data.data["character"]["position"][0]
+    pos_y = data.data["character"]["position"][1]
     region = data.data["character"]["region"]
-    loc = maps.maps[region]
+    region_map = maps.maps[region]
     try:
-        if(loc[x+1][y]=="M" or loc[x][y+1]=="M" or loc[x-1][y]=="M" or loc[x][y-1]=="M" or loc[x+1][y+1]=="M" or loc[x+1][y-1]=="M" or loc[x-1][y-1]=="M" or loc[x-1][y+1]=="M"):
+        if(region_map[pos_x+1][pos_y] == "M"):
             return True
-        return False
     except:
-        return False
+        pass
+    finally:
+        try:
+            if(region_map[pos_x][pos_y+1] == "M"):
+                return True
+        except:
+            pass
+        finally:
+            try:
+                if(region_map[pos_x+1][pos_y+1] == "M"):
+                    return True
+            except:
+                pass
+            finally:
+                try:
+                    if(region_map[pos_x-1][pos_y] == "M"):
+                        return True
+                except:
+                    pass
+                finally:
+                    try:
+                        if(region_map[pos_x][pos_y-1] == "M"):
+                            return True
+                    except:
+                        pass
+                    finally:
+                        try:
+                            if(region_map[pos_x-1][pos_y-1] == "M"):
+                                return True
+                        except:
+                            pass
+                        finally:
+                            try:
+                                if(region_map[pos_x+1][pos_y-1] == "M"):
+                                    return True
+                            except:
+                                pass
+                            finally:
+                                try:
+                                    if(region_map[pos_x-1][pos_y+1] == "M"):
+                                        return True
+                                except:
+                                    return False
+    return False
 
 def add_weapon(weapon):
     global data
