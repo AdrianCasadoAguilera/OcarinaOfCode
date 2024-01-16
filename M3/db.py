@@ -169,4 +169,3 @@ def update_database(data):
 
 
     data.connection.commit()
-
