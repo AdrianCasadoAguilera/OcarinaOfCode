@@ -1,4 +1,4 @@
-import screen as scr,maps,inventory as inv,db,random,data,game_functions
+import screen as scr,maps,inventory as inv,db,random,data,math
 
 # GANON'S LIFE
 ganons_life = 8
@@ -26,6 +26,11 @@ def pass_turn():
             maps.maps[region][data.locations[region]["chests"][key][1][0]][data.locations[region]["chests"][key][1][1]] = "W"
         else:
             maps.maps[region][data.locations[region]["chests"][key][1][0]][data.locations[region]["chests"][key][1][1]] = "M"
+    
+    data.data["character"]["blood_moon_countdown"] -= 1
+
+    if data.data["character"]["blood_moon_countdown"] == 0:
+        blood_moon()
 
 def attack_grass():
     if(data.data["character"]["region"]!="Castle"):
@@ -259,10 +264,10 @@ def attack_enemy():
             index = key
             break
     data.locations[region]["enemies"][index][0] -= 1
-    scr.add_to_prompt(f"Brave, keep fighting, {data.data["character"]["user_name"]}")
+    scr.add_to_prompt(f"Brave, keep fighting, {data.data['character']['user_name']}")
     data.data["character"]["hearts_remaining"] -= 1
     if(data.data["character"]["hearts_remaining"]>0):
-        scr.add_to_prompt(f"Be careful {data.data["character"]["user_name"]}! You only have {data.data["character"]["hearts_remaining"]} hearts!")
+        scr.add_to_prompt(f"Be careful {data.data['character']['user_name']}! You only have {data.data['character']['hearts_remaining']} hearts!")
     directions = ["up", "down", "left", "right"]
     x, y = data.locations[region]["enemies"][index][1][0], data.locations[region]["enemies"][index][1][1]
     if data.locations[region]["enemies"][index][0] == 0:
@@ -711,6 +716,7 @@ def equip(weapon):
             if(el == weapon):
                 raise ValueError(f"You alredy have {el} equipped!")
         data.data["weapons"][weapon]["equipped"] = 1
+        scr.add_to_prompt(f"{weapon} equipped")
     elif(data.data["weapons"][weapon]["quantity"]==0):
         raise ValueError(f"You don't have {weapon}")
 
@@ -719,6 +725,7 @@ def unequip(weapon):
         for el in data.weapons_equipped():
             if(el == weapon):
                 data.data["weapons"][weapon]["equipped"] = 0
+                scr.add_to_prompt(f"{weapon} unequipped")
     elif(data.data["weapons"][weapon]["quantity"]==0):
         raise ValueError(f"You don't have {weapon}")
     else:
@@ -760,6 +767,132 @@ def link_death():
         x = input("What to do now? ")
         if(x.capitalize()==options[0]):
             data.data["character"]["hearts_remaining"] = data.data["character"]["max_hearts"]
+            break
+        scr.add_to_prompt("Invalid Action")
+
+def check_enemy_movement(direction, enemy_index, region):
+    y, x = data.locations[region]["enemies"][enemy_index][1][0], data.locations[region]["enemies"][enemy_index][1][1]
+    try:
+        if direction == "up":
+            if maps.maps[region][y-1][x] == " " and [y-1, x] != data.data["character"]["position"]:
+                return True
+        elif direction == "down":
+            if maps.maps[region][y+1][x] == " " and [y+1, x] != data.data["character"]["position"]:
+                return True
+        elif direction == "left":
+            if maps.maps[region][y][x-1] == " " and [y, x-1] != data.data["character"]["position"]:
+                return True
+        elif direction == "right":
+            if maps.maps[region][y][x+1] == " " and [y, x+1] != data.data["character"]["position"]:
+                return True
+    except:
+        return False
+    return False
+
+def blood_moon():
+    global data, locations, maps
+
+    for region in maps.maps.keys():
+        for i in range(len(maps.maps[region])):
+            for j in range(len(maps.maps[region][i])):
+                if maps.maps[region][i][j] == "E":
+                    maps.maps[region][i][j] = " "
+
+    data.locations["Hyrule"]["enemies"] = {
+            1 : [1,[8,20]],
+            2 : [9,[4,35]]
+        }
+    data.locations["Gerudo"]["enemies"] = {
+            1: [1, [3, 2]],
+            2: [2, [5, 37]]
+        }
+    data.locations["Death Mountain"]["enemies"] = {
+            1 : [2,[4,13]],
+            2 : [2,[3,51]]
+        }
+    data.locations["Necluda"]["enemies"] = {
+            1 : [1,[2,10]],
+            2 : [2,[6,38]]
+        }
+    
+    for region in data.locations.keys():
+        for value in data.locations[region]["enemies"].values():
+            maps.maps[region][value[1][0]][value[1][1]] = "E"
+
+    data.data["character"]["blood_moon_countdown"] = 25
+
+    scr.add_to_prompt(f"The Blood moon rises once again. Please be careful, {data.data['character']['user_name']}.")
+
+
+def ganon():
+    global ganons_life
+    ganons_life -= 1
+    if(ganons_life>0):
+        data.data["character"]["hearts_remaining"] -= 1
+    elif(ganons_life==0):
+        zelda_saved()
+        ganons_life = -1
+
+
+def update_ganons_hearts():
+    if(ganons_life == 8):
+        maps.maps["Castle"][1][54] = "♥"
+        maps.maps["Castle"][1][53] = "♥"
+        maps.maps["Castle"][1][52] = "♥"
+        maps.maps["Castle"][1][51] = "♥"
+        maps.maps["Castle"][1][50] = "♥"
+        maps.maps["Castle"][1][49] = "♥"
+        maps.maps["Castle"][1][48] = "♥"
+        maps.maps["Castle"][1][47] = "♥"
+    if ganons_life <= 7:
+        maps.maps["Castle"][1][54] = " "
+    if ganons_life <= 6:
+        maps.maps["Castle"][1][53] = " "
+    if ganons_life <= 5:
+        maps.maps["Castle"][1][52] = " "
+    if ganons_life <= 4:
+        maps.maps["Castle"][1][51] = " "
+    if ganons_life <= 3:
+        maps.maps["Castle"][1][50] = " "
+    if ganons_life <= 2:
+        maps.maps["Castle"][1][49] = " "
+    if ganons_life <= 1:
+        maps.maps["Castle"][1][48] = " "
+    if ganons_life <= 0:
+        maps.maps["Castle"][1][47] = " "
+
+def zelda_saved():
+    global data
+    while True:
+        titol_seccio = "Zelda saved"
+        options = ["Continue"]
+        lines = """
+
+
+
+        Congratulations, Link has saved Princess Zelda.
+        Thanks for playing!
+
+
+
+
+    """.split("\n")
+        scr.print_menu_screen(lines,options,titol_seccio)
+        scr.add_to_prompt("You saved Zelda, you won the game")
+        x = input("What to do now? ")
+        maps.maps["Castle"] = [[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+          [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '\\', ' ', '/', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+          [' ', ' ', ' ', ' ', ' ', ' ', '-', '-', ' ', 'O', ' ', '-', '-', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+          [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '/', ' ', '\\', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+          [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', '>', ' ', ' ', 'v', '-', 'v', '-', 'v', '-', 'v', ' ', ' ', ' ', '|', '>', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+          [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '/', '_', '\\', ' ', ' ', '|', ' ', ' ', ' ', ' ', ' ', '|', ' ', ' ', '/', '_', '\\', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+          [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', ' ', '|', "'", "'", "'", "'", "'", "'", "'", "'", "'", "'", "'", '|', ' ', '|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+          [' ', ' ', ' ', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', ' ', '|', ' ', '|', '|', ' ', ' ', '_', ' ', ' ', '|', '|', ' ', '|', ' ', '|', " ", ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+          [' ', 'O', 'T', '!', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', ' ', '|', ' ', ' ', ' ', ' ', '|', '#', '|', ' ', ' ', ' ', ' ', '|', ' ', '|', ' ', ' ', ' ', ' ', " ", ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+          [' ', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']]
+        if(x.capitalize()==options[0]):
+            data.data["character"]["hearts_remaining"] = 9
+            data.data["character"]["max_hearts"] = 9
             break
         scr.add_to_prompt("Invalid Action")
 
@@ -897,98 +1030,35 @@ def play(id,act_location):
         except ValueError as e:
             scr.add_to_prompt(e)
 
-def check_enemy_movement(direction, enemy_index, region):
-    y, x = data.locations[region]["enemies"][enemy_index][1][0], data.locations[region]["enemies"][enemy_index][1][1]
-    try:
-        if direction == "up":
-            if maps.maps[region][y-1][x] == " " and [y-1, x] != data.data["character"]["position"]:
-                return True
-        elif direction == "down":
-            if maps.maps[region][y+1][x] == " " and [y+1, x] != data.data["character"]["position"]:
-                return True
-        elif direction == "left":
-            if maps.maps[region][y][x-1] == " " and [y, x-1] != data.data["character"]["position"]:
-                return True
-        elif direction == "right":
-            if maps.maps[region][y][x+1] == " " and [y, x+1] != data.data["character"]["position"]:
-                return True
-    except:
-        return False
-    return False
 
-def blood_moon():
-    global data
-            
+def go_by(tipo, region):
+    lista = []
+    for i in range(len(maps.maps[region])):
+        for j in range(len(maps.maps[region][i])):
+            if maps.maps[region][i][j] == tipo:
+                lista.append([i,j])
 
+    posicion = [11,7]
 
-def ganon():
-    global ganons_life
-    ganons_life -= 1
-    if(ganons_life>0):
-        data.data["character"]["hearts_remaining"] -= 1
-    elif(ganons_life==0):
-        zelda_saved()
-        ganons_life = -1
+    distancias = []
+    for k in lista:
+        distancias.append(math.sqrt((k[0]- posicion[0])**2+(k[1]- posicion[1])**2))
 
+    minimo = min(distancias)
 
-def update_ganons_hearts():
-    if(ganons_life == 8):
-        maps.maps["Castle"][1][54] = "♥"
-        maps.maps["Castle"][1][53] = "♥"
-        maps.maps["Castle"][1][52] = "♥"
-        maps.maps["Castle"][1][51] = "♥"
-        maps.maps["Castle"][1][50] = "♥"
-        maps.maps["Castle"][1][49] = "♥"
-        maps.maps["Castle"][1][48] = "♥"
-        maps.maps["Castle"][1][47] = "♥"
-    if ganons_life <= 7:
-        maps.maps["Castle"][1][54] = " "
-    if ganons_life <= 6:
-        maps.maps["Castle"][1][53] = " "
-    if ganons_life <= 5:
-        maps.maps["Castle"][1][52] = " "
-    if ganons_life <= 4:
-        maps.maps["Castle"][1][51] = " "
-    if ganons_life <= 3:
-        maps.maps["Castle"][1][50] = " "
-    if ganons_life <= 2:
-        maps.maps["Castle"][1][49] = " "
-    if ganons_life <= 1:
-        maps.maps["Castle"][1][48] = " "
-    if ganons_life <= 0:
-        maps.maps["Castle"][1][47] = " "
+    posiciones = [[0,1], [1,0], [1,1], [1,-1], [-1,-1], [0,-1], [-1,0], [-1, 1]]
 
-def zelda_saved():
-    global data
-    while True:
-        titol_seccio = "Zelda saved"
-        options = ["Continue"]
-        lines = """
+    posiciones_validas = []
+    for i in posiciones:
+        if maps.maps[region][lista[distancias.index(minimo)][0]+i[0]][lista[distancias.index(minimo)][1]+i[1]] == " ":
+            posiciones_validas.append([lista[distancias.index(minimo)][0]+i[0], lista[distancias.index(minimo)][1]+i[1]])
 
+    distancias_validas = []
+    for i in posiciones_validas:
+        distancias_validas.append(math.sqrt((i[0]- posicion[0])**2+(i[1]- posicion[1])**2))
 
+    posicion = posiciones_validas[distancias_validas.index(min(distancias_validas))]
 
-        Congratulations, Link has saved Princess Zelda.
-        Thanks for playing!
+    data.data["character"]["position"] = posicion
+    
 
-
-
-
-    """.split("\n")
-        scr.print_menu_screen(lines,options,titol_seccio)
-        scr.add_to_prompt("You saved Zelda, you won the game")
-        x = input("What to do now? ")
-        maps.maps["Castle"] = [[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
-          [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '\\', ' ', '/', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
-          [' ', ' ', ' ', ' ', ' ', ' ', '-', '-', ' ', 'O', ' ', '-', '-', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
-          [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '/', ' ', '\\', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
-          [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', '>', ' ', ' ', 'v', '-', 'v', '-', 'v', '-', 'v', ' ', ' ', ' ', '|', '>', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
-          [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '/', '_', '\\', ' ', ' ', '|', ' ', ' ', ' ', ' ', ' ', '|', ' ', ' ', '/', '_', '\\', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
-          [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', ' ', '|', "'", "'", "'", "'", "'", "'", "'", "'", "'", "'", "'", '|', ' ', '|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
-          [' ', ' ', ' ', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', ' ', '|', ' ', '|', '|', ' ', ' ', '_', ' ', ' ', '|', '|', ' ', '|', ' ', '|', " ", ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
-          [' ', 'O', 'T', '!', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', ' ', '|', ' ', ' ', ' ', ' ', '|', '#', '|', ' ', ' ', ' ', ' ', '|', ' ', '|', ' ', ' ', ' ', ' ', " ", ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
-          [' ', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']]
-        if(x.capitalize()==options[0]):
-            data.data["character"]["hearts_remaining"] = 9
-            data.data["character"]["max_hearts"] = 9
-            break
-        scr.add_to_prompt("Invalid Action")
