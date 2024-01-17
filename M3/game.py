@@ -255,11 +255,14 @@ def attack_enemy():
     region = data.data["character"]["region"]
     enemy_pos = where_is_enemy()
     for key,value in data.locations[region]["enemies"].items():
-        input(value[1] + [] + enemy_pos)
         if(value[1]==enemy_pos):
             index = key
             break
     data.locations[region]["enemies"][index][0] -= 1
+    scr.add_to_prompt(f"Brave, keep fighting, {data.data["character"]["user_name"]}")
+    data.data["character"]["hearts_remaining"] -= 1
+    if(data.data["character"]["hearts_remaining"]>0):
+        scr.add_to_prompt(f"Be careful {data.data["character"]["user_name"]}! You only have {data.data["character"]["hearts_remaining"]} hearts!")
     directions = ["up", "down", "left", "right"]
     x, y = data.locations[region]["enemies"][index][1][0], data.locations[region]["enemies"][index][1][1]
     if data.locations[region]["enemies"][index][0] == 0:
@@ -752,8 +755,8 @@ def link_death():
 
 
     """.split("\n")
-        scr.print_menu_screen(lines,options,titol_seccio)
         scr.add_to_prompt("Nice try, you died. Game is over.")
+        scr.print_menu_screen(lines,options,titol_seccio)
         x = input("What to do now? ")
         if(x.capitalize()==options[0]):
             data.data["character"]["hearts_remaining"] = data.data["character"]["max_hearts"]
@@ -898,16 +901,16 @@ def check_enemy_movement(direction, enemy_index, region):
     y, x = data.locations[region]["enemies"][enemy_index][1][0], data.locations[region]["enemies"][enemy_index][1][1]
     try:
         if direction == "up":
-            if maps.maps[region][y-1][x] == " " and [y, x-1] != data.data["character"]["position"]:
+            if maps.maps[region][y-1][x] == " " and [y-1, x] != data.data["character"]["position"]:
                 return True
         elif direction == "down":
-            if maps.maps[region][y+1][x] == " " and [y, x+1] != data.data["character"]["position"]:
+            if maps.maps[region][y+1][x] == " " and [y+1, x] != data.data["character"]["position"]:
                 return True
         elif direction == "left":
-            if maps.maps[region][y][x-1] == " " and [y-1, x] != data.data["character"]["position"]:
+            if maps.maps[region][y][x-1] == " " and [y, x-1] != data.data["character"]["position"]:
                 return True
         elif direction == "right":
-            if maps.maps[region][y][x+1] == " " and [y+1, x] != data.data["character"]["position"]:
+            if maps.maps[region][y][x+1] == " " and [y, x+1] != data.data["character"]["position"]:
                 return True
     except:
         return False

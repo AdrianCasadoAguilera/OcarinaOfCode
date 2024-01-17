@@ -1,4 +1,4 @@
-import os,platform
+import os,platform,data
 
 prompt = []
 
@@ -49,8 +49,18 @@ def print_screen(char_pos,options,mat,inventory,inv_title="Main",titol_seccio="*
                 print("X",end="")
             elif(mat[i][j]=="limit"):
                 print(" ",end="")
-            elif():
-                print(" ",end="")
+            elif(mat[i][j]=="E"):
+                region = data.data["character"]["region"]
+                if([i,j+1]!=char_pos):
+                    for enemy in data.locations[region]["enemies"].values():
+                        if(enemy[1]==[i,j]):
+                            print(f"E{enemy[0]}",end="")
+                else:
+                    for enemy in data.locations[region]["enemies"].values():
+                        if(enemy[1]==[i,j]):
+                            print(f"{enemy[0]}",end="")
+            elif(mat[i][j-1]=="E"):
+                continue
             elif(mat[i][j]!="!"):
                 print(mat[i][j],end="")
             else:
