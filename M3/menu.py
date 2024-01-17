@@ -314,7 +314,6 @@ while True:
             db.cur.execute(f"SELECT region FROM game WHERE game_id={game_id};")
             act_location = db.cur.fetchall()[0][0]
             game.play(game_id,act_location)
-            break
       elif(opt[0].capitalize()=="New" and opt[1].capitalize()=="Game"):
          create_game()
    except ValueError as e:
