@@ -1,4 +1,4 @@
-import screen as scr,maps,inventory as inv,db,random,data,game_functions
+import screen as scr,maps,inventory as inv,db,random,data
 
 # GANON'S LIFE
 ganons_life = 8
@@ -193,7 +193,60 @@ def where_is_chest():
                                         return [pos_x-1,pos_y+1]
                                 except:
                                     pass
-    
+
+def where_is_sanctuary():
+    pos_x = data.data["character"]["position"][0]
+    pos_y = data.data["character"]["position"][1]
+    region = data.data["character"]["region"]
+    region_map = maps.maps[region]
+    try:
+        if(region_map[pos_x+1][pos_y] == "S"):
+            return [pos_x+1,pos_y]
+    except:
+        pass
+    finally:
+        try:
+            if(region_map[pos_x][pos_y+1] == "S"):
+                return [pos_x,pos_y+1]
+        except:
+            pass
+        finally:
+            try:
+                if(region_map[pos_x+1][pos_y+1] == "S"):
+                    return [pos_x+1,pos_y+1]
+            except:
+                pass
+            finally:
+                try:
+                    if(region_map[pos_x-1][pos_y] == "S"):
+                        return [pos_x-1,pos_y]
+                except:
+                    pass
+                finally:
+                    try:
+                        if(region_map[pos_x][pos_y-1] == "S"):
+                            return [pos_x,pos_y-1]
+                    except:
+                        pass
+                    finally:
+                        try:
+                            if(region_map[pos_x-1][pos_y-1] == "S"):
+                                return [pos_x-1,pos_y-1]
+                        except:
+                            pass
+                        finally:
+                            try:
+                                if(region_map[pos_x+1][pos_y-1] == "S"):
+                                    return [pos_x+1,pos_y-1]
+                            except:
+                                pass
+                            finally:
+                                try:
+                                    if(region_map[pos_x-1][pos_y+1] == "S"):
+                                        return [pos_x-1,pos_y+1]
+                                except:
+                                    pass
+
 def attack_tree():
     prob = random.randint(1,10)
     ws_equipped = data.is_equipped("Wood Sword")
@@ -330,6 +383,14 @@ def open_chest():
         for value in data.locations[key]["chests"].values():
                 value[0] = 1
 
+def open_sanctuary():
+    loc = where_is_sanctuary()
+    region = data.data["character"]["region"]
+    for key,sanct in data.locations[region]["sanctuaries"].items():
+        if(sanct[1]==loc and data.locations[region]["sanctuaries"][key][0]==1):
+                data.locations[region]["sanctuaries"][key][0] -= 1
+                data.data["character"]["max_hearts"] += 1
+                data.data["character"]["hearts_remaining"] = data.data["character"]["max_hearts"]
 
 def who_attacks():
     x = data.data["character"]["position"][1]
@@ -537,55 +598,55 @@ def can_fish():
                                     return False
     return False
 
-def can_chest():
+def can_open():
     pos_x = data.data["character"]["position"][0]
     pos_y = data.data["character"]["position"][1]
     region = data.data["character"]["region"]
     region_map = maps.maps[region]
     try:
-        if(region_map[pos_x+1][pos_y] == "M"):
+        if(region_map[pos_x+1][pos_y] == "M" or region_map[pos_x+1][pos_y] == "S"):
             return True
     except:
         pass
     finally:
         try:
-            if(region_map[pos_x][pos_y+1] == "M"):
+            if(region_map[pos_x][pos_y+1] == "M" or region_map[pos_x][pos_y+1] == "S"):
                 return True
         except:
             pass
         finally:
             try:
-                if(region_map[pos_x+1][pos_y+1] == "M"):
+                if(region_map[pos_x+1][pos_y+1] == "M" or region_map[pos_x+1][pos_y+1] == "S"):
                     return True
             except:
                 pass
             finally:
                 try:
-                    if(region_map[pos_x-1][pos_y] == "M"):
+                    if(region_map[pos_x-1][pos_y] == "M" or region_map[pos_x-1][pos_y] == "S"):
                         return True
                 except:
                     pass
                 finally:
                     try:
-                        if(region_map[pos_x][pos_y-1] == "M"):
+                        if(region_map[pos_x][pos_y-1] == "M" or region_map[pos_x][pos_y-1] == "S"):
                             return True
                     except:
                         pass
                     finally:
                         try:
-                            if(region_map[pos_x-1][pos_y-1] == "M"):
+                            if(region_map[pos_x-1][pos_y-1] == "M" or region_map[pos_x-1][pos_y-1] == "S"):
                                 return True
                         except:
                             pass
                         finally:
                             try:
-                                if(region_map[pos_x+1][pos_y-1] == "M"):
+                                if(region_map[pos_x+1][pos_y-1] == "M" or region_map[pos_x+1][pos_y-1] == "S"):
                                     return True
                             except:
                                 pass
                             finally:
                                 try:
-                                    if(region_map[pos_x-1][pos_y+1] == "M"):
+                                    if(region_map[pos_x-1][pos_y+1] == "M" or region_map[pos_x-1][pos_y+1] == "S"):
                                         return True
                                 except:
                                     return False
@@ -651,8 +712,10 @@ def eat(food):
         increase_health(2)
     elif(food=="Pescatarian"):
         increase_health(3)
-    else:
+    elif(food=="Roasted"):
         increase_health(4)
+    else:
+        scr.add_to_prompt(f"You cannot eat {food}!")
         
 def show_map(inventory, inv_title):
     mat = maps.maps["General Map"]
@@ -663,7 +726,7 @@ def show_map(inventory, inv_title):
             break
         else:
              scr.add_to_prompt("Invalid Action")
-        
+
 def map_position(selected_map):
     if(selected_map=="Gerudo"):
         data.data["character"]["position"] = [2,9]
@@ -706,6 +769,7 @@ def comp_map(act_location,selected_map,id):
         data.data["character"]["position"] = maps.player_position(id)
     else:
         raise ValueError(f"You can't go to {selected_map} from here")
+    
 def equip(weapon):
     if(data.data["weapons"][weapon]["quantity"]>0 and data.data["weapons"][weapon]["equipped"]==0):
         for el in data.weapons_equipped():
@@ -764,6 +828,41 @@ def link_death():
             break
         scr.add_to_prompt("Invalid Action")
 
+def zelda_saved():
+    global data
+    while True:
+        titol_seccio = "Zelda saved"
+        options = ["Continue"]
+        lines = """
+
+
+
+        Congratulations, Link has saved Princess Zelda.
+        Thanks for playing!
+
+
+
+
+    """.split("\n")
+        scr.print_menu_screen(lines,options,titol_seccio)
+        scr.add_to_prompt("You saved Zelda, you won the game")
+        x = input("What to do now? ")
+        maps.maps["Castle"] = [[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+          [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '\\', ' ', '/', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+          [' ', ' ', ' ', ' ', ' ', ' ', '-', '-', ' ', 'O', ' ', '-', '-', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+          [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '/', ' ', '\\', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+          [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', '>', ' ', ' ', 'v', '-', 'v', '-', 'v', '-', 'v', ' ', ' ', ' ', '|', '>', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+          [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '/', '_', '\\', ' ', ' ', '|', ' ', ' ', ' ', ' ', ' ', '|', ' ', ' ', '/', '_', '\\', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+          [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', ' ', '|', "'", "'", "'", "'", "'", "'", "'", "'", "'", "'", "'", '|', ' ', '|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+          [' ', ' ', ' ', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', ' ', '|', ' ', '|', '|', ' ', ' ', '_', ' ', ' ', '|', '|', ' ', '|', ' ', '|', " ", ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+          [' ', 'O', 'T', '!', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', ' ', '|', ' ', ' ', ' ', ' ', '|', '#', '|', ' ', ' ', ' ', ' ', '|', ' ', '|', ' ', ' ', ' ', ' ', " ", ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+          [' ', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']]
+        if(x.capitalize()==options[0]):
+            data.data["character"]["hearts_remaining"] = 9
+            data.data["character"]["max_hearts"] = 9
+            break
+        scr.add_to_prompt("Invalid Action")
+
 def play(id,act_location):
     global ganons_life
     inv_title = "Main"
@@ -792,7 +891,7 @@ def play(id,act_location):
                 options.remove("Cook")
             if(can_fish()==False):
                 options.remove("Fish")
-            if(can_chest()==False):
+            if(can_open()==False):
                 options.remove("Open")
             act_location = data.data["character"]["region"]
             if(act_location=="Castle"):
@@ -813,7 +912,6 @@ def play(id,act_location):
                 else:
                     raise ValueError("Invalid Action")
             elif(x[0].capitalize()=="Show" and len(x)==3):
-                print(x[1],x[2])
                 if(x[1].capitalize()=="Inventory" and x[2].lower() in ["main","food","weapons"]):
                     inv_title = x[2].capitalize()
                 elif(x[1].capitalize()=="Inventory" and x[2].lower()=="help"):
@@ -826,7 +924,7 @@ def play(id,act_location):
                 else:
                     scr.add_to_prompt("Invalid Action")
             elif(x[0].capitalize()=="Eat" and len(x)==2):
-                if(x[1].lower() in ["vegetable","fish","meat","salad","pescatarian","roasted"]):
+                if(x[1].lower() in ["vegetable","salad","pescatarian","roasted"]):
                     if(data.data["foods"][x[1].capitalize()]>0 and data.data["character"]["hearts_remaining"]<data.data["character"]["max_hearts"]):
                         eat(x[1].capitalize())
                     elif(data.data["character"]["hearts_remaining"]==data.data["character"]["max_hearts"]):
@@ -891,6 +989,8 @@ def play(id,act_location):
                 fishing()
             elif(x[0].lower()=="open" and x[1].lower()=="chest" and len(x)==2):
                 open_chest()
+            elif(x[0].lower()=="open" and x[1].lower()=="sanctuary"):
+                open_sanctuary()
             elif(x[0].lower()=="back"):
                 if(data.data["character"]["region"]=="Castle"):
                     ganons_life = 8
@@ -918,9 +1018,7 @@ def check_enemy_movement(direction, enemy_index, region):
     return False
 
 def blood_moon():
-    global data
-            
-
+    global data        
 
 def ganon():
     global ganons_life
@@ -930,7 +1028,6 @@ def ganon():
     elif(ganons_life==0):
         zelda_saved()
         ganons_life = -1
-
 
 def update_ganons_hearts():
     if(ganons_life == 8):
@@ -958,38 +1055,3 @@ def update_ganons_hearts():
         maps.maps["Castle"][1][48] = " "
     if ganons_life <= 0:
         maps.maps["Castle"][1][47] = " "
-
-def zelda_saved():
-    global data
-    while True:
-        titol_seccio = "Zelda saved"
-        options = ["Continue"]
-        lines = """
-
-
-
-        Congratulations, Link has saved Princess Zelda.
-        Thanks for playing!
-
-
-
-
-    """.split("\n")
-        scr.print_menu_screen(lines,options,titol_seccio)
-        scr.add_to_prompt("You saved Zelda, you won the game")
-        x = input("What to do now? ")
-        maps.maps["Castle"] = [[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
-          [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '\\', ' ', '/', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
-          [' ', ' ', ' ', ' ', ' ', ' ', '-', '-', ' ', 'O', ' ', '-', '-', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
-          [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '/', ' ', '\\', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
-          [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', '>', ' ', ' ', 'v', '-', 'v', '-', 'v', '-', 'v', ' ', ' ', ' ', '|', '>', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
-          [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '/', '_', '\\', ' ', ' ', '|', ' ', ' ', ' ', ' ', ' ', '|', ' ', ' ', '/', '_', '\\', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
-          [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', ' ', '|', "'", "'", "'", "'", "'", "'", "'", "'", "'", "'", "'", '|', ' ', '|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
-          [' ', ' ', ' ', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', ' ', '|', ' ', '|', '|', ' ', ' ', '_', ' ', ' ', '|', '|', ' ', '|', ' ', '|', " ", ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
-          [' ', 'O', 'T', '!', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', ' ', '|', ' ', ' ', ' ', ' ', '|', '#', '|', ' ', ' ', ' ', ' ', '|', ' ', '|', ' ', ' ', ' ', ' ', " ", ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
-          [' ', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']]
-        if(x.capitalize()==options[0]):
-            data.data["character"]["hearts_remaining"] = 9
-            data.data["character"]["max_hearts"] = 9
-            break
-        scr.add_to_prompt("Invalid Action")

@@ -1,7 +1,7 @@
 import data
 
-print(len([' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'E']))
+print(len(['~', '~', '~', '~', '~', '~', '~', '~', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'M', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'S']))
 
-for key in data.locations.keys():
-    for value in data.locations[key]["chests"].values():
-        print(value[0])
+# for key in data.locations.keys():
+#     for value in data.locations[key]["chests"].values():
+#         print(value[0])
