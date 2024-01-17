@@ -336,27 +336,22 @@ def open_chest():
 
 
 def who_attacks():
-    x = data.data["character"]["position"][1]
-    y = data.data["character"]["position"][0]
+    pos_x, pos_y = data.data["character"]["position"][1], data.data["character"]["position"][0]
     region = data.data["character"]["region"]
-    mapa = maps.maps
-    try:
-        if mapa[region][y-1][x] == "E" or mapa[region][y+1][x] == "E" or mapa[region][y][x+1] == "E" or mapa[region][y][x-1] == "E" or mapa[region][y-1][x-1] == "E" or mapa[region][y-1][x+1] == "E" or mapa[region][y+1][x-1] == "E" or mapa[region][y+1][x+1] == "E":
-            return "enemy"
-    except:
-        print()
-    finally:
-        try:
-            if mapa[region][y-1][x] == "F" or mapa[region][y+1][x] == "F" or mapa[region][y][x+1] == "F" or mapa[region][y][x-1] == "F" or mapa[region][y-1][x-1] == "F" or mapa[region][y-1][x+1] == "F" or mapa[region][y+1][x-1] == "F" or mapa[region][y+1][x+1] == "F":
-                return "fox"
-        except:
-            print()
-        finally:
+    region_map = maps.maps[region]
+
+    # Definir direcciones relativas para buscar alrededor del personaje
+    directions = [(1, 0), (0, 1), (1, 1), (-1, 0), (0, -1), (-1, -1), (1, -1), (-1, 1)]
+    dic = {"E": "enemy", "F": "fox", "T": "tree"}
+    for dir_x, dir_y in directions:
+        for tipo in ["E", "F", "T"]:
             try:
-                if mapa[region][y-1][x] == "T" or mapa[region][y+1][x] == "T" or mapa[region][y][x+1] == "T" or mapa[region][y][x-1] == "T" or mapa[region][y-1][x-1] == "T" or mapa[region][y-1][x+1] == "T" or mapa[region][y+1][x-1] == "T" or mapa[region][y+1][x+1] == "T":
-                    return "tree"
-            except:
-                print()   
+                target = region_map[pos_x + dir_x][pos_y + dir_y]
+                if target == tipo:
+                    return dic[target]
+            except IndexError:
+                pass
+
     return "grass"
 
 def check_movement(direction):
@@ -1029,7 +1024,6 @@ def play(id,act_location):
                 comp_map(act_location,last_location,id)
         except ValueError as e:
             scr.add_to_prompt(e)
-
 
 def go_by(tipo, region):
     lista = []
