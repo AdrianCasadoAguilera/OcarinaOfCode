@@ -313,8 +313,11 @@ def attack_enemy():
             break
     data.locations[region]["enemies"][index][0] -= 1
     scr.add_to_prompt(f'Brave, keep fighting, {data.data["character"]["user_name"]}')
-    if(data.locations[region]["enemies"][index][0] > 0):
+    protect = use_shield()
+    if(data.locations[region]["enemies"][index][0] > 0 and protect==False):
         data.data["character"]["hearts_remaining"] -= 1
+    elif(protect==True):
+        scr.add_to_prompt("Enemy has hit the shield! You don't recieve damage.")
     if(data.data["character"]["hearts_remaining"]>0):
         scr.add_to_prompt(f"Be careful {data.data['character']['user_name']}! You only have {data.data['character']['hearts_remaining']} hearts!")
     directions = ["up", "down", "left", "right"]
@@ -424,28 +427,24 @@ def open_sanctuary():
                 data.data["character"]["max_hearts"] += 1
                 data.data["character"]["hearts_remaining"] = data.data["character"]["max_hearts"]
 
+
 def who_attacks():
-    x = data.data["character"]["position"][1]
-    y = data.data["character"]["position"][0]
+    pos_x, pos_y = data.data["character"]["position"][1], data.data["character"]["position"][0]
     region = data.data["character"]["region"]
-    mapa = maps.maps
-    try:
-        if mapa[region][y-1][x] == "E" or mapa[region][y+1][x] == "E" or mapa[region][y][x+1] == "E" or mapa[region][y][x-1] == "E" or mapa[region][y-1][x-1] == "E" or mapa[region][y-1][x+1] == "E" or mapa[region][y+1][x-1] == "E" or mapa[region][y+1][x+1] == "E":
-            return "enemy"
-    except:
-        print()
-    finally:
-        try:
-            if mapa[region][y-1][x] == "F" or mapa[region][y+1][x] == "F" or mapa[region][y][x+1] == "F" or mapa[region][y][x-1] == "F" or mapa[region][y-1][x-1] == "F" or mapa[region][y-1][x+1] == "F" or mapa[region][y+1][x-1] == "F" or mapa[region][y+1][x+1] == "F":
-                return "fox"
-        except:
-            print()
-        finally:
+    region_map = maps.maps[region]
+
+    # Definir direcciones relativas para buscar alrededor del personaje
+    directions = [(1, 0), (0, 1), (1, 1), (-1, 0), (0, -1), (-1, -1), (1, -1), (-1, 1)]
+    dic = {"E": "enemy", "F": "fox", "T": "tree"}
+    for dir_x, dir_y in directions:
+        for tipo in ["E", "F", "T"]:
             try:
-                if mapa[region][y-1][x] == "T" or mapa[region][y+1][x] == "T" or mapa[region][y][x+1] == "T" or mapa[region][y][x-1] == "T" or mapa[region][y-1][x-1] == "T" or mapa[region][y-1][x+1] == "T" or mapa[region][y+1][x-1] == "T" or mapa[region][y+1][x+1] == "T":
-                    return "tree"
-            except:
-                print()   
+                target = region_map[pos_y + dir_y][pos_x + dir_x]
+                if target == tipo:
+                    return dic[tipo]
+            except IndexError:
+                pass
+
     return "grass"
 
 def check_movement(direction):
@@ -827,18 +826,20 @@ def unequip(weapon):
     else:
         raise ValueError(f"You alredy have {weapon} unequipped!")
     
-def shield(id):
+def use_shield():
     prob_deflect = random.randint(1,10)
-    if db.is_equipped(id,"Wood Shield") == 1:
+    if data.is_equipped("Wood Shield") == "(equipped)":
         if prob_deflect <=2:
             return True
         else:
             return False
-    elif db.is_equipped(id,"Shield") == 1:
+    elif data.is_equipped("Shield") == "(equipped)":
         if prob_deflect <=3:
             return True
         else: 
             return False
+    return False
+
 def prob_fox_appear():
     prob_fox = random.randint(0,1)
     loc_fox_x = int(data.locations[data.data["character"]["region"]]["fox"][1][0])
