@@ -1,32 +1,72 @@
 import maps, math, data
 
 
-def go_by(tipo, region):
-    lista = []
-    for i in range(len(maps.maps[region])):
-        for j in range(len(maps.maps[region][i])):
-            if maps.maps[region][i][j] == tipo:
-                lista.append([i,j])
-
-    posicion = [11,7]
-
-    distancias = []
-    for k in lista:
-        distancias.append(math.sqrt((k[0]- posicion[0])**2+(k[1]- posicion[1])**2))
-
-    minimo = min(distancias)
-
-    posiciones = [[0,1], [1,0], [1,1], [1,-1], [-1,-1], [0,-1], [-1,0], [-1, 1]]
-
-    posiciones_validas = []
-    for i in posiciones:
-        if maps.maps[region][lista[distancias.index(minimo)][0]+i[0]][lista[distancias.index(minimo)][1]+i[1]] == " ":
-            posiciones_validas.append([lista[distancias.index(minimo)][0]+i[0], lista[distancias.index(minimo)][1]+i[1]])
-
-    distancias_validas = []
-    for i in posiciones_validas:
-        distancias_validas.append(math.sqrt((i[0]- posicion[0])**2+(i[1]- posicion[1])**2))
-
-    posicion = posiciones_validas[distancias_validas.index(min(distancias_validas))]
-
-    data.data["character"]["position"] = posicion
+def print_screen(char_pos,options,mat,inventory,inv_title="Main",titol_seccio="*"):
+    if(inv_title=="Main"):
+        inv_title="Inventory"
+    if(len(titol_seccio)%2==0):
+        titol_seccio += " "
+    if(len(inv_title)%2==0):
+        inv_title = " " + inv_title
+    options_str = ", ".join(options)
+    if(len(options_str)%2==0):
+        options_str += " "
+    clear_screen()
+    print(f"* {titol_seccio} "+"* "*int(((77-len(titol_seccio)-len(inv_title))/2)-1)+inv_title+" *")
+    for i in range(len(mat)):
+        print("*",end="")
+        for j in range(len(mat[i])):
+            if(i==char_pos[0] and j==char_pos[1]):
+                print("X",end="")
+            elif(mat[i][j]=="limit"):
+                print(" ",end="")
+            elif(mat[i][j]=="S" and titol_seccio!="General Map"):
+                region = data.data["character"]["region"]
+                if([i,j+1] != char_pos and [i,j+2] != char_pos):
+                    for sanct,info in data.locations[region]["sanctuaries"].items():
+                        if(info[1]==[i,j]):
+                            if(info[0]==1):
+                                print(f"S{sanct}?",end="")
+                            else:
+                                print(f"S{sanct}",end="")
+                elif([i,j+1]==char_pos):
+                    for sanct,info in data.locations[region]["sanctuaries"].items():
+                        if(info[1]==[i,j]):
+                            if(info[0]==1):
+                                print(f"SX?",end="")
+                            else:
+                                print(f"SX",end="")
+                else:
+                    for sanct,info in data.locations[region]["sanctuaries"].items():
+                        if(info[1]==[i,j]):
+                            print(f"S{sanct}X",end="")
+            elif(mat[i][j]=="E"):
+                region = data.data["character"]["region"]
+                if([i,j+1]!=char_pos):
+                    for enemy in data.locations[region]["enemies"].values():
+                        if(enemy[1]==[i,j]):
+                            print(f"E{enemy[0]}",end="")
+                else:
+                    for enemy in data.locations[region]["enemies"].values():
+                        if(enemy[1]==[i,j]):
+                            print(f"{enemy[0]}",end="")
+            elif(mat[i][j-1]=="E"):
+                    print("",end="")
+            elif(mat[i][j-2]=="S"):
+                    print("",end="")
+            elif(mat[i][j-1]=="S"):
+                print("",end="")
+            elif(mat[i][j-1]=="E"):
+                print("",end="")
+            elif(mat[i][j]!="!"):
+                print(mat[i][j],end="")
+            else:
+                print(" ",end="")
+            
+        print("* ",end="")
+        print(inventory[i].ljust(17),end=" *\n")
+    if(titol_seccio=="General Map"):
+        print(f"* {options} "+"* "*int((77-len(options))/2))
+    else:
+        print(f"* {options_str} "+"* "*int((77-len(options_str))/2))
+    print_prompt()

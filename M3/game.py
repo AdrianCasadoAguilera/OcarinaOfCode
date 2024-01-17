@@ -980,6 +980,11 @@ def play(id,act_location):
                         if(x[2].capitalize()=="Castle"):
                             last_location = act_location
                         comp_map(act_location, x[2].capitalize(),id)
+                    elif(x[1].capitalize() == "By" and (x[2] in ["T", "water", "F", "C", "M", "E"] or (len(x[2]) == 2 and x[2][0] == "S" and x[2][1] in (1,2,3,4,5,6,7)))):
+                        if x[2] == "water":
+                            go_by("~", data.data["character"]["region"])
+                        else:
+                            go_by(x[2], data.data["character"]["region"])
                 elif(len(x)==4):
                     x[2] = x[2].capitalize() + " " + x[3].capitalize()
                     if(x[1].lower()=="to" and x[2] == "Death Mountain"):
