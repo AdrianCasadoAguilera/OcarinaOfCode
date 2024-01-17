@@ -80,6 +80,7 @@ def print_screen(char_pos,options,mat,inventory,inv_title="Main",titol_seccio="*
                         if(enemy[1]==[i,j]):
                             print(f"{enemy[0]}",end="")
             elif(mat[i][j-2]=="S"):
+                region = data.data["character"]["region"]
                 for sanct in data.locations[region]["sanctuaries"].values():
                         if(sanct[1]==[i,j-2]):
                             if(sanct[0]==1):
