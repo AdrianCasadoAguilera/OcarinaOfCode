@@ -18,7 +18,7 @@ locations = {
             1 : [1,[8,47]]
         },
         "fishing" : 1,
-        "fox" : 1
+        "fox" : [1,[8,51]]
         },
         
     "Death Mountain" : {
@@ -34,7 +34,8 @@ locations = {
         "chests": {
             1 : [1,[7,35]]
         },
-        "fishing" : 1
+        "fishing" : 1,
+        "fox" : [1,[30,1]]
     },
     "Gerudo": {
         "enemies": {
@@ -53,7 +54,8 @@ locations = {
             1 : [1,[0,51]],
             2 : [1,[8,7]]
         },
-        "fishing" : 1
+        "fishing" : 1,
+        "fox" : [1,[7,47]]
     },
     "Necluda" : {
         "enemies" : {
@@ -74,7 +76,8 @@ locations = {
             2 : [1,[1,50]],
             3 : [1,[8,22]]
         },
-        "fishing" : 1
+        "fishing" : 1,
+        "fox" : [1,[6,5]]
     },
     "Castle" : {
         "enemies" : {},
