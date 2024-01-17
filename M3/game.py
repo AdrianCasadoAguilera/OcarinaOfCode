@@ -259,10 +259,11 @@ def attack_enemy():
             index = key
             break
     data.locations[region]["enemies"][index][0] -= 1
-    scr.add_to_prompt(f"Brave, keep fighting, {data.data["character"]["user_name"]}")
-    data.data["character"]["hearts_remaining"] -= 1
+    scr.add_to_prompt(f'Brave, keep fighting, {data.data["character"]["user_name"]}')
+    if(data.locations[region]["enemies"][index][0] > 0):
+        data.data["character"]["hearts_remaining"] -= 1
     if(data.data["character"]["hearts_remaining"]>0):
-        scr.add_to_prompt(f"Be careful {data.data["character"]["user_name"]}! You only have {data.data["character"]["hearts_remaining"]} hearts!")
+        scr.add_to_prompt(f"Be careful {data.data['character']['user_name']}! You only have {data.data['character']['hearts_remaining']} hearts!")
     directions = ["up", "down", "left", "right"]
     x, y = data.locations[region]["enemies"][index][1][0], data.locations[region]["enemies"][index][1][1]
     if data.locations[region]["enemies"][index][0] == 0:
