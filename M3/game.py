@@ -1216,8 +1216,6 @@ def play(id,act_location):
                     x[2] = x[2].capitalize() + " " + x[3].capitalize()
                     if(x[1].lower()=="to" and x[2] == "Death Mountain"):
                         comp_map(act_location, x[2],id)
-                    else:
-                        raise ValueError("Invalid Action")
             elif(x[0].lower()=="attack" and len(x)==1):
                 if(act_location=="Castle" and who_attacks()!="tree"):
                     pos = data.data["character"]["position"][1]
@@ -1308,13 +1306,13 @@ def go_by(tipo, region):
 
 def go_by_sanct(sanctuary_number, region):
     posicion = data.data["character"]["position"]
-
+    position_sanctuary = 0
     for key in data.locations[region]["sanctuaries"].keys():
         if key == sanctuary_number:
             position_sanctuary = data.locations[region]["sanctuaries"][sanctuary_number][1]
-        else:
-            raise ValueError("Invalid Action")
-
+    if(position_sanctuary == 0):
+        raise ValueError("Invalid Action")
+    
     posiciones = [[0,1], [1,0], [1,1], [1,-1], [-1,-1], [0,-1], [-1,0], [-1, 1]]
 
     posiciones_validas = []
