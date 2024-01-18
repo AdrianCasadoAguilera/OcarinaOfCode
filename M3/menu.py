@@ -1,4 +1,4 @@
-import screen as scr,random,db,datetime,game
+import screen as scr,random,db,datetime,game, data
 
 initial_screens = ["""                                                                  ## 
                                                                   ## 
@@ -224,6 +224,8 @@ def new_game(user_name):
    db.connection.commit()
    db.cur.execute(f"SELECT max(game_id) FROM game;")
    id = db.cur.fetchall()
+   data.initialize_data(id, user_name)
+   db.insert_initial_data(id)
    game.play(id[0][0],"Hyrule")
 
 def saved_games():
