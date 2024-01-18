@@ -43,7 +43,7 @@ locations = {
             3 : [1,[8,48]]
         },
         "fishing" : 1,
-        "fox" : [1,[30,1]]
+        "fox" : [1,[1,29]]
     },
     "Gerudo": {
         "enemies": {
@@ -220,4 +220,4 @@ def total_weapons():
     total = 0
     for weapon in data["weapons"]:
         total += data["weapons"][weapon]["quantity"]
-    return total    
+    return total

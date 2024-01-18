@@ -377,8 +377,6 @@ def attack_fox():
 
     region = data.data["character"]["region"]
     data.locations[region]["fox"][0] -= 1
-    print(data.locations[region]["fox"][0])
-    input()
     loc_fox_x = int(data.locations[data.data["character"]["region"]]["fox"][1][0])
     loc_fox_y = int(data.locations[data.data["character"]["region"]]["fox"][1][1])    
     if data.locations[region]["fox"][0] == 0:
@@ -780,22 +778,22 @@ def comp_map(act_location,selected_map,id):
     selected_map = selected_map
     if(act_location==selected_map):
         raise ValueError(f"You are allready there")
-    elif(act_location=="Hyrule" and selected_map=="Gerudo" or selected_map=="Death Mountain"):
+    elif(act_location=="Hyrule" and (selected_map=="Gerudo" or selected_map=="Death Mountain")):
         data.data["character"]["region"] = selected_map
         db.change_map(selected_map, id)
         data.data["character"]["position"] = maps.player_position(id)
         prob_fox_appear()
-    elif(act_location=="Death Mountain" and selected_map=="Hyrule" or selected_map=="Necluda"):
+    elif(act_location=="Death Mountain" and (selected_map=="Hyrule" or selected_map=="Necluda")):
         data.data["character"]["region"] = selected_map
         db.change_map(selected_map, id)
         data.data["character"]["position"] = maps.player_position(id)
         prob_fox_appear()
-    elif(act_location=="Gerudo" and selected_map=="Hyrule" or selected_map=="Necluda"):
+    elif(act_location=="Gerudo" and (selected_map=="Hyrule" or selected_map=="Necluda")):
         data.data["character"]["region"] = selected_map
         db.change_map(selected_map, id)
         data.data["character"]["position"] = maps.player_position(id)
         prob_fox_appear()
-    elif(act_location=="Necluda" and selected_map=="Death Mountain" or selected_map=="Gerudo"):
+    elif(act_location=="Necluda" and (selected_map=="Death Mountain" or selected_map=="Gerudo")):
         data.data["character"]["region"] = selected_map
         db.change_map(selected_map, id)
         data.data["character"]["position"] = maps.player_position(id)
@@ -817,6 +815,9 @@ def equip(weapon):
         for el in data.weapons_equipped():
             if(el == weapon):
                 raise ValueError(f"You alredy have {el} equipped!")
+            if(len(el)>0):
+                if(el.split()[-1] == weapon.split()[-1]):
+                    raise ValueError(f"You alredy have a {el.split()[-1]} equipped!")
         data.data["weapons"][weapon]["equipped"] = 1
         scr.add_to_prompt(f"{weapon} equipped")
     elif(data.data["weapons"][weapon]["quantity"]==0):
@@ -875,7 +876,6 @@ def cheat_rename(new_name):
 def cheat_add(option):
     global data
     food = ["Meat","Fish","Vegetable"]
-    option = option.capitalize()
     try:
         if option in data.data["weapons"]:
             data.data["weapons"][option]["quantity"] += 1
@@ -1083,7 +1083,7 @@ def zelda_saved():
           [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', '>', ' ', ' ', 'v', '-', 'v', '-', 'v', '-', 'v', ' ', ' ', ' ', '|', '>', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
           [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '/', '_', '\\', ' ', ' ', '|', ' ', ' ', ' ', ' ', ' ', '|', ' ', ' ', '/', '_', '\\', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
           [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', ' ', '|', "'", "'", "'", "'", "'", "'", "'", "'", "'", "'", "'", '|', ' ', '|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
-          [' ', ' ', ' ', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', ' ', '|', ' ', '|', '|', ' ', ' ', '_', ' ', ' ', '|', '|', ' ', '|', ' ', '|', " ", ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+          ['limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', 'limit', '|', ' ', '|', ' ', '|', '|', ' ', ' ', '_', ' ', ' ', '|', '|', ' ', '|', ' ', '|', " ", ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
           [' ', 'O', 'T', '!', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', ' ', '|', ' ', ' ', ' ', ' ', '|', '#', '|', ' ', ' ', ' ', ' ', '|', ' ', '|', ' ', ' ', ' ', ' ', " ", ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
           [' ', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']]
         if(x.capitalize()==options[0]):
@@ -1100,7 +1100,6 @@ def play(id,act_location):
     while True:
         try:
             # CHECK ELEMENTS
-            pass_turn()
             update_ganons_hearts()
 
             pos = data.data["character"]["position"]
@@ -1114,7 +1113,7 @@ def play(id,act_location):
                     else:
                         data.data["weapons"][weapon]["durability"]=9
             
-            options = ["Exit","Attack","Go","Equip","Unequip","Eat","Cook","Fish","Open","Show","Cheat"]
+            options = ["Exit","Attack","Go","Equip","Unequip","Eat","Cook","Fish","Open","Show"]
             if(data.data["character"]["hearts_remaining"]<=0):
                 link_death()
                 break
@@ -1128,12 +1127,36 @@ def play(id,act_location):
             if(act_location=="Castle"):
                 options = ["Back","Go","Attack","Eat","Show","Equip","Unequip"]
             mat = maps.maps[act_location]
-            inventory = inv.show_inventory(id,inv_title)
+            inventory = inv.show_inventory(inv_title)
             scr.print_screen(pos,options,mat,inventory,inv_title,act_location)
             x = input("What to do now? ").split()
             if(len(x)==0):
                 raise ValueError("Invalid Action")
-            if(x[0].capitalize() not in options):
+            elif(x[0].lower()=="cheat" and len(x) >= 3):
+                if(x[1].lower() == "add"):
+                    if len(x)==3:
+                        cheat_add(x[2].capitalize())
+                    elif len(x)==4:
+                        option = x[2].capitalize()+" "+x[3].capitalize()
+                        cheat_add(option)
+                    else:
+                        raise ValueError("Invalid Action")
+                elif(x[1].lower()=="cook" and len(x)==3):
+                    cheat_cook_food(x[2])
+                elif(x[1].lower()=="open" and x[2].lower()=="sanctuaries" and len(x)==3):
+                    cheat_open_sanctuaries()
+                elif(x[1].lower()=="game" and x[2].lower()=="over" and len(x)==3):
+                    cheat_game_over()
+                elif(x[1].lower()=="win" and x[2].lower()=="game" and len(x)==3):   
+                    cheat_win_game() 
+                elif(len(x)==4):
+                    if((x[1].lower()+" "+x[2].lower()+" "+x[3].lower())=="rename player to"):
+                        cheat_rename(x[4])
+                    else:
+                        raise ValueError("Invalid Action")
+                else:
+                    raise ValueError("Write a valid option")
+            elif(x[0].capitalize() not in options):
                 raise ValueError("Invalid Action")
             elif(x[0].capitalize()=="Exit" and len(x)==1):
                 break
@@ -1153,7 +1176,7 @@ def play(id,act_location):
                 if(x[1].capitalize() in ["Salad","Pescatarian","Roasted"]):
                     cook(x[1].capitalize())
                 else:
-                    scr.add_to_prompt("Invalid Action")
+                    raise ValueError("Invalid Action")
             elif(x[0].capitalize()=="Eat" and len(x)==2):
                 if(x[1].lower() in ["vegetable","salad","pescatarian","roasted"]):
                     if(data.data["foods"][x[1].capitalize()]>0 and data.data["character"]["hearts_remaining"]<data.data["character"]["max_hearts"]):
@@ -1163,7 +1186,7 @@ def play(id,act_location):
                     else:
                         scr.add_to_prompt(f"Not enough {x[1].capitalize()}")
                 else:
-                    scr.add_to_prompt("Invalid Action")
+                    raise ValueError("Invalid Action")
             elif(x[0].capitalize()=="Go"):
                 if(len(x)==3):
                     if(x[1].lower() in ["up","down","left","right"] and x[2].isdigit()):
@@ -1193,6 +1216,8 @@ def play(id,act_location):
                     x[2] = x[2].capitalize() + " " + x[3].capitalize()
                     if(x[1].lower()=="to" and x[2] == "Death Mountain"):
                         comp_map(act_location, x[2],id)
+                    else:
+                        raise ValueError("Invalid Action")
             elif(x[0].lower()=="attack" and len(x)==1):
                 if(act_location=="Castle" and who_attacks()!="tree"):
                     pos = data.data["character"]["position"][1]
@@ -1218,6 +1243,8 @@ def play(id,act_location):
                     x[2] = x[2].capitalize()
                 if(x[1].lower() == "the" and x[2].lower() in ["sword","shield","wood sword","wood shield"]):
                     equip(x[2])
+                else:
+                    raise ValueError("Invalid Action")
             elif(x[0].lower()=="unequip" and len(x)>2 and len(x)<5):
                 if(len(x)==4):
                     x[2] = x[2].capitalize() + " " + x[3].capitalize()
@@ -1225,6 +1252,8 @@ def play(id,act_location):
                     x[2] = x[2].capitalize()
                 if(x[1].lower() == "the" and x[2].lower() in ["sword","shield","wood sword","wood shield"]):
                     unequip(x[2])
+                else:
+                    raise ValueError("Invalid Action")
             elif(x[0].lower()=="fish" and len(x)==1):
                 fishing()
             elif(x[0].lower()=="open" and x[1].lower()=="chest" and len(x)==2):
@@ -1235,27 +1264,12 @@ def play(id,act_location):
                 if(data.data["character"]["region"]=="Castle"):
                     ganons_life = 8
                 comp_map(act_location,last_location,id)
-            elif(x[0].lower()=="cheat" and len(x) >= 3):
-                if(x[1].lower() == "add"):
-                    if len(x)==3:
-                        cheat_add(x[2])
-                    elif len(x)==4:
-                        option = x[2].capitalize()+" "+x[3].capitalize()
-                        cheat_add(option)
-                elif(x[1].lower()=="cook" and len(x)==3):
-                    cheat_cook_food(x[2])
-                elif(x[1].lower()=="open" and x[2].lower()=="sanctuaries" and len(x)==3):
-                    cheat_open_sanctuaries()
-                elif(x[1].lower()=="game" and x[2].lower()=="over" and len(x)==3):
-                    cheat_game_over()
-                elif(x[1].lower()=="win" and x[2].lower()=="game" and len(x)==3):   
-                    cheat_win_game() 
-                elif((x[1].lower()+" "+x[2].lower()+" "+x[3].lower())=="rename player to"):
-                    cheat_rename(x[4])
-                else:
-                    raise ValueError("Write a valid option")
+            else:
+                raise ValueError("Invalid Action")
         except ValueError as e:
             scr.add_to_prompt(e)
+        else:
+            pass_turn()
 
 def go_by(tipo, region):
     lista = []
@@ -1298,6 +1312,8 @@ def go_by_sanct(sanctuary_number, region):
     for key in data.locations[region]["sanctuaries"].keys():
         if key == sanctuary_number:
             position_sanctuary = data.locations[region]["sanctuaries"][sanctuary_number][1]
+        else:
+            raise ValueError("Invalid Action")
 
     posiciones = [[0,1], [1,0], [1,1], [1,-1], [-1,-1], [0,-1], [-1,0], [-1, 1]]
 

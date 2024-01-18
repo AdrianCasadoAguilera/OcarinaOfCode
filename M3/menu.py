@@ -299,13 +299,13 @@ while True:
          if((opt[0].capitalize() + " " + opt[1].capitalize()) not in options):
             raise ValueError("Invalid Action")
          
-      if(opt[0].capitalize()=="Help"):
+      if(opt[0].capitalize()=="Help" and len(opt)==1):
          menu_help()
-      elif(opt[0].capitalize()=="Exit"):
+      elif(opt[0].capitalize()=="Exit" and len(opt)==1):
          break
-      elif(opt[0].capitalize()=="About"):
+      elif(opt[0].capitalize()=="About" and len(opt)==1):
          about()
-      elif(opt[0].capitalize()=="Continue"):
+      elif(opt[0].capitalize()=="Continue" and len(opt)==1):
          if(check_games()>1):
             saved_games()
          else:
@@ -314,7 +314,7 @@ while True:
             db.cur.execute(f"SELECT region FROM game WHERE game_id={game_id};")
             act_location = db.cur.fetchall()[0][0]
             game.play(game_id,act_location)
-      elif(opt[0].capitalize()=="New" and opt[1].capitalize()=="Game"):
+      elif(opt[0].capitalize()=="New" and opt[1].capitalize()=="Game" and len(opt)==2):
          create_game()
    except ValueError as e:
       scr.add_to_prompt(e)
