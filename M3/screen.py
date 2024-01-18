@@ -49,6 +49,26 @@ def print_screen(char_pos,options,mat,inventory,inv_title="Main",titol_seccio="*
                 print("X",end="")
             elif(mat[i][j]=="limit"):
                 print(" ",end="")
+            elif(mat[i][j]=="S" and titol_seccio!="General Map"):
+                region = data.data["character"]["region"]
+                if([i,j+1] != char_pos and [i,j+2] != char_pos):
+                    for sanct,info in data.locations[region]["sanctuaries"].items():
+                        if(info[1]==[i,j]):
+                            if(info[0]==1):
+                                print(f"S{sanct}",end="")
+                            else:
+                                print(f"S{sanct}",end="")
+                elif([i,j+1]==char_pos):
+                    for sanct,info in data.locations[region]["sanctuaries"].items():
+                        if(info[1]==[i,j]):
+                            if(info[0]==1):
+                                print(f"S",end="")
+                            else:
+                                print(f"S",end="")
+                else:
+                    for sanct,info in data.locations[region]["sanctuaries"].items():
+                        if(info[1]==[i,j]):
+                            print(f"S{sanct}",end="")
             elif(mat[i][j]=="E"):
                 region = data.data["character"]["region"]
                 if([i,j+1]!=char_pos):
@@ -59,12 +79,22 @@ def print_screen(char_pos,options,mat,inventory,inv_title="Main",titol_seccio="*
                     for enemy in data.locations[region]["enemies"].values():
                         if(enemy[1]==[i,j]):
                             print(f"{enemy[0]}",end="")
+            elif(mat[i][j-2]=="S"):
+                for sanct in data.locations[region]["sanctuaries"].values():
+                        if(sanct[1]==[i,j-2]):
+                            if(sanct[0]==1):
+                                print("?",end="")
+                            else:
+                                print(" ",end="")
+            elif(mat[i][j-1]=="S"):
+                print("",end="")
             elif(mat[i][j-1]=="E"):
-                continue
+                print("",end="")
             elif(mat[i][j]!="!"):
                 print(mat[i][j],end="")
             else:
                 print(" ",end="")
+            
         print("* ",end="")
         print(inventory[i].ljust(17),end=" *\n")
     if(titol_seccio=="General Map"):
