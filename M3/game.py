@@ -1274,8 +1274,12 @@ def go_by(tipo, region):
 
     posiciones_validas = []
     for i in posiciones:
-        if maps.maps[region][lista[distancias.index(minimo)][0]+i[0]][lista[distancias.index(minimo)][1]+i[1]] == " ":
-            posiciones_validas.append([lista[distancias.index(minimo)][0]+i[0], lista[distancias.index(minimo)][1]+i[1]])
+        try:
+            if maps.maps[region][lista[distancias.index(minimo)][0]+i[0]][lista[distancias.index(minimo)][1]+i[1]] == " ":
+                posiciones_validas.append([lista[distancias.index(minimo)][0]+i[0], lista[distancias.index(minimo)][1]+i[1]])
+        except:
+            pass
+        
 
     distancias_validas = []
     for i in posiciones_validas:
@@ -1296,10 +1300,13 @@ def go_by_sanct(sanctuary_number, region):
     posiciones = [[0,1], [1,0], [1,1], [1,-1], [-1,-1], [0,-1], [-1,0], [-1, 1]]
 
     posiciones_validas = []
+    
     for i in posiciones:
-        if maps.maps[region][position_sanctuary[0]+i[0]][position_sanctuary[1]+i[1]] == " ":
-            posiciones_validas.append([position_sanctuary[0]+i[0], position_sanctuary[1]+i[1]])
-
+        try:
+            if maps.maps[region][position_sanctuary[0]+i[0]][position_sanctuary[1]+i[1]] == " ":
+                posiciones_validas.append([position_sanctuary[0]+i[0], position_sanctuary[1]+i[1]])
+        except:
+            pass
     distancias_validas = []
     for i in posiciones_validas:
         distancias_validas.append(math.sqrt((i[0]- posicion[0])**2+(i[1]- posicion[1])**2))
