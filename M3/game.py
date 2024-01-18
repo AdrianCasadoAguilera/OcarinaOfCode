@@ -911,9 +911,11 @@ def cheat_cook_food(food):
 
 def cheat_open_sanctuaries():
     global locations, data
-    for key in data.locations.keys():
-        data.locations[key]["sanctuaries"]["opened"] == 1     ############# actualizar cuando se tenga hecho locations definitivo
+    for map in ["Hyrule","Gerudo","Necluda","Death Mountain"]:
+            for sanct in data.locations[map]["sanctuaries"].keys():
+                data.locations[map]["sanctuaries"][sanct][0] = 0     ############# actualizar cuando se tenga hecho locations definitivo
     data.data["character"]["max_hearts"] = 9
+    data.data["character"]["hearts_remaining"] = data.data["character"]["max_hearts"]
     scr.add_to_prompt("Cheating: open sanctuaries")
 
 def cheat_game_over():
