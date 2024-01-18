@@ -79,5 +79,6 @@ def player_position(id):
     region = db.region(id)
     mapa = maps[region]
     for x in range(len(mapa)):
+        for y in range(len(mapa[x])):
             if mapa[x][y] == "!":
                 return [x, y]

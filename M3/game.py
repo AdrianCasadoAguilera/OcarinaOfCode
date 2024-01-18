@@ -1180,12 +1180,14 @@ def play(id,act_location):
                         if(x[2].capitalize()=="Castle"):
                             last_location = act_location
                         comp_map(act_location, x[2].capitalize(),id)
-                    elif(x[1].capitalize() == "By" and (x[2] in ["T", "water", "F", "C", "M", "E"] or (len(x[2]) == 2 and x[2][0] == "S" and x[2][1] in (1,2,3,4,5,6,7)))):
-                        if x[2] == "water":
-                            go_by("~", data.data["character"]["region"])
-                        else:
-                            go_by(x[2], data.data["character"]["region"])
                 elif(len(x)==4):
+                    if(x[1].capitalize() == "By" and x[2].capitalize() == "The" and ((x[3].upper() in ["T", "WATER", "F", "C", "M", "E"] or (len(x[3]) == 2 and x[3][0].upper() == "S" and int(x[3][1]) in (0,1,2,3,4,5,6))))):
+                        if x[3].upper() == "WATER":
+                            go_by("~", data.data["character"]["region"])
+                        elif(x[3][0].upper() == "S"):
+                            go_by_sanct(int(x[3][1]), data.data["character"]["region"])
+                        else:
+                            go_by(x[3].upper(), data.data["character"]["region"])
                     x[2] = x[2].capitalize() + " " + x[3].capitalize()
                     if(x[1].lower()=="to" and x[2] == "Death Mountain"):
                         comp_map(act_location, x[2],id)
@@ -1260,7 +1262,7 @@ def go_by(tipo, region):
             if maps.maps[region][i][j] == tipo:
                 lista.append([i,j])
 
-    posicion = [11,7]
+    posicion = data.data["character"]["position"]
 
     distancias = []
     for k in lista:
@@ -1284,3 +1286,24 @@ def go_by(tipo, region):
     data.data["character"]["position"] = posicion
     
 
+def go_by_sanct(sanctuary_number, region):
+    posicion = data.data["character"]["position"]
+
+    for key in data.locations[region]["sanctuaries"].keys():
+        if key == sanctuary_number:
+            position_sanctuary = data.locations[region]["sanctuaries"][sanctuary_number][1]
+
+    posiciones = [[0,1], [1,0], [1,1], [1,-1], [-1,-1], [0,-1], [-1,0], [-1, 1]]
+
+    posiciones_validas = []
+    for i in posiciones:
+        if maps.maps[region][position_sanctuary[0]+i[0]][position_sanctuary[1]+i[1]] == " ":
+            posiciones_validas.append([position_sanctuary[0]+i[0], position_sanctuary[1]+i[1]])
+
+    distancias_validas = []
+    for i in posiciones_validas:
+        distancias_validas.append(math.sqrt((i[0]- posicion[0])**2+(i[1]- posicion[1])**2))
+
+    posicion = posiciones_validas[distancias_validas.index(min(distancias_validas))]
+
+    data.data["character"]["position"] = posicion
