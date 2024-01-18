@@ -1017,6 +1017,8 @@ def blood_moon():
 
     scr.add_to_prompt(f"The Blood moon rises once again. Please be careful, {data.data['character']['user_name']}.")
 
+    db.cur.execute(f"UPDATE game SET blood_moon_appearances = blood_moon_appearances + 1 WHERE game_id = {data.data['character']['game_id']}")
+
 
 def ganon():
     global ganons_life
