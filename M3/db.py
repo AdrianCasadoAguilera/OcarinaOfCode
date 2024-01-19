@@ -111,64 +111,83 @@ def change_map(selected_map, id):
     cur.execute("commit")
 
 def update_database():
-
-    game_query = """
+    character = data.data['character']
+    game_query = f"""
         UPDATE game
-        SET user_name = %(user_name)s,
-            hearts_remaining = %(hearts_remaining)s,
-            max_hearts = %(max_hearts)s,
-            region = %(region)s,
-            blood_moon_countdown = %(blood_moon_countdown)s
-        WHERE game_id = %(game_id)s
+        SET user_name = '{character['user_name']}',
+            hearts_remaining = {character['hearts_remaining']},
+            max_hearts = {character['max_hearts']},
+            region = '{character['region']}',
+            blood_moon_countdown = {character['blood_moon_countdown']}
+        WHERE game_id = {character['game_id']}
     """
-    data.cur.execute(game_query, data.data['character'])
+    cur.execute(game_query)
     
     for food_name, quantity in data.data['foods'].items():
-        foods_query = """
+        foods_query = f"""
             UPDATE foods
-            SET quantity = %s
-            WHERE game_id = %(game_id)s AND food_name = %s
+            SET quantity = {quantity}
+            WHERE game_id = {character['game_id']} AND food_name = '{food_name}'
         """
-        data.cur.execute(foods_query, (quantity, data.data['character']['game_id'], food_name))
+        cur.execute(foods_query)
 
     for weapon_name, weapon_data in data.data['weapons'].items():
-        weapons_query = """
+        weapons_query = f"""
             UPDATE weapons
-            SET quantity = %(quantity)s,
-                equipped = %(equipped)s
-            WHERE game_id = %(game_id)s AND weapon_name = %(weapon_name)s
+            SET quantity = {weapon_data['quantity']},
+                equipped = {weapon_data['equipped']}
+            WHERE game_id = {character['game_id']} AND weapon_name = '{weapon_name}'
         """
-        data.cur.execute(weapons_query, {'game_id': data.data['character']['game_id'], 'weapon_name': weapon_name, **weapon_data})
-
+        cur.execute(weapons_query)
+        
     for region, region_data in data.locations.items():
         for enemy_num, enemy_info in region_data['enemies'].items():
-            enemies_query = """
+            enemies_query = f"""
                 UPDATE enemies
-                SET xpos = %s,
-                    ypos = %s,
-                    lifes_remaining = %s
-                WHERE game_id = %(game_id)s AND region = %(region)s AND num = %s
+                SET xpos = {enemy_info[1][0]},
+                    ypos = {enemy_info[1][1]},
+                    lifes_remaining = {enemy_info[0]}
+                WHERE game_id = {character['game_id']} AND region = '{region}' AND num = {enemy_num}
             """
-            data.cur.execute(enemies_query, (enemy_info[1][0], enemy_info[1][1], enemy_info[0], {'game_id': 1, 'region': region, 'num': enemy_num}))
+            cur.execute(enemies_query)
 
-        for chest_num, chest_position in region_data['chests'].items():
-            chests_query = """
+        for tree_num, tree_data in region_data['trees'].items():
+            trees_query = f"""
+                UPDATE trees
+                SET lives_remaining = {tree_data[0]},
+                    waiting_time = 0
+                WHERE game_id = {character['game_id']} AND region = '{region}' AND num = {tree_num}
+            """
+
+        for chest_num, chest_data in region_data['chests'].items():
+            chests_query = f"""
                 UPDATE chests
-                SET xpos = %s,
-                    ypos = %s
-                WHERE game_id = %(game_id)s AND region = %(region)s AND num = %s
+                SET opened = {chest_data[0]},
+                    xpos = {chest_data[1][0]},
+                    ypos = {chest_data[1][1]}
+                WHERE game_id = {character['game_id']} AND region = '{region}' AND num = {chest_num}
             """
-            data.cur.execute(chests_query, (chest_position[0], chest_position[1], {'game_id': 1, 'region': region, 'num': chest_num}))
+            cur.execute(chests_query)
 
-        game_query = """
+        for sanct_num, sanct_data in region_data['sanctuaries'].items():
+            sanct_query = f"""
+                UPDATE sanctuaries
+                SET opened = {sanct_data[0]},
+                    xpos = {sanct_data[1][0]},
+                    ypos = {sanct_data[1][1]}
+                WHERE game_id = {character['game_id']} AND region = '{region}' AND num = {sanct_num}
+            """
+            cur.execute(sanct_query)
+
+        game_query = f"""
             UPDATE game
-            SET fishing = %s
-            WHERE game_id = %(game_id)s AND region = %(region)s
+            SET fishing = {region_data['fishing']}
+            WHERE game_id = {character['game_id']} AND region = '{region}'
         """
-        data.cur.execute(game_query, (region_data['fishing'], {'game_id': 1, 'region': region}))
+        cur.execute(game_query)
 
 
-    data.connection.commit()
+    connection.commit()
 
 def insert_initial_data(game_id):
 
@@ -198,7 +217,7 @@ def insert_initial_data(game_id):
     for region, region_data in data.locations.items():
         for tree_num, tree_info in region_data.get('trees', {}).items():
             cur.execute("""
-                INSERT INTO trees (game_id, region, num, xpos, ypos, times_hit, waiting_time)
+                INSERT INTO trees (game_id, region, num, xpos, ypos, lives_remaining, waiting_time)
                 VALUES (%s, %s, %s, %s, %s, %s, %s)
             """, (game_id[0][0], region, tree_num, tree_info[1][0], tree_info[1][1], tree_info[0], 0))
 
@@ -208,7 +227,7 @@ def insert_initial_data(game_id):
             cur.execute("""
                 INSERT INTO chests (game_id, region, num, opened, xpos, ypos)
                 VALUES (%s, %s, %s, %s, %s, %s)
-            """, (game_id[0][0], region, chest_num, chest_info[1][0], chest_info[1][1], 0))
+            """, (game_id[0][0], region, chest_num, chest_info[0], chest_info[1][0], chest_info[1][1]))
 
     # Insertar datos en la tabla sanctuaries
     for region, region_data in data.locations.items():

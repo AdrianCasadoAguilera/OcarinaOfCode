@@ -1,72 +1,26 @@
-import maps, math, data
+import maps, math, data, db
 
+def collect_data(id):
+    for region in data.locations.keys():
+        db.cur.execute(f"SELECT * FROM enemies WHERE game_id = {id} AND region = '{region}'")
+        rst = db.cur.fetchall()
+        for i in (rst):
+            data.locations[region]["enemies"][i[2]] = [i[5], [i[3],i[4]]]
 
-def print_screen(char_pos,options,mat,inventory,inv_title="Main",titol_seccio="*"):
-    if(inv_title=="Main"):
-        inv_title="Inventory"
-    if(len(titol_seccio)%2==0):
-        titol_seccio += " "
-    if(len(inv_title)%2==0):
-        inv_title = " " + inv_title
-    options_str = ", ".join(options)
-    if(len(options_str)%2==0):
-        options_str += " "
-    clear_screen()
-    print(f"* {titol_seccio} "+"* "*int(((77-len(titol_seccio)-len(inv_title))/2)-1)+inv_title+" *")
-    for i in range(len(mat)):
-        print("*",end="")
-        for j in range(len(mat[i])):
-            if(i==char_pos[0] and j==char_pos[1]):
-                print("X",end="")
-            elif(mat[i][j]=="limit"):
-                print(" ",end="")
-            elif(mat[i][j]=="S" and titol_seccio!="General Map"):
-                region = data.data["character"]["region"]
-                if([i,j+1] != char_pos and [i,j+2] != char_pos):
-                    for sanct,info in data.locations[region]["sanctuaries"].items():
-                        if(info[1]==[i,j]):
-                            if(info[0]==1):
-                                print(f"S{sanct}?",end="")
-                            else:
-                                print(f"S{sanct}",end="")
-                elif([i,j+1]==char_pos):
-                    for sanct,info in data.locations[region]["sanctuaries"].items():
-                        if(info[1]==[i,j]):
-                            if(info[0]==1):
-                                print(f"SX?",end="")
-                            else:
-                                print(f"SX",end="")
-                else:
-                    for sanct,info in data.locations[region]["sanctuaries"].items():
-                        if(info[1]==[i,j]):
-                            print(f"S{sanct}X",end="")
-            elif(mat[i][j]=="E"):
-                region = data.data["character"]["region"]
-                if([i,j+1]!=char_pos):
-                    for enemy in data.locations[region]["enemies"].values():
-                        if(enemy[1]==[i,j]):
-                            print(f"E{enemy[0]}",end="")
-                else:
-                    for enemy in data.locations[region]["enemies"].values():
-                        if(enemy[1]==[i,j]):
-                            print(f"{enemy[0]}",end="")
-            elif(mat[i][j-1]=="E"):
-                    print("",end="")
-            elif(mat[i][j-2]=="S"):
-                    print("",end="")
-            elif(mat[i][j-1]=="S"):
-                print("",end="")
-            elif(mat[i][j-1]=="E"):
-                print("",end="")
-            elif(mat[i][j]!="!"):
-                print(mat[i][j],end="")
+        db.cur.execute(f"SELECT * FROM trees WHERE game_id = {id} AND region = '{region}'")
+        rst = db.cur.fetchall()
+        for i in (rst):
+            if i[5] != 0:
+                data.locations[region]["trees"][i[2]] = [i[5], [i[3],i[4]]]
             else:
-                print(" ",end="")
-            
-        print("* ",end="")
-        print(inventory[i].ljust(17),end=" *\n")
-    if(titol_seccio=="General Map"):
-        print(f"* {options} "+"* "*int((77-len(options))/2))
-    else:
-        print(f"* {options_str} "+"* "*int((77-len(options_str))/2))
-    print_prompt()
+                data.locations[region]["trees"][i[2]] = [-i[6], [i[3],i[4]]]
+
+        db.cur.execute(f"SELECT * FROM chests WHERE game_id = {id} AND region = '{region}'")
+        rst = db.cur.fetchall()
+        for i in (rst):
+            data.locations[region]["chests"][i[2]] = [i[3], [i[4],i[5]]]
+
+        db.cur.execute(f"SELECT * FROM sanctuaries WHERE game_id = {id} AND region = '{region}'")
+        rst = db.cur.fetchall()
+        for i in (rst):
+            data.locations[region]["sanctuaries"][i[2]] = [i[5], [i[3],i[4]]]

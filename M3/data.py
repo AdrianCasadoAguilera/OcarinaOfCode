@@ -193,6 +193,11 @@ def collect_data(id):
     }
 
 
+    for region in data.locations.keys():
+        db.cur.execute(f"SELECT * FROM enemies WHERE game_id = {id} AND region = {region}")
+        rst = db.cur.fetchall()
+        print(rst)
+
 def is_equipped(weapon):
     if(data["weapons"][weapon]["equipped"]==1):
         return "(equipped)"

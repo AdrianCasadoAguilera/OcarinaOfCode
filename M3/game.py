@@ -431,7 +431,7 @@ def open_sanctuary():
                 data.locations[region]["sanctuaries"][key][0] -= 1
                 data.data["character"]["max_hearts"] += 1
                 data.data["character"]["hearts_remaining"] = data.data["character"]["max_hearts"]
-    db.update_database(data.data["character"]["game_id"])
+    db.update_database()
 
 
 def who_attacks():
@@ -745,6 +745,7 @@ def eat(food):
     remove_food(food,1)
     if(food=="Vegetable"):
         increase_health(1)
+        db.cur.execute(f"UPDATE food_used SET quantity_used = quantity_used + 1 WHERE food_name = {food}")
     elif(food=="Salad"):
         increase_health(2)
     elif(food=="Pescatarian"):
@@ -1108,7 +1109,7 @@ def play(id,act_location):
             for weapon in data.data["weapons"]:
                 if(data.data["weapons"][weapon]["durability"]==0):
                     data.data["weapons"][weapon]["quantity"]-=1
-                    db.cur.execute(f"UPDATE weapons_used SET quantity_used = quantity_used + 1 WHERE game_id = {data.data['characters']['game_id']} and weapon_name = {weapon}")
+                    db.cur.execute(f"UPDATE weapons_used SET quantity_used = quantity_used + 1 WHERE game_id = {data.data['character']['game_id']} AND weapon_name = {weapon}")
                     if(data.data["weapons"][weapon]["quantity"]==0):
                         data.data["weapons"][weapon]["equipped"] = 0
                     if(weapon.split(" ")[0] == "Wood"):
