@@ -11,8 +11,7 @@ CREATE TABLE game (
     max_hearts INT,
     blood_moon_countdown INT,
     blood_moon_appearances INT,
-    region VARCHAR(50),
-    fishing BOOLEAN
+    region VARCHAR(50)
 );
 
 -- Tabla de comidas
@@ -42,32 +41,29 @@ CREATE TABLE enemies (
 );
 
 -- Tabla de santuarios abiertos (sanctuaries_opened)
-CREATE TABLE sanctuaries (
+CREATE TABLE sanctuaries_opened (
     game_id INT,
     region VARCHAR(50),
     num INT,
-    opened BOOLEAN,
 	xpos FLOAT,
     ypos FLOAT
 );
 
 -- Tabla de cofres abiertos (chests_opened)
-CREATE TABLE chests (
+CREATE TABLE chests_opened (
     game_id INT,
     region VARCHAR(50),
     num INT,
-    opened BOOLEAN,
     xpos FLOAT,
     ypos FLOAT
 );
 
-CREATE TABLE trees (
+CREATE TABLE map_objects (
 	game_id INT,
     region VARCHAR(50),
 	num INT,
     xpos INT,
     ypos INT,
-    times_hit INT,
     waiting_time INT
 );
 
