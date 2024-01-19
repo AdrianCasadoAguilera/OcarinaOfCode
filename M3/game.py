@@ -429,6 +429,7 @@ def open_sanctuary():
                 data.locations[region]["sanctuaries"][key][0] -= 1
                 data.data["character"]["max_hearts"] += 1
                 data.data["character"]["hearts_remaining"] = data.data["character"]["max_hearts"]
+                db.update_database(data.data)
 
 
 def who_attacks():
@@ -689,6 +690,7 @@ def can_open():
 def add_weapon(weapon):
     global data
     data.data["weapons"][weapon]["quantity"] += 1
+    db.update_database(data.data)
 
 def remove_food(food,quantity):
     global data
@@ -698,6 +700,7 @@ def remove_food(food,quantity):
 def add_food(food,quantity):
     global data
     data.data["foods"][food] += quantity
+    db.update_database(data.data)
 
 def cook(food):
     if(food == "Salad"):
@@ -783,21 +786,25 @@ def comp_map(act_location,selected_map,id):
         db.change_map(selected_map, id)
         data.data["character"]["position"] = maps.player_position(id)
         prob_fox_appear()
+        db.update_database(data.data)
     elif(act_location=="Death Mountain" and (selected_map=="Hyrule" or selected_map=="Necluda")):
         data.data["character"]["region"] = selected_map
         db.change_map(selected_map, id)
         data.data["character"]["position"] = maps.player_position(id)
         prob_fox_appear()
+        db.update_database(data.data)
     elif(act_location=="Gerudo" and (selected_map=="Hyrule" or selected_map=="Necluda")):
         data.data["character"]["region"] = selected_map
         db.change_map(selected_map, id)
         data.data["character"]["position"] = maps.player_position(id)
         prob_fox_appear()
+        db.update_database(data.data)
     elif(act_location=="Necluda" and (selected_map=="Death Mountain" or selected_map=="Gerudo")):
         data.data["character"]["region"] = selected_map
         db.change_map(selected_map, id)
         data.data["character"]["position"] = maps.player_position(id)
         prob_fox_appear()
+        db.update_database(data.data)
     elif(selected_map=="Castle"):
         data.data["character"]["region"] = selected_map
         db.change_map(selected_map, id)
@@ -807,6 +814,7 @@ def comp_map(act_location,selected_map,id):
         data.data["character"]["region"] = selected_map
         db.change_map(selected_map, id)
         data.data["character"]["position"] = maps.player_position(id)
+        db.update_database(data.data)
     else:
         raise ValueError(f"You can't go to {selected_map} from here")
     
@@ -880,9 +888,11 @@ def cheat_add(option):
         if option in data.data["weapons"]:
             data.data["weapons"][option]["quantity"] += 1
             scr.add_to_prompt(f"Cheating: add {option.lower()}")
+            db.update_database(data.data)
         elif option in food:
             data.data["foods"][option] += 1
             scr.add_to_prompt(f"Cheating: add {option.lower()}")
+            db.update_database(data.data)
         else:
             raise TypeError
     except TypeError:
@@ -898,10 +908,12 @@ def cheat_cook_food(food):
             data.data["food"]["Fish"] += 1
             data.data["food"]["Vegetable"] += 1
             cook(food)
+            db.update_database(data.data)
         elif food == "Roasted":
             data.data["food"]["Meat"] += 1
             data.data["food"]["Vegetable"] += 1
             cook(food)
+            db.update_database(data.data)
         else:
             raise TypeError
         scr.add_to_prompt(f"Cheating: cook {food.lower()}")
@@ -1206,13 +1218,15 @@ def play(id,act_location):
                             last_location = act_location
                         comp_map(act_location, x[2].capitalize(),id)
                 elif(len(x)==4):
-                    if(x[1].capitalize() == "By" and x[2].capitalize() == "The" and ((x[3].upper() in ["T", "WATER", "F", "C", "M", "E"] or (len(x[3]) == 2 and x[3][0].upper() == "S" and int(x[3][1]) in (0,1,2,3,4,5,6))))):
+                    if(x[1].capitalize() == "By" and x[2].capitalize() == "The" and ((x[3].upper() in ["T", "WATER", "F", "C", "M", "E"] or (len(x[3]) == 2 and x[3][0].upper() == "S" and x[3][1] in ('0','1','2','3','4','5','6'))))):
                         if x[3].upper() == "WATER":
                             go_by("~", data.data["character"]["region"])
                         elif(x[3][0].upper() == "S"):
                             go_by_sanct(int(x[3][1]), data.data["character"]["region"])
                         else:
                             go_by(x[3].upper(), data.data["character"]["region"])
+                    else:
+                        raise ValueError("Invalid Action")
                     x[2] = x[2].capitalize() + " " + x[3].capitalize()
                     if(x[1].lower()=="to" and x[2] == "Death Mountain"):
                         comp_map(act_location, x[2],id)
@@ -1281,8 +1295,10 @@ def go_by(tipo, region):
     distancias = []
     for k in lista:
         distancias.append(math.sqrt((k[0]- posicion[0])**2+(k[1]- posicion[1])**2))
-
-    minimo = min(distancias)
+    if(len(distancias)>0):
+        minimo = min(distancias)
+    else:
+        raise ValueError("Invalid Action")
 
     posiciones = [[0,1], [1,0], [1,1], [1,-1], [-1,-1], [0,-1], [-1,0], [-1, 1]]
 
