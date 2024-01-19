@@ -20,12 +20,6 @@ def pass_turn():
             data.locations[region]["trees"][key][0]=4
             maps.maps[region][data.locations[region]["trees"][key][1][0]][data.locations[region]["trees"][key][1][1]] = "T"   
 
-    #Option for opened chests 
-    for key in data.locations[region]["chests"].keys():
-        if(data.locations[region]["chests"][key][0]==0):
-            maps.maps[region][data.locations[region]["chests"][key][1][0]][data.locations[region]["chests"][key][1][1]] = "W"
-        else:
-            maps.maps[region][data.locations[region]["chests"][key][1][0]][data.locations[region]["chests"][key][1][1]] = "M"
     
     data.data["character"]["blood_moon_countdown"] -= 1
 
@@ -410,16 +404,10 @@ def open_chest():
         scr.add_to_prompt("You got a Shield")
         add_weapon("Shield")
     loc = where_is_chest()
-    for key,chest in data.locations[data.data["character"]["region"]]["chests"].items():
-        if(chest[1]==loc):
-                data.locations[data.data["character"]["region"]]["chests"][key][0] -= 1
-    for key in data.locations.keys():
-        for value in data.locations[key]["chests"].values():
-            if value[0]==1:
-                return
-    for key in data.locations.keys():
-        for value in data.locations[key]["chests"].values():
-                value[0] = 1
+    for chest_number,chest_info in data.locations[region]["chests"].items():
+        if(chest_info[1]==loc):
+                data.locations[region]["chests"][chest_number][0] = 0
+    db.update_database()
 
 def open_sanctuary():
     loc = where_is_sanctuary()
@@ -977,6 +965,7 @@ def link_death():
             data.data["character"]["hearts_remaining"] = data.data["character"]["max_hearts"]
             break
         scr.add_to_prompt("Invalid Action")
+    db.update_database()
 
 def check_enemy_movement(direction, enemy_index, region):
     y, x = data.locations[region]["enemies"][enemy_index][1][0], data.locations[region]["enemies"][enemy_index][1][1]
@@ -1117,6 +1106,7 @@ def play(id,act_location):
             update_ganons_hearts()
 
             pos = data.data["character"]["position"]
+            region = data.data["character"]["region"]
             for weapon in data.data["weapons"]:
                 if(data.data["weapons"][weapon]["durability"]==0):
                     data.data["weapons"][weapon]["quantity"]-=1
@@ -1127,6 +1117,22 @@ def play(id,act_location):
                         data.data["weapons"][weapon]["durability"]=5
                     else:
                         data.data["weapons"][weapon]["durability"]=9
+            for key in data.locations[region]["chests"].keys():
+                if(data.locations[region]["chests"][key][0]==0):
+                    maps.maps[region][data.locations[region]["chests"][key][1][0]][data.locations[region]["chests"][key][1][1]] = "W"
+                else:
+                    maps.maps[region][data.locations[region]["chests"][key][1][0]][data.locations[region]["chests"][key][1][1]] = "M"
+            
+            all_chests_opened = True
+            for reg in data.locations:
+                for chest in data.locations[reg]["chests"].values():
+                    if(chest[0]==1):
+                        all_chests_opened = False
+            if(all_chests_opened):
+                scr.add_to_prompt("All chests opened again.")
+                for reg in data.locations:
+                    for chest in data.locations[reg]["chests"].values():
+                        chest[0] = 1
             
             options = ["Exit","Attack","Go","Equip","Unequip","Eat","Cook","Fish","Open","Show"]
             if(data.data["character"]["hearts_remaining"]<=0):
@@ -1228,6 +1234,8 @@ def play(id,act_location):
                             go_by_sanct(int(x[3][1]), data.data["character"]["region"])
                         else:
                             go_by(x[3].upper(), data.data["character"]["region"])
+                    elif(x[1].capitalize()=="To" and x[2].capitalize() == "Death" and x[3].capitalize() == "Mountain"):
+                        comp_map(act_location,"Death Mountain",id)
                     else:
                         raise ValueError("Invalid Action")
                     x[2] = x[2].capitalize() + " " + x[3].capitalize()
