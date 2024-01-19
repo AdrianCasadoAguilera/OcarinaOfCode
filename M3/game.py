@@ -429,7 +429,7 @@ def open_sanctuary():
                 data.locations[region]["sanctuaries"][key][0] -= 1
                 data.data["character"]["max_hearts"] += 1
                 data.data["character"]["hearts_remaining"] = data.data["character"]["max_hearts"]
-    db.update_database(data.data["character"]["game_id"])
+    # db.update_database(data.data["character"]["game_id"])
 
 
 def who_attacks():
