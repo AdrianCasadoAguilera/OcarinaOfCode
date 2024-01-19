@@ -1107,7 +1107,6 @@ def play(id,act_location):
     prob_fox_appear()
     while True:
         try:
-            input(data.locations["Hyrule"]["enemies"])
             # CHECK ELEMENTS
             update_ganons_hearts()
 
