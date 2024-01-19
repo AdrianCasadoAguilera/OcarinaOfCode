@@ -121,7 +121,7 @@ def update_database():
             blood_moon_countdown = %(blood_moon_countdown)s
         WHERE game_id = %(game_id)s
     """
-    data.cur.execute(game_query, data.data['character'])
+    cur.execute(game_query, data.data['character'])
     
     for food_name, quantity in data.data['foods'].items():
         foods_query = """
@@ -129,7 +129,7 @@ def update_database():
             SET quantity = %s
             WHERE game_id = %(game_id)s AND food_name = %s
         """
-        data.cur.execute(foods_query, (quantity, data.data['character']['game_id'], food_name))
+        cur.execute(foods_query, (quantity, data.data['character']['game_id'], food_name))
 
     for weapon_name, weapon_data in data.data['weapons'].items():
         weapons_query = """
@@ -138,7 +138,7 @@ def update_database():
                 equipped = %(equipped)s
             WHERE game_id = %(game_id)s AND weapon_name = %(weapon_name)s
         """
-        data.cur.execute(weapons_query, {'game_id': data.data['character']['game_id'], 'weapon_name': weapon_name, **weapon_data})
+        cur.execute(weapons_query, {'game_id': data.data['character']['game_id'], 'weapon_name': weapon_name, **weapon_data})
 
     for region, region_data in data.locations.items():
         for enemy_num, enemy_info in region_data['enemies'].items():
@@ -149,7 +149,7 @@ def update_database():
                     lifes_remaining = %s
                 WHERE game_id = %(game_id)s AND region = %(region)s AND num = %s
             """
-            data.cur.execute(enemies_query, (enemy_info[1][0], enemy_info[1][1], enemy_info[0], {'game_id': 1, 'region': region, 'num': enemy_num}))
+            cur.execute(enemies_query, (enemy_info[1][0], enemy_info[1][1], enemy_info[0], {'game_id': 1, 'region': region, 'num': enemy_num}))
 
         for chest_num, chest_position in region_data['chests'].items():
             chests_query = """
@@ -158,14 +158,14 @@ def update_database():
                     ypos = %s
                 WHERE game_id = %(game_id)s AND region = %(region)s AND num = %s
             """
-            data.cur.execute(chests_query, (chest_position[0], chest_position[1], {'game_id': 1, 'region': region, 'num': chest_num}))
+            cur.execute(chests_query, (chest_position[0], chest_position[1], {'game_id': 1, 'region': region, 'num': chest_num}))
 
         game_query = """
             UPDATE game
             SET fishing = %s
             WHERE game_id = %(game_id)s AND region = %(region)s
         """
-        data.cur.execute(game_query, (region_data['fishing'], {'game_id': 1, 'region': region}))
+        cur.execute(game_query, (region_data['fishing'], {'game_id': 1, 'region': region}))
 
 
     data.connection.commit()
