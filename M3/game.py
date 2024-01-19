@@ -1,4 +1,4 @@
-import screen as scr,maps,inventory as inv,db,random,data,math
+import screen as scr,maps,inventory as inv,db,random,data,math,hola
 
 # GANON'S LIFE
 ganons_life = 8
@@ -323,28 +323,33 @@ def attack_enemy():
     x, y = data.locations[region]["enemies"][index][1][0], data.locations[region]["enemies"][index][1][1]
     if data.locations[region]["enemies"][index][0] == 0:
         maps.maps[region][x][y] = " "
-    while(True):
-        direction = random.randint(0,3)
-        if directions[direction] == "up":
-            if check_enemy_movement(directions[direction], index, region):
-                data.locations[region]["enemies"][index][1][0] -= 1
-                maps.maps[region][x][y], maps.maps[region][x-1][y] = maps.maps[region][x-1][y], maps.maps[region][x][y]
-                break
-        elif directions[direction] == "down":
-            if check_enemy_movement(directions[direction], index, region):
-                data.locations[region]["enemies"][index][1][0] += 1
-                maps.maps[region][x][y], maps.maps[region][x+1][y] = maps.maps[region][x+1][y], maps.maps[region][x][y]
-                break
-        elif directions[direction] == "left":
-            if check_enemy_movement(directions[direction], index, region):
-                data.locations[region]["enemies"][index][1][1] -= 1
-                maps.maps[region][x][y], maps.maps[region][x][y-1] = maps.maps[region][x][y-1], maps.maps[region][x][y]
-                break
-        elif directions[direction] == "right":
-            if check_enemy_movement(directions[direction], index, region):
-                data.locations[region]["enemies"][index][1][1] += 1
-                maps.maps[region][x][y], maps.maps[region][x][y+1] = maps.maps[region][x][y+1], maps.maps[region][x][y]
-                break
+    else:
+        while(True):
+            direction = random.randint(0,3)
+            if directions[direction] == "up":
+                if check_enemy_movement(directions[direction], index, region):
+                    data.locations[region]["enemies"][index][1][0] -= 1
+                    maps.maps[region][x][y] = " "
+                    maps.maps[region][x-1][y] = "E"
+                    break
+            elif directions[direction] == "down":
+                if check_enemy_movement(directions[direction], index, region):
+                    data.locations[region]["enemies"][index][1][0] += 1
+                    maps.maps[region][x][y] = " "
+                    maps.maps[region][x+1][y] = "E"
+                    break
+            elif directions[direction] == "left":
+                if check_enemy_movement(directions[direction], index, region):
+                    data.locations[region]["enemies"][index][1][1] -= 1
+                    maps.maps[region][x][y] = " "
+                    maps.maps[region][x][y-1] = "E"
+                    break
+            elif directions[direction] == "right":
+                if check_enemy_movement(directions[direction], index, region):
+                    data.locations[region]["enemies"][index][1][1] += 1
+                    maps.maps[region][x][y] = " "
+                    maps.maps[region][x][y+1] = "E"
+                    break
     data.data["weapons"][weapon]["durability"] -= 1
     if not shield == " ":
         data.data["weapons"][shield]["durability"] -= 1
@@ -1102,6 +1107,7 @@ def play(id,act_location):
     prob_fox_appear()
     while True:
         try:
+            input(data.locations["Hyrule"]["enemies"])
             # CHECK ELEMENTS
             update_ganons_hearts()
 
@@ -1110,7 +1116,7 @@ def play(id,act_location):
             for weapon in data.data["weapons"]:
                 if(data.data["weapons"][weapon]["durability"]==0):
                     data.data["weapons"][weapon]["quantity"]-=1
-                    db.cur.execute(f"UPDATE weapons_used SET quantity_used = quantity_used + 1 WHERE game_id = {data.data['characters']['game_id']} and weapon_name = {weapon}")
+                    db.cur.execute(f"UPDATE weapons_used SET quantity_used = quantity_used + 1 WHERE game_id = {data.data['character']['game_id']} and weapon_name = '{weapon}'")
                     if(data.data["weapons"][weapon]["quantity"]==0):
                         data.data["weapons"][weapon]["equipped"] = 0
                     if(weapon.split(" ")[0] == "Wood"):
@@ -1122,6 +1128,13 @@ def play(id,act_location):
                     maps.maps[region][data.locations[region]["chests"][key][1][0]][data.locations[region]["chests"][key][1][1]] = "W"
                 else:
                     maps.maps[region][data.locations[region]["chests"][key][1][0]][data.locations[region]["chests"][key][1][1]] = "M"
+            for reg in data.locations.keys():
+                for num_enemy in data.locations[reg]["enemies"].keys():
+                    if(data.locations[reg]["enemies"][num_enemy][0]>0):
+                        maps.maps[reg][data.locations[reg]["enemies"][num_enemy][1][0]][data.locations[reg]["enemies"][num_enemy][1][1]] = "E"
+                    else:
+                        maps.maps[reg][data.locations[reg]["enemies"][num_enemy][1][0]][data.locations[reg]["enemies"][num_enemy][1][1]] = " "
+            
             
             all_chests_opened = True
             for reg in data.locations:
