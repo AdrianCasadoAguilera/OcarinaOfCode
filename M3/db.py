@@ -110,7 +110,7 @@ def change_map(selected_map, id):
     cur.execute(f'UPDATE game SET region = "{selected_map}" WHERE game_id = {id}')
     cur.execute("commit")
 
-def update_database(data):
+def update_database():
 
     game_query = """
         UPDATE game
@@ -121,24 +121,24 @@ def update_database(data):
             blood_moon_countdown = %(blood_moon_countdown)s
         WHERE game_id = %(game_id)s
     """
-    data.cur.execute(game_query, data['character'])
+    data.cur.execute(game_query, data.data['character'])
     
-    for food_name, quantity in data['foods'].items():
+    for food_name, quantity in data.data['foods'].items():
         foods_query = """
             UPDATE foods
             SET quantity = %s
             WHERE game_id = %(game_id)s AND food_name = %s
         """
-        data.cur.execute(foods_query, (quantity, data['character']['game_id'], food_name))
+        data.cur.execute(foods_query, (quantity, data.data['character']['game_id'], food_name))
 
-    for weapon_name, weapon_data in data['weapons'].items():
+    for weapon_name, weapon_data in data.data['weapons'].items():
         weapons_query = """
             UPDATE weapons
             SET quantity = %(quantity)s,
                 equipped = %(equipped)s
             WHERE game_id = %(game_id)s AND weapon_name = %(weapon_name)s
         """
-        data.cur.execute(weapons_query, {'game_id': data['character']['game_id'], 'weapon_name': weapon_name, **weapon_data})
+        data.cur.execute(weapons_query, {'game_id': data.data['character']['game_id'], 'weapon_name': weapon_name, **weapon_data})
 
     for region, region_data in data.locations.items():
         for enemy_num, enemy_info in region_data['enemies'].items():
@@ -169,3 +169,68 @@ def update_database(data):
 
 
     data.connection.commit()
+
+def insert_initial_data(game_id):
+
+    # Insertar datos en la tabla foods
+    for food_name, quantity in data.data['foods'].items():
+        cur.execute("""
+            INSERT INTO foods (food_name, game_id, quantity)
+            VALUES (%s, %s, %s)
+        """, (food_name, game_id[0][0], quantity))
+
+    # Insertar datos en la tabla weapons
+    for weapon_name, weapon_data in data.data['weapons'].items():
+        cur.execute("""
+            INSERT INTO weapons (weapon_name, game_id, equipped, quantity)
+            VALUES (%s, %s, %s, %s)
+        """, (weapon_name, game_id[0][0], weapon_data['equipped'], weapon_data['quantity']))
+
+    # Insertar datos en la tabla enemies
+    for region, region_data in data.locations.items():
+        for enemy_num, enemy_info in region_data.get('enemies', {}).items():
+            cur.execute("""
+                INSERT INTO enemies (game_id, region, num, xpos, ypos, lifes_remaining)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """, (game_id[0][0], region, enemy_num, enemy_info[1][0], enemy_info[1][1], enemy_info[0]))
+
+    # Insertar datos en la tabla trees
+    for region, region_data in data.locations.items():
+        for tree_num, tree_info in region_data.get('trees', {}).items():
+            cur.execute("""
+                INSERT INTO trees (game_id, region, num, xpos, ypos, times_hit, waiting_time)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """, (game_id[0][0], region, tree_num, tree_info[1][0], tree_info[1][1], tree_info[0], 0))
+
+    # Insertar datos en la tabla chests
+    for region, region_data in data.locations.items():
+        for chest_num, chest_info in region_data.get('chests', {}).items():
+            cur.execute("""
+                INSERT INTO chests (game_id, region, num, opened, xpos, ypos)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """, (game_id[0][0], region, chest_num, chest_info[1][0], chest_info[1][1], 0))
+
+    # Insertar datos en la tabla sanctuaries
+    for region, region_data in data.locations.items():
+        for sanctuary_num, sanctuary_info in region_data.get('sanctuaries', {}).items():
+            cur.execute("""
+                INSERT INTO sanctuaries (game_id, region, num, opened, xpos, ypos)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """, (game_id[0][0], region, sanctuary_num, sanctuary_info[1][0], sanctuary_info[1][1], 0))
+
+    for food_name, quantity in data.data['foods'].items():
+        cur.execute("""
+            INSERT INTO food_used (food_name, game_id, quantity_used)
+            VALUES (%s, %s, %s)
+        """, (food_name, game_id[0][0], 0))
+
+    # Insertar datos en la tabla weapons
+    for weapon_name, weapon_data in data.data['weapons'].items():
+        cur.execute("""
+            INSERT INTO weapons_used (weapon_name, game_id, quantity_used)
+            VALUES (%s, %s, %s)
+        """, (weapon_name, game_id[0][0], 0))
+
+
+    # Confirmar los cambios
+    connection.commit()
