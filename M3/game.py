@@ -1,4 +1,4 @@
-import screen as scr,maps,inventory as inv,db,random,data,math,hola
+import screen as scr,maps,inventory as inv,db,random,data,math
 
 # GANON'S LIFE
 ganons_life = 8
