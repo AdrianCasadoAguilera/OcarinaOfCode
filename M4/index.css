@@ -1,7 +1,9 @@
+@import url('https://fonts.cdnfonts.com/css/the-wild-breath-of-zelda');
+
 body{
     background-image: url("src/maxresdefault.jpg");
     margin: 0;
-    margin-bottom: 1000px;
+
 }
 .sticky{
     position: sticky;
@@ -10,9 +12,9 @@ body{
     background-image: url(src/game-description-background.png);
     justify-content: center;
     display: flex;
-    padding: 200px;
-    padding-left: 500px;
-    padding-right: 500px;
+    padding: 10%;
+    padding-left: 40vh;
+    padding-right: 40vh;
     background-repeat: no-repeat;
     backdrop-filter: blur(100px);
     z-index: -1;
@@ -21,7 +23,7 @@ body{
     justify-content: center;
     display: flex;
     margin-top: 50px;
-    
+    margin: 10%;
 }
 .game-text {
     background-color: rgba(255, 255, 255, 0.3);
@@ -33,3 +35,37 @@ body{
     backdrop-filter: blur(5px);
     padding: 100%;
   }
+.main-boxes{
+    justify-content: center;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 20px;
+    font-style: none;
+    border: solid;
+    padding: 20%;
+    font-family: 'The Wild Breath of Zelda', sans-serif;
+}
+a.small-box:link, a.small-box:visited{
+    border: solid;
+    background-color: red;
+    opacity: 0.7;
+    width: 40%;
+    height: 40%;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    color:black;
+}
+
+a.small-box:hover{
+    opacity: 1;
+    transition: 0.5s;
+    -webkit-transform: scale(1.2);
+    -ms-transform: scale(1.2);
+    transform: scale(1.1);
+}
+
+
+@media screen {
+    
+}
