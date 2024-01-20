@@ -5,22 +5,7 @@ ganons_life = 8
 
 # AUXILIAR FUNCTIONS
 
-def pass_turn():
-    region = data.data["character"]["region"]
-    for key in data.locations[region]["trees"].keys():
-        if(data.locations[region]["trees"][key][0]<0):
-            data.locations[region]["trees"][key][0]+=1
-            if(data.locations[region]["trees"][key][0]>-3):
-                maps.maps[region][data.locations[region]["trees"][key][1][0]][data.locations[region]["trees"][key][1][1]] = "t"
-            elif(data.locations[region]["trees"][key][0]>-7):
-                maps.maps[region][data.locations[region]["trees"][key][1][0]][data.locations[region]["trees"][key][1][1]] = "|"
-            else:
-                maps.maps[region][data.locations[region]["trees"][key][1][0]][data.locations[region]["trees"][key][1][1]] = "."
-        if(data.locations[region]["trees"][key][0]==0):
-            data.locations[region]["trees"][key][0]=4
-            maps.maps[region][data.locations[region]["trees"][key][1][0]][data.locations[region]["trees"][key][1][1]] = "T"   
-
-    
+def pass_turn():  
     data.data["character"]["blood_moon_countdown"] -= 1
 
     if data.data["character"]["blood_moon_countdown"] == 0:
@@ -1133,7 +1118,20 @@ def play(id,act_location):
                         maps.maps[reg][data.locations[reg]["enemies"][num_enemy][1][0]][data.locations[reg]["enemies"][num_enemy][1][1]] = "E"
                     else:
                         maps.maps[reg][data.locations[reg]["enemies"][num_enemy][1][0]][data.locations[reg]["enemies"][num_enemy][1][1]] = " "
-            
+            region = data.data["character"]["region"]
+            for key in data.locations[region]["trees"].keys():
+                if(data.locations[region]["trees"][key][0]<0):
+                    data.locations[region]["trees"][key][0]+=1
+                    if(data.locations[region]["trees"][key][0]>-3):
+                        maps.maps[region][data.locations[region]["trees"][key][1][0]][data.locations[region]["trees"][key][1][1]] = "t"
+                    elif(data.locations[region]["trees"][key][0]>-7):
+                        maps.maps[region][data.locations[region]["trees"][key][1][0]][data.locations[region]["trees"][key][1][1]] = "|"
+                    else:
+                        maps.maps[region][data.locations[region]["trees"][key][1][0]][data.locations[region]["trees"][key][1][1]] = "."
+                if(data.locations[region]["trees"][key][0]==0):
+                    data.locations[region]["trees"][key][0]=4
+                    maps.maps[region][data.locations[region]["trees"][key][1][0]][data.locations[region]["trees"][key][1][1]] = "T" 
+
             
             all_chests_opened = True
             for reg in data.locations:

@@ -153,7 +153,6 @@ def update_database():
             cur.execute(enemies_query)
 
         for chest_num, chest_data in region_data['chests'].items():
-            # input(chest_data)
             chests_query = f"""
                 UPDATE chests
                 SET opened = {chest_data[0]},
@@ -162,6 +161,35 @@ def update_database():
                 WHERE game_id = {character['game_id']} AND region = '{region}' AND num = {chest_num}
             """
             cur.execute(chests_query)
+
+        for sanct_num, sanct_data in region_data['sanctuaries'].items():
+            sanct_query = f"""
+                UPDATE sanctuaries
+                SET opened = {sanct_data[0]},
+                    xpos = {sanct_data[1][0]},
+                    ypos = {sanct_data[1][1]}
+                WHERE game_id = {character['game_id']} AND region = '{region}' AND num = {sanct_num}
+            """
+            cur.execute(sanct_query)
+
+        for tree_num, tree_info in region_data['trees'].items():
+            if(tree_info[0]>0):
+                tree_query = f"""
+                    UPDATE trees
+                    SET xpos = {tree_info[1][0]},
+                        ypos = {tree_info[1][1]},
+                        times_hit = {tree_info[0]},
+                        waiting_time = 0
+                    WHERE game_id = {character['game_id']} AND region = '{region}' AND num = {tree_num}"""
+            else:
+                tree_query = f"""
+                    UPDATE trees
+                    SET xpos = {tree_info[1][0]},
+                        ypos = {tree_info[1][1]},
+                        times_hit = 0,
+                        waiting_time = {-tree_info[0]}
+                    WHERE game_id = {character['game_id']} AND region = '{region}' AND num = {tree_num}"""
+            cur.execute(tree_query)
 
         game_query = f"""
             UPDATE game
@@ -219,7 +247,7 @@ def insert_initial_data(game_id):
             cur.execute("""
                 INSERT INTO sanctuaries (game_id, region, num, opened, xpos, ypos)
                 VALUES (%s, %s, %s, %s, %s, %s)
-            """, (game_id[0][0], region, sanctuary_num, sanctuary_info[1][0], sanctuary_info[1][1], 0))
+            """, (game_id[0][0], region, sanctuary_num, sanctuary_info[0], sanctuary_info[1][0], sanctuary_info[1][1]))
 
     for food_name, quantity in data.data['foods'].items():
         cur.execute("""

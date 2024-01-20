@@ -74,7 +74,7 @@ locations = {
             2 : [2,[5,37]]
         },
         "trees" : {
-            1 : [4,[15,6]],
+            1 : [4,[6,15]],
             2 : [4,[6,13]],
             3 : [4,[7,14]],
             4 : [4,[1,37]],
@@ -97,9 +97,10 @@ locations = {
     "Castle" : {
         "enemies" : {},
         "trees" : {
-            1 : [4,[15,6]]
+            1 : [4,[8,3]]
         },
         "chests": {},
+        "sanctuaries" : {},
         "fishing" : 1
     }
 }
@@ -214,7 +215,7 @@ def collect_data(id):
         db.cur.execute(f"SELECT * FROM sanctuaries WHERE {id} AND region = '{region}'")
         rst = db.cur.fetchall()
         for i in (rst):
-            locations[region]["sanctuaries"][i[2]] = [i[5], [int(i[3]),int(i[4])]]
+            locations[region]["sanctuaries"][i[2]] = [i[3], [int(i[4]),int(i[5])]]
 
 
 def is_equipped(weapon):
