@@ -1,32 +1,11 @@
-import screen as scr,maps,inventory as inv,db,random,data,math
+import screen as scr,maps,inventory as inv,db,random,data,math,hola
 
 # GANON'S LIFE
 ganons_life = 8
 
 # AUXILIAR FUNCTIONS
 
-def pass_turn():
-    region = data.data["character"]["region"]
-    for key in data.locations[region]["trees"].keys():
-        if(data.locations[region]["trees"][key][0]<0):
-            data.locations[region]["trees"][key][0]+=1
-            if(data.locations[region]["trees"][key][0]>-3):
-                maps.maps[region][data.locations[region]["trees"][key][1][0]][data.locations[region]["trees"][key][1][1]] = "t"
-            elif(data.locations[region]["trees"][key][0]>-7):
-                maps.maps[region][data.locations[region]["trees"][key][1][0]][data.locations[region]["trees"][key][1][1]] = "|"
-            else:
-                maps.maps[region][data.locations[region]["trees"][key][1][0]][data.locations[region]["trees"][key][1][1]] = "."
-        if(data.locations[region]["trees"][key][0]==0):
-            data.locations[region]["trees"][key][0]=4
-            maps.maps[region][data.locations[region]["trees"][key][1][0]][data.locations[region]["trees"][key][1][1]] = "T"   
-
-    #Option for opened chests 
-    for key in data.locations[region]["chests"].keys():
-        if(data.locations[region]["chests"][key][0]==0):
-            maps.maps[region][data.locations[region]["chests"][key][1][0]][data.locations[region]["chests"][key][1][1]] = "W"
-        else:
-            maps.maps[region][data.locations[region]["chests"][key][1][0]][data.locations[region]["chests"][key][1][1]] = "M"
-    
+def pass_turn():  
     data.data["character"]["blood_moon_countdown"] -= 1
 
     if data.data["character"]["blood_moon_countdown"] == 0:
@@ -329,28 +308,33 @@ def attack_enemy():
     x, y = data.locations[region]["enemies"][index][1][0], data.locations[region]["enemies"][index][1][1]
     if data.locations[region]["enemies"][index][0] == 0:
         maps.maps[region][x][y] = " "
-    while(True):
-        direction = random.randint(0,3)
-        if directions[direction] == "up":
-            if check_enemy_movement(directions[direction], index, region):
-                data.locations[region]["enemies"][index][1][0] -= 1
-                maps.maps[region][x][y], maps.maps[region][x-1][y] = maps.maps[region][x-1][y], maps.maps[region][x][y]
-                break
-        elif directions[direction] == "down":
-            if check_enemy_movement(directions[direction], index, region):
-                data.locations[region]["enemies"][index][1][0] += 1
-                maps.maps[region][x][y], maps.maps[region][x+1][y] = maps.maps[region][x+1][y], maps.maps[region][x][y]
-                break
-        elif directions[direction] == "left":
-            if check_enemy_movement(directions[direction], index, region):
-                data.locations[region]["enemies"][index][1][1] -= 1
-                maps.maps[region][x][y], maps.maps[region][x][y-1] = maps.maps[region][x][y-1], maps.maps[region][x][y]
-                break
-        elif directions[direction] == "right":
-            if check_enemy_movement(directions[direction], index, region):
-                data.locations[region]["enemies"][index][1][1] += 1
-                maps.maps[region][x][y], maps.maps[region][x][y+1] = maps.maps[region][x][y+1], maps.maps[region][x][y]
-                break
+    else:
+        while(True):
+            direction = random.randint(0,3)
+            if directions[direction] == "up":
+                if check_enemy_movement(directions[direction], index, region):
+                    data.locations[region]["enemies"][index][1][0] -= 1
+                    maps.maps[region][x][y] = " "
+                    maps.maps[region][x-1][y] = "E"
+                    break
+            elif directions[direction] == "down":
+                if check_enemy_movement(directions[direction], index, region):
+                    data.locations[region]["enemies"][index][1][0] += 1
+                    maps.maps[region][x][y] = " "
+                    maps.maps[region][x+1][y] = "E"
+                    break
+            elif directions[direction] == "left":
+                if check_enemy_movement(directions[direction], index, region):
+                    data.locations[region]["enemies"][index][1][1] -= 1
+                    maps.maps[region][x][y] = " "
+                    maps.maps[region][x][y-1] = "E"
+                    break
+            elif directions[direction] == "right":
+                if check_enemy_movement(directions[direction], index, region):
+                    data.locations[region]["enemies"][index][1][1] += 1
+                    maps.maps[region][x][y] = " "
+                    maps.maps[region][x][y+1] = "E"
+                    break
     data.data["weapons"][weapon]["durability"] -= 1
     if not shield == " ":
         data.data["weapons"][shield]["durability"] -= 1
@@ -410,16 +394,10 @@ def open_chest():
         scr.add_to_prompt("You got a Shield")
         add_weapon("Shield")
     loc = where_is_chest()
-    for key,chest in data.locations[data.data["character"]["region"]]["chests"].items():
-        if(chest[1]==loc):
-                data.locations[data.data["character"]["region"]]["chests"][key][0] -= 1
-    for key in data.locations.keys():
-        for value in data.locations[key]["chests"].values():
-            if value[0]==1:
-                return
-    for key in data.locations.keys():
-        for value in data.locations[key]["chests"].values():
-                value[0] = 1
+    for chest_number,chest_info in data.locations[region]["chests"].items():
+        if(chest_info[1]==loc):
+                data.locations[region]["chests"][chest_number][0] = 0
+    db.update_database()
 
 def open_sanctuary():
     loc = where_is_sanctuary()
@@ -429,7 +407,7 @@ def open_sanctuary():
                 data.locations[region]["sanctuaries"][key][0] -= 1
                 data.data["character"]["max_hearts"] += 1
                 data.data["character"]["hearts_remaining"] = data.data["character"]["max_hearts"]
-    # db.update_database(data.data["character"]["game_id"])
+                db.update_database()
 
 
 def who_attacks():
@@ -690,6 +668,7 @@ def can_open():
 def add_weapon(weapon):
     global data
     data.data["weapons"][weapon]["quantity"] += 1
+    db.update_database()
 
 def remove_food(food,quantity):
     global data
@@ -699,6 +678,7 @@ def remove_food(food,quantity):
 def add_food(food,quantity):
     global data
     data.data["foods"][food] += quantity
+    db.update_database()
 
 def cook(food):
     if(food == "Salad"):
@@ -784,21 +764,25 @@ def comp_map(act_location,selected_map,id):
         db.change_map(selected_map, id)
         data.data["character"]["position"] = maps.player_position(id)
         prob_fox_appear()
+        db.update_database()
     elif(act_location=="Death Mountain" and (selected_map=="Hyrule" or selected_map=="Necluda")):
         data.data["character"]["region"] = selected_map
         db.change_map(selected_map, id)
         data.data["character"]["position"] = maps.player_position(id)
         prob_fox_appear()
+        db.update_database()
     elif(act_location=="Gerudo" and (selected_map=="Hyrule" or selected_map=="Necluda")):
         data.data["character"]["region"] = selected_map
         db.change_map(selected_map, id)
         data.data["character"]["position"] = maps.player_position(id)
         prob_fox_appear()
+        db.update_database()
     elif(act_location=="Necluda" and (selected_map=="Death Mountain" or selected_map=="Gerudo")):
         data.data["character"]["region"] = selected_map
         db.change_map(selected_map, id)
         data.data["character"]["position"] = maps.player_position(id)
         prob_fox_appear()
+        db.update_database()
     elif(selected_map=="Castle"):
         data.data["character"]["region"] = selected_map
         db.change_map(selected_map, id)
@@ -808,6 +792,7 @@ def comp_map(act_location,selected_map,id):
         data.data["character"]["region"] = selected_map
         db.change_map(selected_map, id)
         data.data["character"]["position"] = maps.player_position(id)
+        db.update_database()
     else:
         raise ValueError(f"You can't go to {selected_map} from here")
     
@@ -881,9 +866,11 @@ def cheat_add(option):
         if option in data.data["weapons"]:
             data.data["weapons"][option]["quantity"] += 1
             scr.add_to_prompt(f"Cheating: add {option.lower()}")
+            db.update_database()
         elif option in food:
             data.data["foods"][option] += 1
             scr.add_to_prompt(f"Cheating: add {option.lower()}")
+            db.update_database()
         else:
             raise TypeError
     except TypeError:
@@ -899,10 +886,12 @@ def cheat_cook_food(food):
             data.data["food"]["Fish"] += 1
             data.data["food"]["Vegetable"] += 1
             cook(food)
+            db.update_database()
         elif food == "Roasted":
             data.data["food"]["Meat"] += 1
             data.data["food"]["Vegetable"] += 1
             cook(food)
+            db.update_database()
         else:
             raise TypeError
         scr.add_to_prompt(f"Cheating: cook {food.lower()}")
@@ -966,6 +955,7 @@ def link_death():
             data.data["character"]["hearts_remaining"] = data.data["character"]["max_hearts"]
             break
         scr.add_to_prompt("Invalid Action")
+    db.update_database()
 
 def check_enemy_movement(direction, enemy_index, region):
     y, x = data.locations[region]["enemies"][enemy_index][1][0], data.locations[region]["enemies"][enemy_index][1][1]
@@ -1106,16 +1096,53 @@ def play(id,act_location):
             update_ganons_hearts()
 
             pos = data.data["character"]["position"]
+            region = data.data["character"]["region"]
             for weapon in data.data["weapons"]:
                 if(data.data["weapons"][weapon]["durability"]==0):
                     data.data["weapons"][weapon]["quantity"]-=1
-                    db.cur.execute(f"UPDATE weapons_used SET quantity_used = quantity_used + 1 WHERE game_id = {data.data['characters']['game_id']} and weapon_name = {weapon}")
+                    db.cur.execute(f"UPDATE weapons_used SET quantity_used = quantity_used + 1 WHERE game_id = {data.data['character']['game_id']} and weapon_name = '{weapon}'")
                     if(data.data["weapons"][weapon]["quantity"]==0):
                         data.data["weapons"][weapon]["equipped"] = 0
                     if(weapon.split(" ")[0] == "Wood"):
                         data.data["weapons"][weapon]["durability"]=5
                     else:
                         data.data["weapons"][weapon]["durability"]=9
+            for key in data.locations[region]["chests"].keys():
+                if(data.locations[region]["chests"][key][0]==0):
+                    maps.maps[region][data.locations[region]["chests"][key][1][0]][data.locations[region]["chests"][key][1][1]] = "W"
+                else:
+                    maps.maps[region][data.locations[region]["chests"][key][1][0]][data.locations[region]["chests"][key][1][1]] = "M"
+            for reg in data.locations.keys():
+                for num_enemy in data.locations[reg]["enemies"].keys():
+                    if(data.locations[reg]["enemies"][num_enemy][0]>0):
+                        maps.maps[reg][data.locations[reg]["enemies"][num_enemy][1][0]][data.locations[reg]["enemies"][num_enemy][1][1]] = "E"
+                    else:
+                        maps.maps[reg][data.locations[reg]["enemies"][num_enemy][1][0]][data.locations[reg]["enemies"][num_enemy][1][1]] = " "
+            region = data.data["character"]["region"]
+            for key in data.locations[region]["trees"].keys():
+                if(data.locations[region]["trees"][key][0]<0):
+                    data.locations[region]["trees"][key][0]+=1
+                    if(data.locations[region]["trees"][key][0]>-3):
+                        maps.maps[region][data.locations[region]["trees"][key][1][0]][data.locations[region]["trees"][key][1][1]] = "t"
+                    elif(data.locations[region]["trees"][key][0]>-7):
+                        maps.maps[region][data.locations[region]["trees"][key][1][0]][data.locations[region]["trees"][key][1][1]] = "|"
+                    else:
+                        maps.maps[region][data.locations[region]["trees"][key][1][0]][data.locations[region]["trees"][key][1][1]] = "."
+                if(data.locations[region]["trees"][key][0]==0):
+                    data.locations[region]["trees"][key][0]=4
+                    maps.maps[region][data.locations[region]["trees"][key][1][0]][data.locations[region]["trees"][key][1][1]] = "T" 
+
+            
+            all_chests_opened = True
+            for reg in data.locations:
+                for chest in data.locations[reg]["chests"].values():
+                    if(chest[0]==1):
+                        all_chests_opened = False
+            if(all_chests_opened):
+                scr.add_to_prompt("All chests opened again.")
+                for reg in data.locations:
+                    for chest in data.locations[reg]["chests"].values():
+                        chest[0] = 1
             
             options = ["Exit","Attack","Go","Equip","Unequip","Eat","Cook","Fish","Open","Show"]
             if(data.data["character"]["hearts_remaining"]<=0):
@@ -1210,13 +1237,17 @@ def play(id,act_location):
                             last_location = act_location
                         comp_map(act_location, x[2].capitalize(),id)
                 elif(len(x)==4):
-                    if(x[1].capitalize() == "By" and x[2].capitalize() == "The" and ((x[3].upper() in ["T", "WATER", "F", "C", "M", "E", "W", "O"] or (len(x[3]) == 2 and x[3][0].upper() == "S" and int(x[3][1]) in (0,1,2,3,4,5,6))))):
+                    if(x[1].capitalize() == "By" and x[2].capitalize() == "The" and ((x[3].upper() in ["T", "WATER", "F", "C", "M", "E", "W", "O"] or (len(x[3]) == 2 and x[3][0].upper() == "S" and x[3][1] in ('0','1','2','3','4','5','6'))))):
                         if x[3].upper() == "WATER":
                             go_by("~", data.data["character"]["region"])
                         elif(x[3][0].upper() == "S"):
                             go_by_sanct(int(x[3][1]), data.data["character"]["region"])
                         else:
                             go_by(x[3].upper(), data.data["character"]["region"])
+                    elif(x[1].capitalize()=="To" and x[2].capitalize() == "Death" and x[3].capitalize() == "Mountain"):
+                        comp_map(act_location,"Death Mountain",id)
+                    else:
+                        raise ValueError("Invalid Action")
                     x[2] = x[2].capitalize() + " " + x[3].capitalize()
                     if(x[1].lower()=="to" and x[2] == "Death Mountain"):
                         comp_map(act_location, x[2],id)
@@ -1285,8 +1316,10 @@ def go_by(tipo, region):
     distancias = []
     for k in lista:
         distancias.append(math.sqrt((k[0]- posicion[0])**2+(k[1]- posicion[1])**2))
-
-    minimo = min(distancias)
+    if(len(distancias)>0):
+        minimo = min(distancias)
+    else:
+        raise ValueError("Invalid Action")
 
     posiciones = [[0,1], [1,0], [1,1], [1,-1], [-1,-1], [0,-1], [-1,0], [-1, 1]]
 
