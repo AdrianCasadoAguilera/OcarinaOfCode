@@ -932,7 +932,7 @@ def check_name(name):
 
 # MAIN FUNCTIONS
 
-def link_death():
+def link_death(id):
     global data
     while True:
         titol_seccio = "Link's death"
@@ -950,6 +950,8 @@ def link_death():
     """.split("\n")
         scr.add_to_prompt("Nice try, you died. Game is over.")
         scr.print_menu_screen(lines,options,titol_seccio)
+        if(data.data['character']['region']=="Castle"):
+            comp_map("Castle","Hyrule",id)
         x = input("What to do now? ")
         if(x.capitalize()==options[0]):
             data.data["character"]["hearts_remaining"] = data.data["character"]["max_hearts"]
@@ -1146,7 +1148,7 @@ def play(id,act_location):
             
             options = ["Exit","Attack","Go","Equip","Unequip","Eat","Cook","Fish","Open","Show"]
             if(data.data["character"]["hearts_remaining"]<=0):
-                link_death()
+                link_death(id)
                 break
             if(can_cook()==False):
                 options.remove("Cook")
