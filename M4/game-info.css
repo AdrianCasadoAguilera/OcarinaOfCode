@@ -1,0 +1,77 @@
+@import url('https://fonts.cdnfonts.com/css/the-wild-breath-of-zelda');
+
+*{
+    font-family: Arial, Helvetica, sans-serif;
+    scroll-behavior: smooth;
+}
+
+body{
+    background-color: white;
+    margin: 0;
+}
+#intro{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: red;
+    position: sticky;
+    width: 100%;
+    top:0;
+}
+#page{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+#main{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80%;
+    margin-top: 1%;
+}
+#navigator{
+    width: 20%;
+    height: 100vh;
+    z-index: 0;
+    color:white;
+    background-color: rgb(5, 102, 29);
+    top: 80px;
+    position: sticky;
+}
+#navigator ul li a{
+    text-decoration: none;
+    color:white;
+}
+#navigator ul li a:hover{
+    font-weight: bolder;
+}
+.container{
+    width: 80%;
+}
+.container-title{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.container-inner{
+    background-color: rgb(235, 233, 233);
+    border-radius: 20px;
+    padding: 30px;
+    width: 100%;
+    margin: 20px;
+}
+#inner-list *{
+    margin-bottom: 10px;
+}
+
+footer{
+    z-index: 1;
+}
+.container-images{
+    display: flex;
+    flex-direction: row;
+}
+.container-image{
+    margin: 15px;
+}
