@@ -2,17 +2,17 @@ import data
 
 # FUNCTIONS
 
-def show_inventory(id,to_show):
+def show_inventory(to_show):
     main = ["                ",
             data.data["character"]["user_name"]+f"♥ {data.data['character']['hearts_remaining']}/{data.data['character']['max_hearts']}".rjust(17-len(data.data["character"]["user_name"])),
+            f"Blood moon in {data.data['character']['blood_moon_countdown']}",
             "                ",
             "Equipment",
             data.weapons_equipped()[0].rjust(17),
             data.weapons_equipped()[1].rjust(17),
             " "*17,
             "Food"+str(data.total_food()).rjust(13),
-            "Weapons"+str(data.total_weapons()).rjust(10),
-            " "*17]
+            "Weapons"+str(data.total_weapons()).rjust(10)]
     
     weapons = [" "*17,
                " "*17,

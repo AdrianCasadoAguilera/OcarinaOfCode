@@ -135,7 +135,8 @@ def update_database():
         weapons_query = f"""
             UPDATE weapons
             SET quantity = {weapon_data['quantity']},
-                equipped = {weapon_data['equipped']}
+                equipped = {weapon_data['equipped']},
+                lives_remaining = {weapon_data['durability']}
             WHERE game_id = {character['game_id']} AND weapon_name = '{weapon_name}'
         """
         cur.execute(weapons_query)
@@ -150,14 +151,6 @@ def update_database():
                 WHERE game_id = {character['game_id']} AND region = '{region}' AND num = {enemy_num}
             """
             cur.execute(enemies_query)
-
-        for tree_num, tree_data in region_data['trees'].items():
-            trees_query = f"""
-                UPDATE trees
-                SET lives_remaining = {tree_data[0]},
-                    waiting_time = 0
-                WHERE game_id = {character['game_id']} AND region = '{region}' AND num = {tree_num}
-            """
 
         for chest_num, chest_data in region_data['chests'].items():
             chests_query = f"""
@@ -178,6 +171,25 @@ def update_database():
                 WHERE game_id = {character['game_id']} AND region = '{region}' AND num = {sanct_num}
             """
             cur.execute(sanct_query)
+
+        for tree_num, tree_info in region_data['trees'].items():
+            if(tree_info[0]>0):
+                tree_query = f"""
+                    UPDATE trees
+                    SET xpos = {tree_info[1][0]},
+                        ypos = {tree_info[1][1]},
+                        times_hit = {tree_info[0]},
+                        waiting_time = 0
+                    WHERE game_id = {character['game_id']} AND region = '{region}' AND num = {tree_num}"""
+            else:
+                tree_query = f"""
+                    UPDATE trees
+                    SET xpos = {tree_info[1][0]},
+                        ypos = {tree_info[1][1]},
+                        times_hit = 0,
+                        waiting_time = {-tree_info[0]}
+                    WHERE game_id = {character['game_id']} AND region = '{region}' AND num = {tree_num}"""
+            cur.execute(tree_query)
 
         game_query = f"""
             UPDATE game
@@ -201,9 +213,9 @@ def insert_initial_data(game_id):
     # Insertar datos en la tabla weapons
     for weapon_name, weapon_data in data.data['weapons'].items():
         cur.execute("""
-            INSERT INTO weapons (weapon_name, game_id, equipped, quantity)
-            VALUES (%s, %s, %s, %s)
-        """, (weapon_name, game_id[0][0], weapon_data['equipped'], weapon_data['quantity']))
+            INSERT INTO weapons (weapon_name, game_id, equipped, lives_remaining, quantity)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (weapon_name, game_id[0][0], weapon_data['equipped'], weapon_data['durability'], weapon_data['quantity']))
 
     # Insertar datos en la tabla enemies
     for region, region_data in data.locations.items():
@@ -235,7 +247,7 @@ def insert_initial_data(game_id):
             cur.execute("""
                 INSERT INTO sanctuaries (game_id, region, num, opened, xpos, ypos)
                 VALUES (%s, %s, %s, %s, %s, %s)
-            """, (game_id[0][0], region, sanctuary_num, sanctuary_info[1][0], sanctuary_info[1][1], 0))
+            """, (game_id[0][0], region, sanctuary_num, sanctuary_info[0], sanctuary_info[1][0], sanctuary_info[1][1]))
 
     for food_name, quantity in data.data['foods'].items():
         cur.execute("""

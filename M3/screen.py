@@ -79,14 +79,15 @@ def print_screen(char_pos,options,mat,inventory,inv_title="Main",titol_seccio="*
                     for enemy in data.locations[region]["enemies"].values():
                         if(enemy[1]==[i,j]):
                             print(f"{enemy[0]}",end="")
-            elif(mat[i][j-2]=="S"):
+            elif(mat[i][j-2]=="S" and titol_seccio!="General Map"):
+                region = data.data["character"]["region"]
                 for sanct in data.locations[region]["sanctuaries"].values():
                         if(sanct[1]==[i,j-2]):
                             if(sanct[0]==1):
                                 print("?",end="")
                             else:
                                 print(" ",end="")
-            elif(mat[i][j-1]=="S"):
+            elif(mat[i][j-1]=="S" and titol_seccio!="General Map"):
                 print("",end="")
             elif(mat[i][j-1]=="E"):
                 print("",end="")
