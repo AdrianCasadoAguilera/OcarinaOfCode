@@ -675,7 +675,7 @@ def remove_food(food,quantity):
     global data
     if data.data["foods"][food] >= quantity:
         data.data["foods"][food] -= quantity
-        db.cur.execute(f"UPDATE food_used SET quantity = quantity + 1 WHERE game_id = {data.data['character']['game_id']} and food_name = '{food}'")
+        db.cur.execute(f"UPDATE food_used SET quantity_used = quantity_used + 1 WHERE game_id = {data.data['character']['game_id']} and food_name = '{food}'")
 
 def add_food(food,quantity):
     global data
