@@ -67,7 +67,7 @@ CREATE TABLE trees (
 	num INT,
     xpos INT,
     ypos INT,
-    times_hit INT,
+    lives_remaining INT,
     waiting_time INT
 );
 
