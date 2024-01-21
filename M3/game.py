@@ -405,7 +405,8 @@ def open_sanctuary():
     for key,sanct in data.locations[region]["sanctuaries"].items():
         if(sanct[1]==loc and data.locations[region]["sanctuaries"][key][0]==1):
                 data.locations[region]["sanctuaries"][key][0] -= 1
-                data.data["character"]["max_hearts"] += 1
+                if data.data["character"]["max_hearts"] <= 8:
+                    data.data["character"]["max_hearts"] += 1
                 data.data["character"]["hearts_remaining"] = data.data["character"]["max_hearts"]
                 db.update_database()
 
