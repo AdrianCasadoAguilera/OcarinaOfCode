@@ -1,9 +1,23 @@
 import mysql.connector, data
+from sshtunnel import SSHTunnelForwarder
 
-connection = mysql.connector.connect(user='OcarinaOfCode',password='1234',host='127.0.0.1',database='zelda')
+
+
+with SSHTunnelForwarder(
+    ('4.231.232.138', 22),
+    ssh_username='equipo7',
+    ssh_password='@W7YS9i5vufnGSi',
+    remote_bind_address=('4.231.232.138', 56538)
+) as tunnel:
+    connection = mysql.connector.connect(
+        host='127.0.0.1',
+        port=tunnel.local_bind_port,
+        user='root',
+        password='root',
+        database='zelda'
+    )
 
 cur = connection.cursor()
-
 
 # QUERIES FROM GAME TABLE
 
