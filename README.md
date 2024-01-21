@@ -26,11 +26,12 @@
     <a href="https://github.com/AdrianCasadoAguilera/OcarinaOfCode/issues">Report Bug</a>
     ·
   </p>
-</div>
+</div><br />
 
 
 
-<!-- TABLE OF CONTENTS -->
+
+
 <details>
   <summary>Table of Contents</summary>
   <ol>
@@ -56,6 +57,7 @@
 ## About The Project
 
 This GitHub is a school project game that draws inspiration from The Legend of Zelda: Breath of the Wild, recreating elements of its open-world adventure in a personalized game. Utilizing Python, embark on a nostalgic journey featuring expansive landscapes and epic battles. May the spirit of Hyrule guide our development!
+
 Gameplay:
 * **Open-World Exploration:** Players can explore a vast and visually stunning open world, discovering shrines, fighting enemies and interacting with diverse environments.
 * **Combat:**  Real-time combat with various enemies, utilizing a Sword and a Shield. Each encounter requires strategy and skill to overcome!
