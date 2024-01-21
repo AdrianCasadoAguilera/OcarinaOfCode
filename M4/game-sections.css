@@ -1,0 +1,120 @@
+@import url('https://fonts.cdnfonts.com/css/the-wild-breath-of-zelda');
+
+body{
+    background-image: url(src/triforce-gray.png);
+    background-color: rgb(207, 204, 204);
+    background-size: 70px;
+    background-attachment: fixed;
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+#body{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+#title{
+    display: flex;
+    justify-content: center;
+    background-image: url(src/triforce-yellow.png);
+    background-color: rgb(216, 170, 44);
+    background-size: 30px;
+    position: sticky;
+    top:0;
+}
+#main-title{
+    font-family: "The Wild Breath of Zelda";
+    font-size: 70px;
+}
+#intro{
+    display: flex;
+    flex-direction: row;
+    width: 80%;
+}
+#intro-text{
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: center;
+    color:rgb(0, 0, 0);
+}
+#intro-info{
+    font-weight: bold;
+}
+#intro-title{
+    font-family: "The Wild Breath of Zelda";
+    font-size: 40px;
+}
+
+
+.container{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}
+#locations{
+    background-image: url(src/maps-portada.jpg);
+    width: 100%;
+}
+#hyrule-castle{
+    background-image: url(src/hyrule-castle.jpg);
+    width: 100%;
+    height: max-content;
+    color:rgb(26, 79, 114);
+}
+.container-title{
+    
+    background-repeat: no-repeat;
+    width: 100%;
+    align-items: center;
+    text-align: center;
+}
+.container-title-text{
+    font-family: "The Wild Breath of Zelda";
+    font-size: 100px;
+}
+.container-inner{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 80%;
+    justify-content: center;
+}
+.map-photo{
+    width: 500px;
+    border-radius: 20px;
+    margin: 20px;
+}
+.map-box{
+    width: max-content;
+    border-radius: 20px;
+    margin: 20px;
+    padding: 10px;
+    transition: 0.3s;
+}
+.map-text{
+    display: none;
+}
+.map-box:hover .map-text{
+    display: block;
+}
+.map-box:hover{
+    background-color: rgba(209, 143, 0, 0.6);
+}
+#zelda{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    text-align: left;
+}
+#zelda-title{
+    font-family: "The Wild Breath of Zelda";
+    font-size: 40px;
+}

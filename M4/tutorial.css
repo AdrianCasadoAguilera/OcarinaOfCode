@@ -27,29 +27,14 @@ a:link{
     height: 60vh;
     box-sizing: content-box;
     border-right: solid 2px;
-    /* padding-bottom: 20%; */
-    /* border-radius: 5%; */
     transition: 0.5s;
-    /* margin: 30px; */
     color: black;
-    /* opacity: 0.9; */
-    /* filter: blur(1px); */
-    /* -webkit-filter: blur(1px); */
     display: flex;
     justify-content: center;
     align-items: center;
 }
 .game-box:hover{
     width: 40vw;
-    /* border-right: 6mm solid;
-    border-right-color: black; 
-    border-bottom: 6mm solid;
-    border-bottom-color: black; */
-    /* transform: translate(-10px,-10px);
-    transition: 0.8s ease; */
-    /* opacity: 1; */
-    /* filter: blur(0px);
-    -webkit-filter: blur(0px); */
 }
 #game-options{
     background-image: url(src/zelda-background1.jpg);

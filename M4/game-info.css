@@ -115,4 +115,9 @@
 .main-title{
     font-family: "The Wild Breath of Zelda";
     font-size: 100px;
+    background-image:url(src/triforce-yellow.png);
+}
+#ganon-title{
+    font-family: "The Wild Breath of Zelda";
+    font-size: 70px;
 }
