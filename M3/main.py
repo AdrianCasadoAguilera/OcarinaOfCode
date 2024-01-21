@@ -1,4 +1,4 @@
-import screen as scr,random,db,datetime,game, data
+import screen as scr,random,db,datetime,game,data,queries
 
 initial_screens = ["""                                                                  ## 
                                                                   ## 
@@ -318,5 +318,7 @@ while True:
             game.play(game_id,act_location)
       elif(opt[0].capitalize()=="New" and opt[1].capitalize()=="Game" and len(opt)==2):
          create_game()
+      elif(opt[0].capitalize() == "Consultes" and opt[1].upper() == "DB" and len(opt) == 2):
+         queries.menu_queries()
    except ValueError as e:
       scr.add_to_prompt(e)

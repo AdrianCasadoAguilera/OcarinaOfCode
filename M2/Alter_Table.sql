@@ -5,8 +5,8 @@ MODIFY COLUMN game_id int AUTO_INCREMENT primary key,
 MODIFY COLUMN region VARCHAR(50) CHECK (region in ("Hyrule", "Death mountain", "Gerudo", "Necluda", "Castle")) NOT NULL,
 MODIFY COLUMN hearts_remaining INT DEFAULT 3,
 MODIFY COLUMN max_hearts INT DEFAULT 3,
-MODIFY COLUMN fishing BOOLEAN DEFAULT 1
-MODIFY COLUMN last_connected DATETIME DEFAULT CURRENT_TIMESTAMP;
+MODIFY COLUMN last_connected DATETIME DEFAULT CURRENT_TIMESTAMP,
+MODIFY COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP;
 
 ALTER TABLE foods
 MODIFY COLUMN food_name VARCHAR(50) CHECK (food_name in ("Vegetable", "Salad", "Pescatarian", "Roasted", "Meat", "Fish")) NOT NULL,
@@ -44,7 +44,7 @@ FOREIGN KEY (game_id) REFERENCES game(game_id) ON DELETE CASCADE;
 ALTER TABLE trees
 MODIFY COLUMN region VARCHAR(50) CHECK (region in ("Hyrule", "Death mountain", "Gerudo", "Necluda", "Castle")) NOT NULL,
 MODIFY COLUMN num INT NOT NULL,
-MODIFY COLUMN times_hit INT DEFAULT 0,
+MODIFY COLUMN times_hit INT DEFAULT 4,
 ADD PRIMARY KEY (game_id, region, num),
 ADD CONSTRAINT fk_game_trees
 FOREIGN KEY (game_id) REFERENCES game(game_id) ON DELETE CASCADE;
