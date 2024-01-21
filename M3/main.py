@@ -1,4 +1,4 @@
-import screen as scr,random,db,datetime,game, data
+import screen as scr,random,db,datetime,game,data,queries
 
 initial_screens = ["""                                                                  ## 
                                                                   ## 
@@ -224,7 +224,7 @@ def new_game(user_name):
    db.connection.commit()
    db.cur.execute(f"SELECT max(game_id) FROM game;")
    id = db.cur.fetchall()
-   data.initialize_data(id, user_name)
+   data.initialize_data(id,user_name)
    db.insert_initial_data(id)
    game.play(id[0][0],"Hyrule")
 
@@ -295,7 +295,9 @@ while True:
    try:
       x = input("What to do now? ")
       opt = x.split(" ")
-      if(opt[0].capitalize() not in options):
+      if(opt[0].capitalize() == "Consultes" and opt[1].upper() == "DB" and len(opt) == 2):
+         queries.menu_queries()
+      if(opt[0].capitalize() not in options ):
          if(len(opt)==1):
             raise ValueError("Invalid Action")
          if((opt[0].capitalize() + " " + opt[1].capitalize()) not in options):

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viweport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1">
+        <script src="shadowPartial.js"></script>
+        <link href="gallery.css" rel="stylesheet">
+        <title>OOC Gallery</title>
+    </head>
+    <header>
+        <shadow-partial data-html="header.part.html" data-css="header.part.css"></shadow-partial>
+        <div class="sticky">
+            <shadow-partial data-html="selection.part.html" data-css="selection.part.css"></shadow-partial>
+        </div>
+    </header>
+    <body>
+        <h1>ZELDA GALLERY</h1>
+        <ul class="gallery">
+            <li><a href="#img1"><img src="src/zelda-background1.jpg" alt=""></a></li>
+            <li><a href="#img2"><img src="src/zelda-background2.jpg" alt=""></a></li>
+            <li><a href="#img3"><img src="src/zelda-background3.jpg" alt=""></a></li>
+            <li><a href="#img4"><img src="src/zelda-header.png" alt=""></a></li>
+        </ul>
+        <div class="modal" id="img1">
+            <p>INSERT TEXT</p>
+            <div class="image">
+                <a href="#img4">&#60;</a>
+                <a href="#img2"><img src="src/zelda-background1.jpg" alt=""></a>
+                <a href="#img2">></a>
+            </div>
+            <a class="close" href="">X</a>
+        </div>
+        <div class="modal" id="img2">
+            <h3>INSERT TEXT</h3>
+            <div class="image">
+                <a href="#img1">&#60;</a>
+                <a href="#img3"><img src="src/zelda-background2.jpg" alt=""></a>
+                <a href="#img3">></a>
+            </div>
+            <a class="close" href="">X</a>
+        </div>
+        <div class="modal" id="img3">
+            <h3>INSERT TEXT</h3>
+            <div class="image">
+                <a href="#img2">&#60;</a>
+                <a href="#img4"><img src="src/zelda-background3.jpg" alt=""></a>
+                <a href="#img4">></a>
+            </div>
+            <a class="close" href="">X</a>
+        </div>
+        <div class="modal" id="img4">
+            <h3>INSERT TEXT</h3>
+            <div class="image">
+                <a href="#img3">&#60;</a>
+                <a href="#img1"><img src="src/zelda-header.png" alt=""></a>
+                <a href="#img1">></a>
+            </div>
+            <a class="close" href="">X</a>
+        </div>
+    </body>
+    <footer>
+        <shadow-partial data-html="footer.part.html" data-css="footer.part.css"></shadow-partial>
+    </footer>
+</html>

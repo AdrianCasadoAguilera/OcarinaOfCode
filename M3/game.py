@@ -674,6 +674,7 @@ def remove_food(food,quantity):
     global data
     if data.data["foods"][food] >= quantity:
         data.data["foods"][food] -= quantity
+        db.cur.execute(f"UPDATE food_used SET quantity = quantity + 1 WHERE game_id = {data.data['character']['game_id']} and food_name = '{food}'")
 
 def add_food(food,quantity):
     global data
@@ -723,6 +724,7 @@ def eat(food):
     remove_food(food,1)
     if(food=="Vegetable"):
         increase_health(1)
+        db.cur.execute(f"UPDATE food_used SET quantity_used = quantity_used + 1 WHERE food_name = '{food}' and game_id = {data.data['character']['game_id']}")
     elif(food=="Salad"):
         increase_health(2)
     elif(food=="Pescatarian"):

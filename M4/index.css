@@ -1,7 +1,9 @@
+@import url('https://fonts.cdnfonts.com/css/the-wild-breath-of-zelda');
+
 body{
     background-image: url("src/maxresdefault.jpg");
     margin: 0;
-    margin-bottom: 1000px;
+
 }
 .sticky{
     position: sticky;
@@ -10,26 +12,114 @@ body{
     background-image: url(src/game-description-background.png);
     justify-content: center;
     display: flex;
-    padding: 200px;
-    padding-left: 500px;
-    padding-right: 500px;
+    padding: 20%;
     background-repeat: no-repeat;
-    backdrop-filter: blur(100px);
     z-index: -1;
+    height: max-content;
+    width: 80%;
+    border-radius: 5%;
+    box-shadow: 20px 25px 10px;
+    position: relative;
 }
 .game-background{
     justify-content: center;
+    align-items: center;
     display: flex;
-    margin-top: 50px;
-    
+    margin: 20%;
+    margin-top: 5%;
+    margin-bottom: 5%;
+    max-width: 70%;
 }
 .game-text {
+    position: absolute;
     background-color: rgba(255, 255, 255, 0.3);
     border-radius: 5px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
     font-family: sans-serif;
     text-align: center;
-    line-height: 1;
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(5px);
-    padding: 100%;
-  }
+    /* backdrop-filter: blur(5px); */
+    height: max-content;
+    width:fit-content;
+    padding: 15px;
+    border: solid 1px;
+    box-shadow: 0px 5px 10px;
+    top:50%;
+    left:50%;
+    transform: translate(-50%,-50%);
+
+}
+.main-boxes{
+    justify-content: center;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 20px;
+    font-style: none;
+    font-size: 50px;
+    font-family: 'The Wild Breath of Zelda', sans-serif;
+}
+a.small-box:link ,a.small-box:visited{
+    opacity: 0.7;
+    width: 20%;
+    height: 20%;
+    text-decoration: none;
+    color:black;
+    transition: 0.8s ease;
+    padding: 10%;
+}
+
+a.small-box:hover{
+    opacity: 1;
+    transition: 0.8s ease;
+    -webkit-transform: scale(1.1);
+    -ms-transform: scale(1.1);
+    transform: scale(1.05);
+}
+
+a.large-box:link, a.large-box:visited{
+    background-color: red;
+    opacity: 0.7;
+    width: 130vh;
+    height: 10vh;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    color:black;
+    padding: 5px;
+    padding-bottom: 100px;
+    margin: 20px;
+    transition: 0.8s ease;
+}
+.tutorial-img{
+    background-image: url(src/zelda-tutorial-img.jpg);
+    background-size: 60%;
+    background-position: 10px;
+    background-repeat: no-repeat;
+}
+
+.gallery-img{
+    background-image: url(src/zelda-gallery-img2.webp);
+    background-size: 75%;
+    background-position: 10px;
+    background-repeat: no-repeat;
+}
+
+.aboutus-img{
+    background-image: url(src/aboutus-img2.jpg);
+    background-size: cover;
+    top: 50px;
+}
+
+a.large-box:hover{
+    opacity: 1;
+    transition: 0.8s ease;
+    -webkit-transform: scale(1.1);
+    -ms-transform: scale(1.1);
+    transform: scale(1.05);
+}
+
+@media screen {
+    
+}
