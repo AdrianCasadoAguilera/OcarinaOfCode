@@ -2,76 +2,73 @@
 
 *{
     font-family: Arial, Helvetica, sans-serif;
-    scroll-behavior: smooth;
 }
 
-body{
-    background-color: white;
-    margin: 0;
-}
-#intro{
+#body{
+    background-image: url(src/triforce-gray.png);
+    background-size: 80px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: red;
-    position: sticky;
-    width: 100%;
-    top:0;
 }
-#page{
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-}
-#main{
+
+.section{
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 80%;
-    margin-top: 1%;
-}
-#navigator{
-    width: 20%;
-    height: 100vh;
-    z-index: 0;
-    color:white;
-    background-color: rgb(5, 102, 29);
-    top: 80px;
-    position: sticky;
-}
-#navigator ul li a{
-    text-decoration: none;
-    color:white;
-}
-#navigator ul li a:hover{
-    font-weight: bolder;
-}
-.container{
-    width: 80%;
-}
-.container-title{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-.container-inner{
-    background-color: rgb(235, 233, 233);
-    border-radius: 20px;
-    padding: 30px;
     width: 100%;
-    margin: 20px;
-}
-#inner-list *{
-    margin-bottom: 10px;
 }
 
-footer{
-    z-index: 1;
+#maps-title{
+    background-image: url(src/maps-portada.jpg);
 }
-.container-images{
+#enemies-title{
+    background-image: url(src/enemies-portada.jpeg);   
+}
+.section-title{
+    width: 100%;
+    background-repeat: no-repeat;
     display: flex;
-    flex-direction: row;
+    align-items: center;
 }
-.container-image{
+.section-title-text{
+    margin: 100px;
+}
+
+.section-elements{
+    max-width: 80%;
+}
+
+.map-photo{
+    width: 50%;
     margin: 15px;
+    border-radius: 20px;
+}
+
+#hyrule{
+    background-color: rgba(15, 180, 0,0.6);
+}
+
+#gerudo{
+    background-color: rgba(255, 208, 0, 0.6);
+}
+#necluda{
+    background-color: rgba(0, 149, 255, 0.6);
+}
+#death-mountain{
+    background-color: rgba(255, 0, 0, 0.6);
+}
+
+.map{
+    transform: translateX(-3000px);
+    border: solid white 2px;
+    border-radius: 30px;
+    display: flex;
+    padding: 35px;
+    margin: 35px;
+    animation: left-to-right 2s forwards 0.3s;
+    align-items: center;
+}
+@keyframes left-to-right {
+    100% {transform: translateX(0px);}
 }

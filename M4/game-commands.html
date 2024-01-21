@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="UTF-8">
+        <script src="shadowPartial.js"></script>
+        <link href="game-commands.css" rel="stylesheet">
+        <title>OOC Tutorial</title>
+    </head>
+    <body>
+        <header>
+            <shadow-partial data-html="header.part.html" data-css="header.part.css"></shadow-partial>
+            <div class="sticky">
+                <shadow-partial data-html="selection.part.html" data-css="selection.part.css"></shadow-partial>
+            </div>
+        </header>
+        <div id="intro">
+            <h1>HOW TO PLAY</h1>
+        </div>
+        <div id="page">
+            <div id="navigator">
+                <div>
+                    <b>INDEX</b>
+                    <ul id="navigator-list">
+                        <li><a href="#main-menu">Main menu</a></li>
+                        <li><a href="#saved-games">Saved games</a></li>
+                        <li><a href="#movement">Movement</a></li>
+                        <li><a href="#attack">Attack</a></li>
+                        <li><a href="#weapons">Weapons</a></li>
+                        <li><a href="#food">Food</a></li>
+                        <li><a href="#inventory">Inventory</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div id="main">
+                <div class="container" id="main-menu">
+                    <div class="container-title">
+                        <b class="container-title-text">MAIN MENU</b>
+                    </div>
+                    <div class="container-inner">
+                        <ul>
+                            <li>
+                                <b>New Game</b>
+                                <p>Create a new game. It will open the name choice menu.</p>
+                            </li>
+                            <li>
+                                <b>Continue</b>
+                                <p>It will only be available if there is, at least, one game created. Allows the user to play with any game saved previously.</p>
+                            </li>
+                            <li>
+                                <b>About</b>
+                                <p>Creators of "Zelda: Breath of The Wild".</p>
+                            </li>
+                            <li>
+                                <b>Help</b>
+                                <p>Opens a menu displaying all options available.</p>
+                            </li>
+                            <li>
+                                <b>Exit</b>
+                                <p>Go out the game.</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="container" id="saved-games">
+                    <div class="container-title">
+                        <b class="container-title-text">SAVED GAMES</b>
+                        <p>This option will only appear if there are two or more saved games.</p>
+                    </div>
+                    <div class="container-inner">
+                        <ul>
+                            <li>
+                                <b>Play X</b>
+                                <p>Select the game you want to continue with. X is the id of the game.</p>
+                            </li>
+                            <li>
+                                <b>Erase X</b>
+                                <p>Delete all the information of the game. BE CAREFUL! This game will not be available anymore.</p>
+                            </li>
+                            <li>
+                                <b>Help</b>
+                                <p>Opens a menu displaying all options available.</p>
+                            </li>
+                            <li>
+                                <b>Back</b>
+                                <p>Go back to the main menu</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="container" id="movement">
+                    <div class="container-title">
+                        <b class="container-title-text">MOVEMENT</b>
+                    </div>
+                    <div class="container-inner">
+                        <ul>
+                            <li>
+                                <b>Go (left|right|up|down) X</b>
+                                <p>Move straight to the direction indicated (X). The directions accpedted are up, down, left and right. If there's no space enough to complete the movement, the character will move to the last position available.</p>
+                            </li>
+                            <li>
+                                <b>Go by the X</b>
+                                <p>Goes to the nearest element indicated at X. For example, if you type "Go by T", the character will appear next to the nearest tree.</p>
+                                <b>POSITIONS ACCEPTED:</b>
+                                <ul id="inner-list">
+                                    <li><b>T:</b> goes to the nearest tree</li>
+                                    <li><b>E:</b> goes to the nearest enemy</li>
+                                    <li><b>C:</b> goes to the nearest kitchen</li>
+                                    <li><b>M:</b> goes to the nearest chest</li>
+                                    <li><b>F:</b> goes to the nearest fox</li>
+                                    <li><b>water:</b> goes to the nearest water surface</li>
+                                    <li><b>SX:</b> goes to the sanctuary corresponding to the number indicated (X)</li>
+                                </ul>
+                            </li>
+                            <li>
+                                <b>Go to X</b>
+                                <p>Goes to the map selected. The maps available are Hyrule (initial map), Gerudo, Necluda, Death Mountain and Castle (final map).</p>
+                            </li>
+                            <li>
+                                <b>Show map</b>
+                                <p>Shows which are the maps you can travel to. </p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="container" id="attack">
+                    <div class="container-title">
+                        <b class="container-title-text">ATTACK</b>
+                    </div>
+                    <div class="container-inner">
+                        <ul>
+                            <li>
+                                <b>Attack</b>
+                                <p>Attacks the nearest element.</p>
+                                <b>You can attack:</b>
+                                <ul id="inner-list">
+                                    <li><b>Trees:</b> If you attack a tree, you can get an apple, a wooden sword or shield, or anything. Attacking it with a sword will increase your posibilities of winning a weapon. But be careful! If you hit four times a tree with your sword, you will break it, and you will have to wait 10 turns to attack it again.</li>
+                                    <li><b>Enemies:</b> You can attack an enemy only with a sword equipped. Every time you attack an enemy, he will move. You will also receive damage, except if you have a shield equipped, which can protect you in certain attacks.</li>
+                                    <li><b>Fox:</b> Attacking a fox will allow you to obtain meat.</li>
+                                    <li><b>Anywhere:</b> Attacking the floor, you have the opportunity to capture a lizard. It will give you meat.</li>
+                                    <li><b>Ganon:</b> At the castle, you can attack Ganon. Be aware of your position: you will only be able to attack him if you are less than 3 positions away. But be careful, because every time you approach him, you'll be damaged.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="container" id="weapons">
+                    <div class="container-title">
+                        <b class="container-title-text">WEAPONS</b>
+                    </div>
+                    <div class="container-inner">
+                        <ul>
+                            <li>
+                                <b>Equip the (Wood Sword|Sword|Wood Shield|Shield)</b>
+                                <p>Equips the weapon indicated. If you have a weapon of the same type equipped (Sword/Shield), you have to unequip it before equipping another one.</p>
+                            </li>
+                            <li>
+                                <b>Unequip the (Wood Sword|Sword|Wood Shield|Shield)</b>
+                                <p>Unequips the weapon indicated. </p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="container" id="food">
+                    <div class="container-title">
+                        <b class="container-title-text">FOOD</b>
+                    </div>
+                    <div class="container-inner">
+                        <ul>
+                            <li>
+                                <b>Eat (Vegetable|Salad|Pescatarian|Roasted)</b>
+                                <p>Eats the food indicated. Eating helps you to recover health.</p>
+                            </li>
+                            <li>
+                                <b>Cook (Salad|Pescatarian|Roasted)</b>
+                                <p>Cooks the food indicated. You must be next to a kitchen (C) and have the ingredients needed for each food.</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="container" id="inventory">
+                    <div class="container-title">
+                        <b class="container-title-text">INVENTORY</b>
+                    </div>
+                    <div class="container-inner">
+                        <ul>
+                            <li>
+                                <b>Show inventory (main|weapons|food)</b>
+                                <p>Show the inventory indicated. Main inventory shows you your name, health, equipped weapons, total weapons, total food and turns for the Blood Moon. Weapons inventory show all your weapons, their durability, quantity and if they are equipped or not. Food inventory show you how many of each food do you have.</p>
+                            </li>
+                            <div class="container-images">
+                                <div class="container-image">
+                                    <img src="src/inventory-main.png">
+                                    <p>Main inventory</p>
+                                </div>
+                                <div class="container-image">
+                                    <img src="src/inventory-weapons.png">
+                                    <p>Weapons inventory</p>
+                                </div>
+                                <div class="container-image">
+                                    <img src="src/inventory-food.png">
+                                    <p>Food inventory</p>
+                                </div>
+                            </div>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </body>
+        <footer>
+            <shadow-partial data-html="footer.part.html" data-css="footer.part.css"></shadow-partial>
+        </footer>
+</html>
