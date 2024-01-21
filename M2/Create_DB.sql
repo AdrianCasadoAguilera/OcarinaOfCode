@@ -12,7 +12,7 @@ CREATE TABLE game (
     blood_moon_countdown INT,
     blood_moon_appearances INT,
     region VARCHAR(50),
-    fishing BOOLEAN
+    created_at DATETIME 
 );
 
 -- Tabla de comidas
@@ -67,7 +67,7 @@ CREATE TABLE trees (
 	num INT,
     xpos INT,
     ypos INT,
-    lives_remaining INT,
+    times_hit INT,
     waiting_time INT
 );
 
