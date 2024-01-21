@@ -1,0 +1,71 @@
+@import url('https://fonts.cdnfonts.com/css/the-wild-breath-of-zelda');
+
+*{
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#body{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#who-are-we{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 70%;
+}
+
+#intro{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#photos{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.photo{
+    margin-right: 30px;
+    width:300px;
+    border-radius: 100%;
+}
+.flip-scale-up-hor:hover {
+    -webkit-animation: flip-scale-up-hor 0.5s linear both;
+            animation: flip-scale-up-hor 0.5s linear both;
+}
+
+@-webkit-keyframes flip-scale-up-hor {
+  0% {
+    -webkit-transform: scale(1) rotateX(0);
+            transform: scale(1) rotateX(0);
+  }
+  50% {
+    -webkit-transform: scale(2.5) rotateX(-90deg);
+            transform: scale(2.5) rotateX(-90deg);
+  }
+  100% {
+    -webkit-transform: scale(1) rotateX(-180deg);
+            transform: scale(1) rotateX(-180deg);
+  }
+}
+@keyframes flip-scale-up-hor {
+  0% {
+    -webkit-transform: scale(1) rotateX(0);
+            transform: scale(1) rotateX(0);
+  }
+  50% {
+    -webkit-transform: scale(2.5) rotateX(-90deg);
+            transform: scale(2.5) rotateX(-90deg);
+  }
+  100% {
+    -webkit-transform: scale(1) rotateX(-180deg);
+            transform: scale(1) rotateX(-180deg);
+  }
+}
