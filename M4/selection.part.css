@@ -50,6 +50,10 @@ li.display:hover{
     text-decoration: none;
     color: black;
 }
+.title{
+    font-size: 100px;
+    color: 	rgb(231, 197, 5);
+}
 .two {
     background-image: repeating-linear-gradient(45deg, #1d9157, #134423 1em, #16913a 1em, #215f26 50%);
     background-size: 2em 2em;
