@@ -10,6 +10,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
 }
 
 .section{
@@ -21,9 +22,21 @@
 
 #maps-title{
     background-image: url(src/maps-portada.jpg);
+    background-size: 100%;
 }
 #enemies-title{
-    background-image: url(src/enemies-portada.jpeg);   
+    background-image: url(src/enemies-portada.jpeg);
+    background-size: 100%;
+}
+#sanctuaries-title{
+    background-image: url(src/sanctuaries-portada.jpg);
+    background-size: 100%;
+}
+#enemies-title-text{
+    color:white;
+}
+#sanctuaries-title-text{
+    color:white;
 }
 .section-title{
     width: 100%;
@@ -33,6 +46,8 @@
 }
 .section-title-text{
     margin: 100px;
+    font-family: "The Wild Breath of Zelda";
+    font-size: 80px;
 }
 
 .section-elements{
@@ -71,4 +86,33 @@
 }
 @keyframes left-to-right {
     100% {transform: translateX(0px);}
+}
+
+.inline{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#enemy-photo{
+    width: 40%;
+}
+
+#enemy{
+    margin-top: 100px;
+    margin-bottom: 100px;
+}
+
+.enemies-desc{
+    font-weight: 700;
+    font-size: x-large;
+    text-align: center;
+    max-width: 70%;
+    border-radius: 20px;
+    background-color: rgba(138, 138, 138,0.5);
+    padding: 30px;
+}
+.main-title{
+    font-family: "The Wild Breath of Zelda";
+    font-size: 100px;
 }

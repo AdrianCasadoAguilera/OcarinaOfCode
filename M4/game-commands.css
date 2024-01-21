@@ -47,19 +47,31 @@ body{
     position: sticky;
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 #navigator-list{
     list-style: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 #navigator b{
     padding-left: 40px;
 }
-#navigator ul li a{
-    text-decoration: none;
+.nav-element{
+    background-color: rgba(255, 136, 0,0.5);
+    padding: 10px;
     color:white;
+    text-decoration: none;
+    width: 100%;
+    border-radius: 20px;
+    margin: 10px;
+    text-align: center;
+    transition: 0.3s;
 }
-#navigator ul li a:hover{
-    font-weight: bolder;
+.nav-element:hover{
+    /* background-color: black; */
+    opacity: 0.5;
 }
 .container{
     width: 80%;

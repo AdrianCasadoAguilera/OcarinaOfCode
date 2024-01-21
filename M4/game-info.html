@@ -7,14 +7,14 @@
         <title>OOC Tutorial</title>
     </head>
     <body>
-        <!-- <header>
+        <header>
             <shadow-partial data-html="header.part.html" data-css="header.part.css"></shadow-partial>
             <div class="sticky">
                 <shadow-partial data-html="selection.part.html" data-css="selection.part.css"></shadow-partial>
             </div>
-        </header> -->
+        </header>
         <div id="body">
-            <h1>THE GAME</h1>
+            <h1 class="main-title">THE GAME</h1>
             <div class="section">
                 <div class="section-title" id="maps-title">
                     <h1 class="section-title-text">THE REGIONS</h1>
@@ -53,14 +53,39 @@
                         </div>
                     </div>
                 </div>
+            </div>
             <div class="section">
                 <div class="section-title" id="enemies-title">
-                    <h1 class="section-title-text">THE ENEMIES</h1>
+                    <h1 class="section-title-text" id="enemies-title-text">THE ENEMIES</h1>
                 </div>
                 <div class="section-elements">
+                    <div class="inline" id="enemy">
+                        <img src="src/enemy.webp" id="enemy-photo">
+                        <p class="enemies-desc">Zelda: Breath of the Wild enemies are the most disgusting creatures you can ever find. They are ugly, bad, and will no doubt hurting you in any chance they have to do it. However, their intelligence is not as high. Take a chance on that, and, when they don't expect it, try to attack them with your best sword.</p>
+                    </div>
+                    <div>
+                        <h1 class="main-title">GANON</h1>
+                        <div class="inline">
+                            <img src="src/ganon.webp" class="map-photo">
+                            <p class="enemies-desc">Do you know that type of person you are never comfortable with? Someone whose body odor is absolutely disgusting, and even looking at his face is such a horrible experience? Well, all this, and a lot more, it's Ganon. Ganon kidnapped the princess Zelda, and we cannot imagine what is she suffering. You must defeat him and bring the princess back home.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
+            <div class="section">
+                <div class="section-title" id="sanctuaries-title">
+                    <h1 class="section-title-text" id="sanctuaries-title-text">THE SANCTUARIES</h1>
+                </div>
+                <div class="section-elements">
+                    <div class="inline">
+                        <p class="enemies-desc">Do you feel weak and need to rest? Don't worry, just find a sanctuary and take an extra push. Sanctuaries at the kingdom of Zelda recovers your life to max, and adds one more heart to your life. But be careful, because once you open it, you will not be able to open it again.</p>
+                        <img src="src/sanctuary.webp" class="map-photo">
+                    </div>
+                </div>
             </div>
         </div>
+        <footer>
+            <shadow-partial data-html="footer.part.html" data-css="footer.part.css"></shadow-partial>
+        </footer>
     </body>
 </html>
