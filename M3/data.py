@@ -218,6 +218,11 @@ def collect_data(id):
             locations[region]["sanctuaries"][i[2]] = [i[3], [int(i[4]),int(i[5])]]
 
 
+    for region in locations.keys():
+        db.cur.execute(f"SELECT * FROM enemies WHERE game_id = {id} AND region = '{region}'")
+        rst = db.cur.fetchall()
+        print(rst)
+
 def is_equipped(weapon):
     if(data["weapons"][weapon]["equipped"]==1):
         return "(equipped)"

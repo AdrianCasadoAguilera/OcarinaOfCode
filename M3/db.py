@@ -1,14 +1,44 @@
-import mysql.connector, data
+import data
+import logging
+import sshtunnel
+import pymysql
+from sshtunnel import SSHTunnelForwarder
 
-connection = mysql.connector.connect(user='OcarinaOfCode',password='1234',host='127.0.0.1',database='zelda')
+def open_ssh_tunnel(verbose=False):
+    """Open an SSH tunnel and connect using a username and password.
+    :param verbose: Set to True to show logging
+    :return tunnel: Global SSH tunnel connection
+    """
+    if verbose:
+        sshtunnel.DEFAULT_LOGLEVEL = logging.DEBUG
+    global tunnel
+    tunnel = SSHTunnelForwarder(
+        ('4.231.232.138', 22),
+        ssh_username='equipo7',
+        ssh_password='@W7YS9i5vufnGSi',
+        remote_bind_address=('127.0.0.1', 3306)
+)
+    tunnel.start()
+
+open_ssh_tunnel()
+
+
+connection = pymysql.connect(
+        host='127.0.0.1',
+        user='root',
+        passwd='root',
+        db='zelda',
+        port=tunnel.local_bind_port
+
+    )
+
 
 cur = connection.cursor()
-
 
 # QUERIES FROM GAME TABLE
 
 def user_name(id):
-    cur.execute(f"SELECT user_name FROM game WHERE game_id={id}")
+    cur.execute(f"SELECT user_name FROM game WHERE game_id={id};")
     name = cur.fetchall()
     return name[0][0]
 

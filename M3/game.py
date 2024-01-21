@@ -723,6 +723,7 @@ def eat(food):
     remove_food(food,1)
     if(food=="Vegetable"):
         increase_health(1)
+        db.cur.execute(f"UPDATE food_used SET quantity_used = quantity_used + 1 WHERE food_name = {food}")
     elif(food=="Salad"):
         increase_health(2)
     elif(food=="Pescatarian"):
