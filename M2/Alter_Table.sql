@@ -5,7 +5,7 @@ MODIFY COLUMN game_id int AUTO_INCREMENT primary key,
 MODIFY COLUMN region VARCHAR(50) CHECK (region in ("Hyrule", "Death mountain", "Gerudo", "Necluda", "Castle")) NOT NULL,
 MODIFY COLUMN hearts_remaining INT DEFAULT 3,
 MODIFY COLUMN max_hearts INT DEFAULT 3,
-MODIFY COLUMN fishing BOOLEAN DEFAULT 1
+MODIFY COLUMN fishing BOOLEAN DEFAULT True,
 MODIFY COLUMN last_connected DATETIME DEFAULT CURRENT_TIMESTAMP;
 
 ALTER TABLE foods

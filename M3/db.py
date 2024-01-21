@@ -221,13 +221,6 @@ def update_database():
                     WHERE game_id = {character['game_id']} AND region = '{region}' AND num = {tree_num}"""
             cur.execute(tree_query)
 
-        game_query = f"""
-            UPDATE game
-            SET fishing = {region_data['fishing']}
-            WHERE game_id = {character['game_id']} AND region = '{region}'
-        """
-        cur.execute(game_query)
-
 
     connection.commit()
 
