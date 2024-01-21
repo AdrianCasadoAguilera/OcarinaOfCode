@@ -295,7 +295,9 @@ while True:
    try:
       x = input("What to do now? ")
       opt = x.split(" ")
-      if(opt[0].capitalize() not in options):
+      if(opt[0].capitalize() == "Consultes" and opt[1].upper() == "DB" and len(opt) == 2):
+         queries.menu_queries()
+      if(opt[0].capitalize() not in options ):
          if(len(opt)==1):
             raise ValueError("Invalid Action")
          if((opt[0].capitalize() + " " + opt[1].capitalize()) not in options):
@@ -318,7 +320,5 @@ while True:
             game.play(game_id,act_location)
       elif(opt[0].capitalize()=="New" and opt[1].capitalize()=="Game" and len(opt)==2):
          create_game()
-      elif(opt[0].capitalize() == "Consultes" and opt[1].upper() == "DB" and len(opt) == 2):
-         queries.menu_queries()
    except ValueError as e:
       scr.add_to_prompt(e)
