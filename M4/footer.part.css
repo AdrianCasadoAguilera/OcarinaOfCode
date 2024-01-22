@@ -1,6 +1,7 @@
 footer{
     background-color: black;
     bottom: 0;
+    font-size: 2vh;
 }
 .content{
     justify-content: center;

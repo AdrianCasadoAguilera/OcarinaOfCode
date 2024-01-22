@@ -26,12 +26,14 @@
     justify-content: center;
     max-width: 70%;
     margin-top: 50px;
+    font-size: 2vh;
 }
 
 #photos{
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    justify-content: center;
 }
 #joloco{
     background-image: url("src/joloco.jpg");
@@ -112,6 +114,9 @@
     height: 15vw;
     perspective: 1000px;
     margin:35px;
+    min-width: 35vh;
+    min-height: 35vh;
+    font-size: 2vh;
 }
   
 .flip-card-inner {

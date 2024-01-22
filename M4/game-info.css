@@ -52,6 +52,7 @@
 
 .section-elements{
     max-width: 80%;
+    font-size: 2vh;
 }
 
 .map-photo{
@@ -111,6 +112,7 @@
     border-radius: 20px;
     background-color: rgba(138, 138, 138,0.5);
     padding: 30px;
+    font-size: 2vh;
 }
 .main-title{
     font-family: "The Wild Breath of Zelda";
